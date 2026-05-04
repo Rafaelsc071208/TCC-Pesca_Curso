@@ -4,7 +4,7 @@ export const courses = [
     title: "curso pré vestibular 1",
     description: "Português para o ENEM",
     category: "Presencial",
-    price: 0,
+    price: 100.00,
     link: "https://exemplo.com"
   },
   {
@@ -12,7 +12,7 @@ export const courses = [
     title: "curso pré vestibular 2",
     description: "Matemática para o ENEM",
     category: "Online",
-    price: 50,
+    price: 50.00,
     link: "https://exemplo.com"
   }
 ]

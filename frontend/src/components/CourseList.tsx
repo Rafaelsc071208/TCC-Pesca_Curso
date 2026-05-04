@@ -1,4 +1,5 @@
 import { courses } from "../data/courses"
+import CourseCard from "./CourseCard"
 
 export default function CourseList() {
   return (
@@ -7,17 +8,15 @@ export default function CourseList() {
       gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
       gap: "20px",
       padding: "80px 20px 20px",
-     
     }}>
       {courses.map(course => (
-        <div key={course.id} style={{
-          background: "#bdbdbd",
-          padding: "15px",
-          borderRadius: "10px"
-        }}>
-          <h3>{course.title}</h3>
-          <p>{course.category}</p>
-        </div>
+        <CourseCard
+          key={course.id}
+          id={course.id}
+          title={course.title}
+          category={course.category}
+          price={course.price}
+        />
       ))}
     </div>
   )
