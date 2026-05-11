@@ -1,13 +1,16 @@
-import { courses } from "../data/courses"
 import CourseCard from "./CourseCard"
 
-export default function CourseList() {
+type Props = {
+  courses: any[]
+}
+
+export default function CourseList({ courses }: Props) {
   return (
     <div style={{
       display: "grid",
       gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
       gap: "20px",
-      padding: "80px 20px 20px",
+      padding: "20px"
     }}>
       {courses.map(course => (
         <CourseCard

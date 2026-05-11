@@ -1,4 +1,14 @@
-export default function Header() {
+
+
+type Props = {
+  search: string
+  setSearch: (value: string) => void
+}
+
+export default function Header({
+  search,
+  setSearch
+}: Props) {
   return (
     <div style={{
       position: "fixed",
@@ -7,11 +17,12 @@ export default function Header() {
       height: "60px",
       background: "#a8e6cf",
       display: "flex",
-      alignItems: "center",
       justifyContent: "center",
-      zIndex: 1000
+      alignItems: "center"
     }}>
       <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         placeholder="Buscar cursos..."
         style={{
           width: "40%",

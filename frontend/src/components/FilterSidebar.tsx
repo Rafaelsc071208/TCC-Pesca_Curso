@@ -1,4 +1,12 @@
-export default function FilterSidebar({ onClose }: any) {
+type Props = {
+  setSelectedCategory: (value: string) => void
+  onClose: () => void
+}
+
+export default function FilterSidebar({
+  setSelectedCategory,
+  onClose
+}: Props) {
   return (
     <div style={{
       position: "fixed",
@@ -8,22 +16,81 @@ export default function FilterSidebar({ onClose }: any) {
       height: "100%",
       background: "#2e7d5a",
       color: "white",
-      padding: "20px",
-      zIndex: 1000
-     
+      padding: "20px"
     }}>
       <button onClick={onClose}
-       style={{
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#fff",
-    color: "#2e7d5a",
-    cursor: "pointer",
-    marginBottom: "20px"
-  }}
->Fechar</button>
+             style={{
+              width: "30%",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#56c596",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}>
+        Fechar
+      </button>
+
       <h2>Filtros</h2>
+
+      <button onClick={() => setSelectedCategory("")}
+        style={{
+              width: "50%",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#56c596",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}>
+        Todos
+      </button>
+<br />
+<br />      <button onClick={() => setSelectedCategory("Presencial")}
+        style={{
+              width: "50%",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#56c596",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}>
+        Presencial
+      </button>
+<br />
+<br />  
+      <button onClick={() => setSelectedCategory("Online")}
+        style={{
+              width: "50%",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#56c596",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}>
+        Online
+      </button>
+<br />
+<br />
+      <button onClick={() => setSelectedCategory("Misto")}
+        style={{
+              width: "50%",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              background: "#56c596",
+              color: "white",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}>
+        Misto
+      </button>
     </div>
   )
 }
