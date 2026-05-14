@@ -15,7 +15,7 @@ export default function Header({
       top: 0,
       width: "100%",
       height: "60px",
-      background: "#a8e6cf",
+      background: "#4fb5a8",
       display: "flex",
       justifyContent: "center",
       alignItems: "center"

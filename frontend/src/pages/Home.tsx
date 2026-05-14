@@ -38,14 +38,15 @@ export default function Home() {
       }}>
         <button onClick={() => setShowFilters(true)}
                  style={{
-              width: "5%",
+              
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
-              fontSize: "16px"
+              fontSize: "16px",
+              textAlign:"center"
             }}>
           Filtros
         </button>

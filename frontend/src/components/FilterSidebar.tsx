@@ -12,9 +12,9 @@ export default function FilterSidebar({
       position: "fixed",
       right: 0,
       top: 0,
-      width: "300px",
+      width: "250px",
       height: "100%",
-      background: "#2e7d5a",
+      background: "#4fb5a8",
       color: "white",
       padding: "20px"
     }}>
@@ -24,10 +24,11 @@ export default function FilterSidebar({
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
-              fontSize: "16px"
+              fontSize: "16px",
+              textAlign: "center"
             }}>
         Fechar
       </button>
@@ -40,7 +41,7 @@ export default function FilterSidebar({
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
               fontSize: "16px"
@@ -54,7 +55,7 @@ export default function FilterSidebar({
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
               fontSize: "16px"
@@ -69,7 +70,7 @@ export default function FilterSidebar({
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
               fontSize: "16px"
@@ -84,7 +85,7 @@ export default function FilterSidebar({
               padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
-              background: "#56c596",
+              background: "#26786e",
               color: "white",
               cursor: "pointer",
               fontSize: "16px"

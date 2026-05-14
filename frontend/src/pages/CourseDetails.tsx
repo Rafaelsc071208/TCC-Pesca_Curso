@@ -21,7 +21,7 @@ export default function CourseDetails() {
       <div style={{
         width: "100%",
         height: "60px",
-        background: "#a8e6cf",
+        background: "#4fb5a8",
         display: "flex",
         alignItems: "center",
         padding: "0 20px",
@@ -33,7 +33,7 @@ export default function CourseDetails() {
             border: "none",
             borderRadius: "8px",
             cursor: "pointer",
-            background: "#56c596",
+            background: "#26786e",
             color: "white"
           }}>
             Voltar
