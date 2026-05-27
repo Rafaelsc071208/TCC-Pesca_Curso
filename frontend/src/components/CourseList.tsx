@@ -1,7 +1,14 @@
 import CourseCard from "./CourseCard"
 
+type Course = {
+  id: number
+  title: string
+  category: string
+  price: number
+}
+
 type Props = {
-  courses: any[]
+  courses: Course[]
 }
 
 export default function CourseList({ courses }: Props) {
@@ -15,7 +22,7 @@ export default function CourseList({ courses }: Props) {
       {courses.map(course => (
         <CourseCard
           key={course.id}
-          id={course.id}
+          id={String(course.id)}
           title={course.title}
           category={course.category}
           price={course.price}

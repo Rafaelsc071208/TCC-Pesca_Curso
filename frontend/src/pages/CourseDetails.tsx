@@ -1,132 +1,249 @@
+import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { courses } from "../data/courses"
+import axios from "axios"
+
+type Course = {
+  id: number
+  title: string
+  description: string
+  category: string
+  price: number
+  link: string
+  description_det: string
+  endereco: string
+}
 
 export default function CourseDetails() {
+
   const { id } = useParams()
 
-  const course = courses.find(course => course.id === id)
+  const [course, setCourse] = useState<Course | null>(null)
 
+
+
+  // buscar curso
+  useEffect(() => {
+
+    axios
+      .get("http://localhost:3000/courses")
+      .then(response => {
+
+        const foundCourse = response.data.find(
+          (course: Course) =>
+            course.id === Number(id)
+        )
+
+        setCourse(foundCourse)
+      })
+
+      .catch(error => {
+        console.error(error)
+      })
+
+  }, [id])
+
+
+
+  // loading
   if (!course) {
-    return <h1>Curso não encontrado</h1>
+    return <h1>Carregando...</h1>
   }
 
+
+
   return (
-    <div style={{
-      width: "100%",
-      minHeight: "100vh",
-      background: "#f5f5f5"
-    }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f5f5f5"
+      }}
+    >
 
       {/* HEADER */}
-      <div style={{
-        width: "100%",
-        height: "60px",
-        background: "#4fb5a8",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 20px",
-        boxSizing: "border-box"
-      }}>
-        <Link to="/">
-          <button style={{
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            background: "#26786e",
-            color: "white"
-          }}>
-            Voltar
-          </button>
-        </Link>
-      </div>
-
-      {/* CONTEÚDO */}
-      <div style={{
-        display: "flex",
-        height: "calc(100vh - 60px)"
-      }}>
-
-        {/* ÁREA DE IMAGEM */}
-        <div style={{
-          flex: 1,
-          padding: "20px",
-          boxSizing: "border-box"
-        }}>
-          <div style={{
-            width: "100%",
-            height: "100%",
-            background: "#d9d9d9",
-            borderRadius: "10px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "32px",
-            color: "#555"
-          }}>
-            PREVIEW DA IMAGEM DO CURSO
-          </div>
-        </div>
-
-        {/* PAINEL LATERAL */}
-        <div style={{
-          width: "320px",
-          background: "#2e7d5a",
-          color: "white",
-          padding: "20px",
-          boxSizing: "border-box",
+      <div
+        style={{
+          width: "100%",
+          height: "70px",
+          background: "#26786e",
           display: "flex",
-          flexDirection: "column",
-          gap: "20px"
-        }}>
-          <h1>{course.title}</h1>
+          alignItems: "center",
+          padding: "0 20px",
+          boxSizing: "border-box"
+        }}
+      >
 
-          <p>
-            {course.description}
-          </p>
+        <Link to="/">
 
-          <div>
-            <strong>Categoria:</strong>
-            <p>{course.category}</p>
-          </div>
-
-          <div>
-            <strong>Preço:</strong>
-            <p>R$ {course.price}</p>
-          </div>
-
-          <div>
-            <strong>Descrição Detalhada:</strong>
-            <p>{course.description_det}</p>
-          </div>
-          <div>
-            <strong>Endereço:</strong>
-            <p>{course.endereco}</p>
-          </div>
-
-          <a
-            href={course.link}
-            target="_blank"
+          <button
             style={{
-              marginTop: "auto"
-            }}
-          >
-            <button style={{
-              width: "100%",
-              padding: "12px",
+              padding: "10px 20px",
               border: "none",
               borderRadius: "8px",
               background: "#56c596",
               color: "white",
-              cursor: "pointer",
-              fontSize: "16px"
-            }}>
+              cursor: "pointer"
+            }}
+          >
+            Voltar
+          </button>
+
+        </Link>
+
+      </div>
+
+
+
+      {/* CONTEÚDO */}
+      <div
+        style={{
+          display: "flex",
+          gap: "30px",
+          padding: "30px"
+        }}
+      >
+
+        {/* ESQUERDA */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px"
+          }}
+        >
+
+          {/* IMAGEM/PREVIEW */}
+          <div
+            style={{
+              width: "100%",
+              height: "400px",
+              background: "#d9d9d9",
+              borderRadius: "12px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "28px",
+              color: "#555"
+            }}
+          >
+            PREVIEW DO CURSO
+          </div>
+
+
+
+          {/* DESCRIÇÃO DETALHADA */}
+          <div
+            style={{
+              background: "white",
+              padding: "20px",
+              borderRadius: "12px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+            }}
+          >
+
+            <h2>
+              Sobre o curso
+            </h2>
+
+            <p>
+              {course.description_det}
+            </p>
+
+          </div>
+
+        </div>
+
+
+
+        {/* DIREITA */}
+        <div
+          style={{
+            width: "350px",
+            background: "#2e7d5a",
+            color: "white",
+            padding: "25px",
+            borderRadius: "12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            height: "fit-content"
+          }}
+        >
+
+          <h1>
+            {course.title}
+          </h1>
+
+
+
+          <div>
+            <strong>Descrição:</strong>
+
+            <p>
+              {course.description}
+            </p>
+          </div>
+
+
+
+          <div>
+            <strong>Categoria:</strong>
+
+            <p>
+              {course.category}
+            </p>
+          </div>
+
+
+
+          <div>
+            <strong>Preço:</strong>
+
+            <p>
+              R$ {course.price}
+            </p>
+          </div>
+
+
+
+          <div>
+            <strong>Endereço:</strong>
+
+            <p>
+              {course.endereco}
+            </p>
+          </div>
+
+
+
+          {/* BOTÃO */}
+          <a
+            href={course.link}
+            target="_blank"
+          >
+
+            <button
+              style={{
+                width: "100%",
+                padding: "14px",
+                border: "none",
+                borderRadius: "10px",
+                background: "#56c596",
+                color: "white",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "bold"
+              }}
+            >
               Acessar Curso
             </button>
+
           </a>
+
         </div>
 
       </div>
+
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import axios from "axios"
 
 type Props = {
   id: string
@@ -13,6 +14,25 @@ export default function CourseCard({
   category,
   price,
 }: Props) {
+  const user = JSON.parse(
+  localStorage.getItem("user") || "null"
+)
+async function handleDelete() {
+
+  try {
+
+    await axios.delete(
+      `http://localhost:3000/courses/${id}`
+    )
+
+    alert("Curso deletado")
+
+    window.location.reload()
+
+  } catch (error) {
+    console.error(error)
+  }
+}
   return (
     <div style={{
       background: "#e8e8e8",
@@ -48,7 +68,28 @@ export default function CourseCard({
           Ver mais
         </button>
       </Link>
+      {
+  user?.isAdmin === 1 && (
+
+    <button
+      onClick={handleDelete}
+      style={{
+        marginTop: "10px",
+        background: "red",
+        color: "white",
+        border: "none",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        cursor: "pointer"
+      }}
+    >
+      Deletar
+    </button>
+
+  )
+}
       </div>
     </div>
   )
 }
+
