@@ -19,6 +19,16 @@ export default function CourseDetails() {
 
   const [course, setCourse] = useState<Course | null>(null)
 
+  const getExternalLink = (link: string) => {
+    const trimmedLink = link?.trim()
+
+    if (!trimmedLink) return "#"
+
+    return /^https?:\/\//i.test(trimmedLink)
+      ? trimmedLink
+      : `https://${trimmedLink}`
+  }
+
 
 
   // buscar curso
@@ -217,9 +227,11 @@ export default function CourseDetails() {
 
 
           {/* BOTÃO */}
+          
           <a
-            href={course.link}
+            href={getExternalLink(course.link)}
             target="_blank"
+            rel="noopener noreferrer"
           >
 
             <button
