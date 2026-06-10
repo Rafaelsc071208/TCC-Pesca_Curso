@@ -59,17 +59,24 @@ export function createCourse(req: Request, res: Response) {
 
 
 // LISTAR CURSOS
-export function getCourses(req: Request, res: Response) {
+export function getCourses(
+  req: Request,
+  res: Response
+) {
+
+  const search = req.query.search || ""
 
   db.all(
     `
-    SELECT * FROM courses
+    SELECT *
+    FROM courses
+    WHERE title LIKE ?
     `,
-    [],
+    [`%${search}%`],
 
     (err, rows) => {
 
-      if (err) {
+      if(err){
         return res.status(500).json({
           error: err.message
         })

@@ -3,11 +3,13 @@ import { Link } from "react-router-dom"
 type Props = {
   search: string
   setSearch: (value: string) => void
+  onOpenFilters: () => void
 }
 
 export default function Header({
   search,
-  setSearch
+  setSearch,
+  onOpenFilters
 }: Props) {
 
   // pega usuário logado
@@ -60,17 +62,45 @@ export default function Header({
 
 
       {/* PESQUISA */}
-      <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Buscar cursos..."
+      <div
         style={{
           width: "40%",
-          padding: "12px",
-          borderRadius: "20px",
-          border: "none"
+          display: "flex",
+          alignItems: "center",
+          gap: "8px"
         }}
-      />
+      >
+
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Buscar cursos..."
+          style={{
+            flex: 1,
+            padding: "12px",
+            borderRadius: "20px",
+            border: "none"
+          }}
+        />
+
+        <button
+          onClick={onOpenFilters}
+          style={{
+            width: "45px",
+            height: "45px",
+            border: "none",
+            borderRadius: "10px",
+            background: "#56c596",
+            color: "white",
+            cursor: "pointer",
+            fontSize: "20px",
+            fontWeight: "bold"
+          }}
+        >
+          ☰
+        </button>
+
+      </div>
 
 
 

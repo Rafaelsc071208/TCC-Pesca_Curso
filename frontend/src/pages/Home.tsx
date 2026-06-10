@@ -26,13 +26,17 @@ export default function Home() {
 
   const [courses, setCourses] = useState<Course[]>([])
 
+  const [minPrice, setMinPrice] = useState(0)
+
+  const [maxPrice, setMaxPrice] = useState(999999)
+
 
 
   // BUSCAR CURSOS DA API
   useEffect(() => {
 
     axios
-      .get("http://localhost:3000/courses")
+      .get(`http://localhost:3000/courses?search=${search}`)
       .then(response => {
         setCourses(response.data)
       })
@@ -43,18 +47,60 @@ export default function Home() {
   }, [])
 
 
-
   // FILTROS
   const filteredCourses = courses.filter(course => {
 
     const matchesSearch =
-      course.title.toLowerCase().includes(search.toLowerCase())
+      course.title
+        .toLowerCase()
+        .includes(search.toLowerCase())
+
+      ||
+
+      course.description
+        .toLowerCase()
+        .includes(search.toLowerCase())
 
     const matchesCategory =
-      selectedCategory === "" ||
-      course.category === selectedCategory
 
-    return matchesSearch && matchesCategory
+      selectedCategory === ""
+
+      ||
+
+      (
+        selectedCategory === "Presencial" &&
+        (
+          course.category === "Presencial" ||
+          course.category === "Misto"
+        )
+      )
+
+      ||
+
+      (
+        selectedCategory === "Online" &&
+        (
+          course.category === "Online" ||
+          course.category === "Misto"
+        )
+      )
+
+      ||
+
+      (   
+        selectedCategory === "Misto" &&
+        course.category === "Misto"
+      )
+
+    const matchesPrice =
+      course.price >= minPrice &&
+      course.price <= maxPrice
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesPrice
+    )
   })
 
 
@@ -65,27 +111,27 @@ export default function Home() {
       <Header
         search={search}
         setSearch={setSearch}
-      />
-
-      <div style={{
-        marginTop: "70px",
-        padding: "10px 20px"
-      }}>
-        <button
-          onClick={() => setShowFilters(true)}
-        >
-          Filtros
-        </button>
-      </div>
+        onOpenFilters={() => setShowFilters(prev => !prev)}
+    />
 
       {showFilters && (
         <FilterSidebar
           setSelectedCategory={setSelectedCategory}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          setMinPrice={setMinPrice}
+          setMaxPrice={setMaxPrice}
           onClose={() => setShowFilters(false)}
         />
       )}
 
-      <CourseList courses={filteredCourses} />
+      <div
+        style={{
+          marginTop: "90px"
+        }}
+      >
+        <CourseList courses={filteredCourses} />
+      </div>
 
     </div>
   )
