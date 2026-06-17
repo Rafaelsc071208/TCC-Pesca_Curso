@@ -1,6 +1,6 @@
 import { useState } from "react"
 import axios from "axios"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import Header from "../components/Header"
 
@@ -49,7 +49,10 @@ export default function Register() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f5f5f5"
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "#f5f5f5"
       }}
     >
 
@@ -57,6 +60,7 @@ export default function Register() {
       <Header
         search={search}
         setSearch={setSearch}
+        onOpenFilters={() => {}}
       />
 
 
@@ -98,6 +102,12 @@ export default function Register() {
             placeholder="Nome de usuário"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            
+            style={{
+              padding:"12px",
+              borderRadius:"8px",
+              border:"1px solid #ccc"
+            }}
           />
 
 
@@ -106,6 +116,12 @@ export default function Register() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+
+            style={{
+              padding:"12px",
+              borderRadius:"8px",
+              border:"1px solid #ccc"
+            }}
           />
 
 
@@ -115,6 +131,12 @@ export default function Register() {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+
+            style={{
+              padding:"12px",
+              borderRadius:"8px",
+              border:"1px solid #ccc"
+            }}
           />
 
 
@@ -134,7 +156,26 @@ export default function Register() {
           >
             Criar Conta
           </button>
+          <p
+            style={{
+              textAlign:"center",
+              margin:"0"
+            }}
+          >
+            Já tem uma conta?
 
+            <Link
+              to="/login"
+              style={{
+                marginLeft:"5px",
+                color:"#2e7d5a",
+                fontWeight:"bold",
+                textDecoration:"none"
+              }}
+            >
+             Entrar 
+            </Link>  
+          </p>
         </form>
 
       </div>
