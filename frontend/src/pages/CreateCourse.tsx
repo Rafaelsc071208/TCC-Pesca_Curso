@@ -8,6 +8,14 @@ export default function CreateCourse() {
   const [search, setSearch] = useState("")
 
   const [title, setTitle] = useState("")
+
+  const [institutionName, setInstitutionName] = useState("")
+  const [modality, setModality] = useState("")
+  const [paymentType, setPaymentType] = useState("")
+  const [location, setLocation] = useState("")
+  const [period, setPeriod] = useState("")
+  const [duration, setDuration] = useState("")
+
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
   const [price, setPrice] = useState("")
@@ -15,6 +23,9 @@ export default function CreateCourse() {
   const [descriptionDet, setDescriptionDet] = useState("")
   const [endereco, setEndereco] = useState("")
 
+  const user = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  )
 
 
   async function handleSubmit(e: React.FormEvent) {
@@ -28,11 +39,24 @@ export default function CreateCourse() {
         {
           title,
           description,
-          category,
+
+          institution_name: institutionName,
+
+          modality,
+
+          payment_type: paymentType,
+
+          location,
+
+          period,
+
+          duration,
+
           price: Number(price),
-          link,
+
           description_det: descriptionDet,
-          endereco
+
+          created_by: user.id
         }
       )
 
@@ -81,7 +105,7 @@ export default function CreateCourse() {
           justifyContent: "center"
         }}
       >
-
+        
         <form
           onSubmit={handleSubmit}
           style={{
@@ -95,7 +119,6 @@ export default function CreateCourse() {
             gap: "15px"
           }}
         >
-
           <h1
             style={{
               color: "#2e7d5a"
@@ -163,21 +186,25 @@ export default function CreateCourse() {
 
 
 
-          <button
-            type="submit"
-            style={{
-              padding: "14px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#56c596",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}
-          >
-            Criar Curso
-          </button>
+          {
+            user.role === "institution" && (
+              <button
+                type="submit"
+                style={{
+                  padding: "14px",
+                  border: "none",
+                  borderRadius: "10px",
+                  background: "#56c596",
+                  color: "white",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  cursor: "pointer"
+                }}
+              >
+                Criar Curso
+              </button>
+            )
+          }
 
         </form>
 

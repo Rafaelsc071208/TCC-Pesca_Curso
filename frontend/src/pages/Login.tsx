@@ -40,10 +40,8 @@ export default function Login() {
       else{
         navigate("/")
       }
-      
-      alert("Login realizado!")
 
-      navigate("/")
+      alert("Login realizado!")
 
     } catch (error) {
       console.error(error)

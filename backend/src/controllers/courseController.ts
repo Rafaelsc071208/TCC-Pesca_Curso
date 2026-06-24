@@ -9,11 +9,15 @@ export function createCourse(req: Request, res: Response) {
   const {
     title,
     description,
-    category,
+    institution_name,
+    modality,
+    payment_type,
+    location,
+    period,
+    duration,
     price,
-    link,
     description_det,
-    endereco
+    created_by
   } = req.body
 
   db.run(
@@ -22,22 +26,30 @@ export function createCourse(req: Request, res: Response) {
     (
       title,
       description,
-      category,
       price,
-      link,
       description_det,
-      endereco
+      institution_name,
+      modality,
+      payment_type,
+      location,
+      period,
+      duration,
+      created_by
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       title,
       description,
-      category,
       price,
-      link,
       description_det,
-      endereco
+      institution_name,
+      modality,
+      payment_type,
+      location,
+      period,
+      duration,
+      created_by
     ],
 
     function (err) {
@@ -109,6 +121,34 @@ export function deleteCourse(req: Request, res: Response) {
       return res.json({
         message: "Curso deletado"
       })
+    }
+  )
+}
+
+export function getMyCourses(
+  req: Request,
+  res: Response
+){
+
+  const { userId } = req.params
+
+  db.all(
+    `
+    SELECT *
+    FROM courses
+    WHERE created_by = ?
+    `,
+    [userId],
+
+    (err, rows) => {
+
+      if(err){
+        return res.status(500).json({
+          error: err.message
+        })
+      }
+
+      return res.json(rows)
     }
   )
 }

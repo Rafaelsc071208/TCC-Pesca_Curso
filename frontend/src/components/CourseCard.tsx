@@ -4,8 +4,10 @@ import axios from "axios"
 type Props = {
   id: string
   title: string
-  category: string
+  institution_name: string
   price: number
+  image_url?: string
+  category: string
 }
 
 export default function CourseCard({
@@ -13,6 +15,8 @@ export default function CourseCard({
   title,
   category,
   price,
+  institution_name,
+  image_url,
 }: Props) {
   const user = JSON.parse(
   localStorage.getItem("user") || "null"
@@ -42,52 +46,63 @@ async function handleDelete() {
 
     }}>
       <h3>{title}</h3>
-<div style={{
-      background: "#ffffff",
-      padding: "10px",
-      borderRadius: "10px",
-      textAlign: "left"
+      <div style={{
+        background: "#ffffff",
+        padding: "10px",
+        borderRadius: "10px",
+        textAlign: "left"
 
-    }}>
-      <p>{category}</p>
-
-      <p>R$ {price.toFixed(2)}</p>
-
-      <Link to={`/course/${id}`}>
-        <button
+      }}>
+        <img
+          src={image_url}
           style={{
-            marginTop: "10px",
-            padding: "8px 12px",
-            border: "none",
-            borderRadius: "6px",
-            background: "#26786e",
-            color: "white",
-            cursor: "pointer"
+            width:"100%",
+            height:"180px",
+            objectFit:"cover"
           }}
-        >
-          Ver mais
-        </button>
-      </Link>
-      {
-  user?.isAdmin === 1 && (
+        />
 
-    <button
-      onClick={handleDelete}
-      style={{
-        marginTop: "10px",
-        background: "red",
-        color: "white",
-        border: "none",
-        padding: "8px 12px",
-        borderRadius: "6px",
-        cursor: "pointer"
-      }}
-    >
-      Deletar
-    </button>
+        <h3>{institution_name}</h3>
 
-  )
-}
+        <p>{category}</p>
+
+        <p>R$ {price.toFixed(2)}/mês</p>
+
+        <Link to={`/course/${id}`}>
+          <button
+            style={{
+              marginTop: "10px",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              background: "#26786e",
+              color: "white",
+              cursor: "pointer"
+            }}
+          >
+            Ver mais
+          </button>
+        </Link>
+        {
+    user?.isAdmin === 1 && (
+
+      <button
+        onClick={handleDelete}
+        style={{
+          marginTop: "10px",
+          background: "red",
+          color: "white",
+          border: "none",
+          padding: "8px 12px",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        Deletar
+      </button>
+
+    )
+  }
       </div>
     </div>
   )

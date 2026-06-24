@@ -16,7 +16,11 @@ type Course = {
   endereco: string
 }
 
-export default function institutionDashboard() {
+export default function InstitutionDashboard() {
+
+  const user = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  )
 
   const [showFilters, setShowFilters] = useState(false)
 
@@ -36,7 +40,7 @@ export default function institutionDashboard() {
   useEffect(() => {
 
     axios
-      .get(`http://localhost:3000/courses?search=${search}`)
+      .get(`http://localhost:3000/courses/my/${user.id}`)
       .then(response => {
         setCourses(response.data)
       })
