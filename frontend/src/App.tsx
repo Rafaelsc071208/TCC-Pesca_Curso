@@ -5,6 +5,7 @@ import Home from "./pages/Home"
 import CourseDetails from "./pages/CourseDetails"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import InstitutionDashboard from "./pages/InstitutionDashboard"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/create-course" element={<CreateCourse />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/institution" element={<InstitutionDashboard />} />
       </Routes>
     </BrowserRouter>
   )

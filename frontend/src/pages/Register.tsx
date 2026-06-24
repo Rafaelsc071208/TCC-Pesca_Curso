@@ -14,7 +14,7 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-
+  const [role, setrole] = useState("user")
 
   async function handleRegister(e: React.FormEvent) {
 
@@ -27,7 +27,8 @@ export default function Register() {
         {
           username,
           email,
-          password
+          password,
+          role
         }
       )
 
@@ -124,6 +125,18 @@ export default function Register() {
             }}
           />
 
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            style={{
+              padding:"12px",
+              borderRadius:"8px",
+              border:"1px solid #ccc"
+            }}
+          >
+            <option value="user">Aluno</option>
+            <option value="institution">Instituição</option>
+          </select>
 
 
           <input

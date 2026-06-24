@@ -33,7 +33,14 @@ export default function Login() {
         "user",
         JSON.stringify(response.data.user)
       )
-
+      
+      if(response.data.user.role === "institution"){
+      navigate("/institution")
+      }
+      else{
+        navigate("/")
+      }
+      
       alert("Login realizado!")
 
       navigate("/")

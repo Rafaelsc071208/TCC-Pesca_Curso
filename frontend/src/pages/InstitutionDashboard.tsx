@@ -16,15 +16,11 @@ type Course = {
   endereco: string
 }
 
-export default function Home() {
+export default function institutionDashboard() {
 
   const [showFilters, setShowFilters] = useState(false)
 
   const [search, setSearch] = useState("")
-
-  const user = JSON.parse(
-    localStorage.getItem("user") || "{}"
-  )
 
   const [selectedCategory, setSelectedCategory] = useState("")
 

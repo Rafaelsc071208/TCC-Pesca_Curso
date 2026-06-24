@@ -5,14 +5,14 @@ export function registerUser(req: Request, res: Response) {
     
     console.log(req.body)
 
-  const { username, email, password } = req.body
+  const { username, email, password, role } = req.body
 
   db.run(
     `
-    INSERT INTO users (username, email, password)
-    VALUES (?, ?, ?)
+    INSERT INTO users (username, email, password, role)
+    VALUES (?, ?, ?, ?)
     `,
-    [username, email, password],
+    [username, email, password, role],
 
     function (err) {
 
