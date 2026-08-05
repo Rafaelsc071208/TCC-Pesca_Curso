@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import axios from "axios"
+import ImageCarousel from "./ImageCarousel"
 
 type Props = {
   id: string
@@ -22,19 +23,15 @@ export default function CourseCard({
   localStorage.getItem("user") || "null"
 )
 async function handleDelete() {
-
   try {
-
     await axios.delete(
-      `http://localhost:3000/courses/${id}`
+      `http://localhost:3000/courses/${id}?requesterId=${user.id}`
     )
-
     alert("Curso deletado")
-
     window.location.reload()
-
   } catch (error) {
     console.error(error)
+    alert("Você não tem permissão para deletar este curso")
   }
 }
   return (
@@ -53,14 +50,7 @@ async function handleDelete() {
         textAlign: "left"
 
       }}>
-        <img
-          src={image_url}
-          style={{
-            width:"100%",
-            height:"180px",
-            objectFit:"cover"
-          }}
-        />
+        <ImageCarousel images={images} height="180px" />
 
         <h3>{institution_name}</h3>
 

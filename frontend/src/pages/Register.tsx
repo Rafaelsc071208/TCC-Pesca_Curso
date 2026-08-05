@@ -14,7 +14,7 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const [role, setrole] = useState("user")
+  const [role, setRole] = useState("user")
 
   async function handleRegister(e: React.FormEvent) {
 

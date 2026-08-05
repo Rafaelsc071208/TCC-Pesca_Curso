@@ -65,3 +65,27 @@ export function loginUser(req: Request, res: Response) {
     }
   )
 }
+
+export function deleteUser(req: Request, res: Response) {
+  const { id } = req.params
+
+  db.run(
+    `DELETE FROM users WHERE id = ?`,
+    [id],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.json({ message: "Usuário deletado" })
+    }
+  )
+}
+
+export function getUsers(req: Request, res: Response) {
+  db.all(
+    `SELECT id, username, email, isAdmin, role FROM users`,
+    [],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.json(rows)
+    }
+  )
+}

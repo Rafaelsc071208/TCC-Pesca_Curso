@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import axios from "axios"
+import ImageCarousel from "../components/ImageCarousel"
 
 type Course = {
   id: number
@@ -72,13 +73,18 @@ export default function CourseDetails() {
       {/* HEADER */}
       <div
         style={{
+          position: "fixed",
+          top: 0,
           width: "100%",
+          left: 0,
           height: "70px",
           background: "#26786e",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           padding: "0 20px",
-          boxSizing: "border-box"
+          boxSizing: "border-box",
+          zIndex: 1000
         }}
       >
 
@@ -108,7 +114,8 @@ export default function CourseDetails() {
         style={{
           display: "flex",
           gap: "30px",
-          padding: "30px"
+          padding: "30px",
+          paddingTop: "70px",
         }}
       >
 
@@ -136,7 +143,7 @@ export default function CourseDetails() {
               color: "#555"
             }}
           >
-            PREVIEW DO CURSO
+            <ImageCarousel images={course.images || []} height="400px" />
           </div>
 
 

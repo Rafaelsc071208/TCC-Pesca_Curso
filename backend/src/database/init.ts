@@ -9,7 +9,8 @@ db.serialize(() => {
       username TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       password TEXT NOT NULL,
-      isAdmin INTEGER DEFAULT 0
+      isAdmin INTEGER DEFAULT 0,
+      role TEXT DEFAULT 'user'
     )
   `)
 
@@ -19,12 +20,44 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       description TEXT NOT NULL,
-      category TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'Presencial',
       price REAL NOT NULL,
-      link TEXT NOT NULL,
+      link TEXT,
       description_det TEXT NOT NULL,
-      endereco TEXT NOT NULL
+      endereco TEXT,
+      institution_name TEXT,
+      modality TEXT,
+      payment_type TEXT,
+      location TEXT,
+      period TEXT,
+      duration TEXT,
+      created_by INTEGER,
+      FOREIGN KEY (created_by) REFERENCES users(id)
     )
   `)
+
+  // imagens do curso
+  db.run(`
+    CREATE TABLE IF NOT EXISTS course_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL,
+      image_url TEXT NOT NULL,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )
+  `)
+
+  // avaliações
+  db.run(`
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  )
+`)
 
 })

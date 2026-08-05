@@ -1,0 +1,30 @@
+import { Request, Response } from "express"
+import { db } from "../database/database"
+
+export function createReview(req: Request, res: Response) {
+  const { course_id, user_id, rating, comment } = req.body
+
+  db.run(
+    `INSERT INTO reviews (course_id, user_id, rating, comment) VALUES (?, ?, ?, ?)`,
+    [course_id, user_id, rating, comment],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.status(201).json({ message: "Avaliação enviada", reviewId: this.lastID })
+    }
+  )
+}
+
+export function getReviewsByCourse(req: Request, res: Response) {
+  const { courseId } = req.params
+
+  db.all(
+    `SELECT reviews.*, users.username FROM reviews
+     JOIN users ON users.id = reviews.user_id
+     WHERE course_id = ? ORDER BY created_at DESC`,
+    [courseId],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.json(rows)
+    }
+  )
+}

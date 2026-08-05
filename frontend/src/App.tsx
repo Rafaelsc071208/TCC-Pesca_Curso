@@ -6,11 +6,13 @@ import CourseDetails from "./pages/CourseDetails"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import InstitutionDashboard from "./pages/InstitutionDashboard"
+import AdminPanel from "./pages/AdminPanel"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<Home />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/create-course" element={<CreateCourse />} />

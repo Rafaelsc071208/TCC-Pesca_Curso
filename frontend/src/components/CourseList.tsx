@@ -15,7 +15,7 @@ export default function CourseList({ courses }: Props) {
   return (
     <div style={{
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+      gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
       gap: "20px",
       padding: "20px"
     }}>

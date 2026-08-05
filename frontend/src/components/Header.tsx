@@ -35,6 +35,7 @@ export default function Header({
         position: "fixed",
         top: 0,
         width: "100%",
+        left: 0,
         height: "70px",
         background: "#26786e",
         display: "flex",
@@ -120,6 +121,21 @@ export default function Header({
 
               {/* ADMIN */}
               {
+                <Link to="/admin">
+
+                <button
+                  style={{
+                    padding: "10px 18px",
+                    border: "none",
+                    borderRadius: "10px",
+                    background: "#2e7d5a",
+                    color: "white",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                >
+                  + Criar Curso
+                </button>
   user && (
 
     <Link to="/create-course">
