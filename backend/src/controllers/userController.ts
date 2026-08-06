@@ -89,3 +89,67 @@ export function getUsers(req: Request, res: Response) {
     }
   )
 }
+
+// ATUALIZAR PERFIL
+export function updateUser(req: Request, res: Response) {
+  const { id } = req.params
+  const { username, email } = req.body
+  const file = req.file as Express.Multer.File | undefined
+
+  const fields: string[] = []
+  const values: any[] = []
+
+  if (username) { fields.push("username = ?"); values.push(username) }
+  if (email) { fields.push("email = ?"); values.push(email) }
+  if (file) { fields.push("photo_url = ?"); values.push(`/uploads/${file.filename}`) }
+
+  if (fields.length === 0) {
+    return res.status(400).json({ error: "Nada para atualizar" })
+  }
+
+  values.push(id)
+
+  db.run(
+    `UPDATE users SET ${fields.join(", ")} WHERE id = ?`,
+    values,
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message })
+
+      db.get(
+        `SELECT id, username, email, isAdmin, role, photo_url FROM users WHERE id = ?`,
+        [id],
+        (err2, row) => {
+          if (err2) return res.status(500).json({ error: err2.message })
+          return res.json({ message: "Perfil atualizado", user: row })
+        }
+      )
+    }
+  )
+}
+
+// TROCAR SENHA
+export function changePassword(req: Request, res: Response) {
+  const { id } = req.params
+  const { currentPassword, newPassword } = req.body
+
+  db.get(
+    `SELECT password FROM users WHERE id = ?`,
+    [id],
+    (err, row: any) => {
+      if (err) return res.status(500).json({ error: err.message })
+
+      if (!row || row.password !== currentPassword) {
+        return res.status(401).json({ error: "Senha atual incorreta" })
+      }
+
+      db.run(
+        `UPDATE users SET password = ? WHERE id = ?`,
+        [newPassword, id],
+        (err2) => {
+          if (err2) return res.status(500).json({ error: err2.message })
+          return res.json({ message: "Senha alterada" })
+        }
+      )
+    }
+  )
+}

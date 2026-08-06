@@ -7,6 +7,9 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import InstitutionDashboard from "./pages/InstitutionDashboard"
 import AdminPanel from "./pages/AdminPanel"
+import Profile from "./pages/Profile"
+import Favorites from "./pages/Favorites"
+import MyReviews from "./pages/MyReviews"
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/institution" element={<InstitutionDashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/my-reviews" element={<MyReviews />} />
       </Routes>
     </BrowserRouter>
   )

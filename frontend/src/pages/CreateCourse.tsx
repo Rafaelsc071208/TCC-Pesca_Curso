@@ -1,10 +1,13 @@
 import { useState } from "react"
 import axios from "axios"
 import FormField, { fieldStyle } from "../components/FormField"
+import { useNavigate } from "react-router-dom"
 
 import Header from "../components/Header"
 
 export default function CreateCourse() {
+
+  const navigate = useNavigate()
 
   const [search, setSearch] = useState("")
 
@@ -45,6 +48,11 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
   async function handleSubmit(e: React.FormEvent) {
   e.preventDefault()
 
+  const confirmed = window.confirm(
+    "Tem certeza que deseja publicar esse curso?"
+  )
+  if (!confirmed) return
+
   try {
     const formData = new FormData()
 
@@ -71,8 +79,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
       { headers: { "Content-Type": "multipart/form-data" } }
     )
 
-    alert("Curso criado!")
-    // ... limpar campos como antes, e adicionar setImages([])
+    navigate("/")
   } catch (error) {
     console.error(error)
     alert("Erro ao criar curso")

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useTheme } from "../context/ThemeContext"
+import ProfileMenu from "./ProfileMenu"
 
 type Props = {
   search: string
@@ -19,12 +20,6 @@ export default function Header({
   const user = JSON.parse(
     localStorage.getItem("user") || "null"
   )
-
-  // logout
-  function handleLogout() {
-    localStorage.removeItem("user")
-    window.location.reload()
-  }
 
   return (
     <div
@@ -161,31 +156,9 @@ export default function Header({
               </Link>
             )}
 
-            {/* NOME */}
-            <span
-              style={{
-                fontWeight: "bold",
-                color: "#ffffff"
-              }}
-            >
-              {user.username}
-            </span>
-
-            {/* LOGOUT */}
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: "10px 15px",
-                border: "none",
-                borderRadius: "8px",
-                background: "red",
-                color: "white",
-                cursor: "pointer"
-              }}
-            >
-              Sair
-            </button>
+            <ProfileMenu user={user} />
           </>
+          
         ) : (
           // NÃO LOGADO
           <Link to="/login">

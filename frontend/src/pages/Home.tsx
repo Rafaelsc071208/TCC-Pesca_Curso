@@ -36,6 +36,36 @@ export default function Home() {
 
   const [maxPrice, setMaxPrice] = useState(999999)
 
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([])
+
+  useEffect(() => {
+    if (!user?.id) return
+
+    axios
+      .get(`http://localhost:3000/favorites/${user.id}/ids`)
+      .then(response => setFavoriteIds(response.data))
+      .catch(error => console.error(error))
+  }, [])
+
+  async function handleToggleFavorite(courseId: number) {
+    const alreadyFavorited = favoriteIds.includes(courseId)
+
+    try {
+      if (alreadyFavorited) {
+        await axios.delete(`http://localhost:3000/favorites/${user.id}/${courseId}`)
+        setFavoriteIds(prev => prev.filter(id => id !== courseId))
+      } else {
+        await axios.post("http://localhost:3000/favorites", {
+          user_id: user.id,
+          course_id: courseId
+        })
+        setFavoriteIds(prev => [...prev, courseId])
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Faça login para favoritar cursos")
+    }
+  }
 
 
   // BUSCAR CURSOS DA API
@@ -136,7 +166,11 @@ export default function Home() {
           marginTop: "90px"
         }}
       >
-        <CourseList courses={filteredCourses} />
+        <CourseList
+          courses={filteredCourses}
+          favoriteIds={favoriteIds}
+          onToggleFavorite={handleToggleFavorite}
+        />
       </div>
 
     </div>

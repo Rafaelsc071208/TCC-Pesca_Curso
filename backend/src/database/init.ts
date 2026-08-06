@@ -60,4 +60,22 @@ db.serialize(() => {
   )
 `)
 
+  // coluna de foto de perfil (migração segura — ignora erro se já existir)
+  db.run(`ALTER TABLE users ADD COLUMN photo_url TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) {
+      console.error(err)
+    }
+  })
+
+  // favoritos
+  db.run(`
+    CREATE TABLE IF NOT EXISTS favorites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      course_id INTEGER NOT NULL,
+      UNIQUE(user_id, course_id),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )
+  `)
 })

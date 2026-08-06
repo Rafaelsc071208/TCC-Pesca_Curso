@@ -9,6 +9,8 @@ type Props = {
   price: number
   images?: string[]
   category: string
+  isFavorited?: boolean
+  onToggleFavorite?: () => void
 }
 
 export default function CourseCard({
@@ -18,7 +20,10 @@ export default function CourseCard({
   price,
   institution_name,
   images,
+  isFavorited,
+  onToggleFavorite
 }: Props) {
+  
   const user = JSON.parse(
     localStorage.getItem("user") || "null"
   )
@@ -73,6 +78,24 @@ export default function CourseCard({
             Ver mais
           </button>
         </Link>
+
+        {onToggleFavorite && (
+          <button
+            onClick={onToggleFavorite}
+            style={{
+              marginTop: "10px",
+              marginLeft: "8px",
+              background: "none",
+              border: "1px solid #ddd",
+              borderRadius: "6px",
+              padding: "8px 12px",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}
+          >
+            {isFavorited ? "❤️" : "🤍"}
+          </button>
+        )}
 
         {user?.isAdmin === 1 && (
           <button

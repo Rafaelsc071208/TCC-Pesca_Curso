@@ -28,3 +28,18 @@ export function getReviewsByCourse(req: Request, res: Response) {
     }
   )
 }
+
+export function getReviewsByUser(req: Request, res: Response) {
+  const { userId } = req.params
+
+  db.all(
+    `SELECT reviews.*, courses.title as course_title FROM reviews
+     JOIN courses ON courses.id = reviews.course_id
+     WHERE user_id = ? ORDER BY created_at DESC`,
+    [userId],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.json(rows)
+    }
+  )
+}

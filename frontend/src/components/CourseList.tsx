@@ -11,9 +11,11 @@ type Course = {
 
 type Props = {
   courses: Course[]
+  favoriteIds?: number[]
+  onToggleFavorite?: (courseId: number) => void
 }
 
-export default function CourseList({ courses }: Props) {
+export default function CourseList({ courses, favoriteIds, onToggleFavorite }: Props) {
   return (
     <div style={{
       display: "grid",
@@ -30,6 +32,10 @@ export default function CourseList({ courses }: Props) {
           price={course.price}
           institution_name={course.institution_name}
           images={course.images}
+          isFavorited={favoriteIds?.includes(course.id)}
+          onToggleFavorite={
+            onToggleFavorite ? () => onToggleFavorite(course.id) : undefined
+          }
         />
       ))}
     </div>

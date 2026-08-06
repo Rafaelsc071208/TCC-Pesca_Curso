@@ -50,10 +50,10 @@ export default function Register() {
     <div
       style={{
         minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#f5f5f5"
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#f5f5f5"
       }}
     >
 
