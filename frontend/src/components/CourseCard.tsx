@@ -7,7 +7,7 @@ type Props = {
   title: string
   institution_name: string
   price: number
-  image_url?: string
+  images?: string[]
   category: string
 }
 
@@ -17,30 +17,31 @@ export default function CourseCard({
   category,
   price,
   institution_name,
-  image_url,
+  images,
 }: Props) {
   const user = JSON.parse(
-  localStorage.getItem("user") || "null"
-)
-async function handleDelete() {
-  try {
-    await axios.delete(
-      `http://localhost:3000/courses/${id}?requesterId=${user.id}`
-    )
-    alert("Curso deletado")
-    window.location.reload()
-  } catch (error) {
-    console.error(error)
-    alert("Você não tem permissão para deletar este curso")
+    localStorage.getItem("user") || "null"
+  )
+
+  async function handleDelete() {
+    try {
+      await axios.delete(
+        `http://localhost:3000/courses/${id}?requesterId=${user.id}`
+      )
+      alert("Curso deletado")
+      window.location.reload()
+    } catch (error) {
+      console.error(error)
+      alert("Você não tem permissão para deletar este curso")
+    }
   }
-}
+
   return (
     <div style={{
       background: "#e8e8e8",
       padding: "2px",
       borderRadius: "10px",
       textAlign: "center"
-
     }}>
       <h3>{title}</h3>
       <div style={{
@@ -48,9 +49,8 @@ async function handleDelete() {
         padding: "10px",
         borderRadius: "10px",
         textAlign: "left"
-
       }}>
-        <ImageCarousel images={images} height="180px" />
+        <ImageCarousel images={images || []} height="180px" />
 
         <h3>{institution_name}</h3>
 
@@ -73,28 +73,25 @@ async function handleDelete() {
             Ver mais
           </button>
         </Link>
-        {
-    user?.isAdmin === 1 && (
 
-      <button
-        onClick={handleDelete}
-        style={{
-          marginTop: "10px",
-          background: "red",
-          color: "white",
-          border: "none",
-          padding: "8px 12px",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
-        Deletar
-      </button>
-
-    )
-  }
+        {user?.isAdmin === 1 && (
+          <button
+            onClick={handleDelete}
+            style={{
+              marginTop: "10px",
+              marginLeft: "8px",
+              background: "red",
+              color: "white",
+              border: "none",
+              padding: "8px 12px",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            Deletar
+          </button>
+        )}
       </div>
     </div>
   )
 }
-

@@ -1,8 +1,9 @@
 import express from "express"
 import cors from "cors"
 import userRoutes from "./routes/userRoutes"
-import "./database/init"
 import courseRoutes from "./routes/courseRoutes"
+import reviewRoutes from "./routes/reviewRoutes"   // <-- ADICIONAR ESTA LINHA
+import "./database/init"
 import path from "path"
 
 const app = express()

@@ -2,6 +2,17 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import axios from "axios"
 import ImageCarousel from "../components/ImageCarousel"
+import StarRating from "../components/StarRating"
+
+type Review = {
+  id: number
+  course_id: number
+  user_id: number
+  rating: number
+  comment: string
+  created_at: string
+  username: string
+}
 
 type Course = {
   id: number
@@ -12,6 +23,7 @@ type Course = {
   link: string
   description_det: string
   endereco: string
+  images?: string[]
 }
 
 export default function CourseDetails() {
@@ -19,6 +31,49 @@ export default function CourseDetails() {
   const { id } = useParams()
 
   const [course, setCourse] = useState<Course | null>(null)
+
+  const user = JSON.parse(localStorage.getItem("user") || "null")
+
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [newRating, setNewRating] = useState(0)
+  const [newComment, setNewComment] = useState("")
+
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0
+
+  function fetchReviews() {
+    axios
+      .get(`http://localhost:3000/reviews/${id}`)
+      .then(response => setReviews(response.data))
+      .catch(error => console.error(error))
+  }
+
+  async function handleSubmitReview(e: React.FormEvent) {
+    e.preventDefault()
+
+    if (newRating === 0) {
+      alert("Selecione uma nota de 1 a 5 estrelas")
+      return
+    }
+
+    try {
+      await axios.post("http://localhost:3000/reviews", {
+        course_id: id,
+        user_id: user.id,
+        rating: newRating,
+        comment: newComment
+      })
+
+      setNewRating(0)
+      setNewComment("")
+      fetchReviews()
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao enviar avaliação")
+    }
+  }
 
   const getExternalLink = (link: string) => {
     const trimmedLink = link?.trim()
@@ -50,6 +105,8 @@ export default function CourseDetails() {
       .catch(error => {
         console.error(error)
       })
+
+    fetchReviews() 
 
   }, [id])
 
@@ -168,9 +225,99 @@ export default function CourseDetails() {
 
           </div>
 
+          {/* AVALIAÇÕES */}
+          <div
+            style={{
+              background: "white",
+              padding: "20px",
+              borderRadius: "12px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "15px" }}>
+              <h2 style={{ margin: 0 }}>Avaliações</h2>
+              {reviews.length > 0 && (
+                <>
+                  <StarRating rating={Math.round(averageRating)} readOnly size={18} />
+                  <span style={{ color: "#666", fontSize: "14px" }}>
+                    {averageRating.toFixed(1)} ({reviews.length} avaliação{reviews.length > 1 ? "ões" : ""})
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* FORMULÁRIO DE NOVA AVALIAÇÃO */}
+            {user ? (
+              <form
+                onSubmit={handleSubmitReview}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  marginBottom: "25px",
+                  paddingBottom: "20px",
+                  borderBottom: "1px solid #eee"
+                }}
+              >
+                <StarRating rating={newRating} onRate={setNewRating} size={26} />
+
+                <textarea
+                  placeholder="Conte como foi sua experiência com esse curso..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  rows={3}
+                  style={{
+                    padding: "12px",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    fontFamily: "inherit",
+                    resize: "vertical"
+                  }}
+                />
+
+                <button
+                  type="submit"
+                  style={{
+                    alignSelf: "flex-start",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "8px",
+                    background: "#26786e",
+                    color: "white",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                >
+                  Enviar avaliação
+                </button>
+              </form>
+            ) : (
+              <p style={{ color: "#666", marginBottom: "20px" }}>
+                <Link to="/login" style={{ color: "#26786e", fontWeight: "bold" }}>Faça login</Link> para avaliar este curso.
+              </p>
+            )}
+
+            {/* LISTA DE AVALIAÇÕES */}
+            {reviews.length === 0 ? (
+              <p style={{ color: "#999" }}>Ainda não há avaliações para este curso.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {reviews.map(review => (
+                  <div key={review.id} style={{ borderBottom: "1px solid #f0f0f0", paddingBottom: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <strong>{review.username}</strong>
+                      <StarRating rating={review.rating} readOnly size={16} />
+                    </div>
+                    {review.comment && (
+                      <p style={{ margin: "6px 0 0", color: "#444" }}>{review.comment}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
-
-
 
         {/* DIREITA */}
         <div

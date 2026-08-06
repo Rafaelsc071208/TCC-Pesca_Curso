@@ -14,6 +14,8 @@ type Course = {
   link: string
   description_det: string
   endereco: string
+  institution_name: string
+  images?: string[]       
 }
 
 export default function Home() {

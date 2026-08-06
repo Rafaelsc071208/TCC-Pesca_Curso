@@ -5,6 +5,8 @@ type Course = {
   title: string
   category: string
   price: number
+  institution_name: string
+  images?: string[]
 }
 
 type Props = {
@@ -26,6 +28,8 @@ export default function CourseList({ courses }: Props) {
           title={course.title}
           category={course.category}
           price={course.price}
+          institution_name={course.institution_name}
+          images={course.images}
         />
       ))}
     </div>

@@ -27,7 +27,8 @@ export default function FilterSidebar({
       height: "100%",
       background: "#4fb5a8",
       color: "white",
-      padding: "20px"
+      padding: "20px",
+      zIndex: 999
     }}>
       <button onClick={onClose}
              style={{

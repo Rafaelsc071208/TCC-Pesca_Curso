@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { useTheme } from "../context/ThemeContext"
 
 type Props = {
   search: string
@@ -12,22 +13,18 @@ export default function Header({
   onOpenFilters
 }: Props) {
 
+  const { theme, toggleTheme } = useTheme()
+
   // pega usuário logado
   const user = JSON.parse(
     localStorage.getItem("user") || "null"
   )
 
-
-
   // logout
   function handleLogout() {
-
     localStorage.removeItem("user")
-
     window.location.reload()
   }
-
-
 
   return (
     <div
@@ -60,8 +57,6 @@ export default function Header({
         Cursos
       </Link>
 
-
-
       {/* PESQUISA */}
       <div
         style={{
@@ -71,7 +66,6 @@ export default function Header({
           gap: "8px"
         }}
       >
-
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -100,10 +94,7 @@ export default function Header({
         >
           ☰
         </button>
-
       </div>
-
-
 
       {/* DIREITA */}
       <div
@@ -113,16 +104,47 @@ export default function Header({
           gap: "10px"
         }}
       >
+        {/* DARK MODE */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            width: "40px",
+            height: "40px",
+            border: "none",
+            borderRadius: "50%",
+            background: "#2e7d5a",
+            color: "white",
+            cursor: "pointer",
+            fontSize: "18px"
+          }}
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
 
-        {/* SE LOGADO */}
-        {
-          user ? (
-            <>
+        {user ? (
+          <>
+            {/* ADMIN */}
+            {user.isAdmin === 1 && (
+              <Link to="/admin">
+                <button
+                  style={{
+                    padding: "10px 18px",
+                    border: "none",
+                    borderRadius: "10px",
+                    background: "#2e7d5a",
+                    color: "white",
+                    fontWeight: "bold",
+                    cursor: "pointer"
+                  }}
+                >
+                  Painel Admin
+                </button>
+              </Link>
+            )}
 
-              {/* ADMIN */}
-              {
-                <Link to="/admin">
-
+            {/* CRIAR CURSO (só para instituição) */}
+            {user.role === "institution" && (
+              <Link to="/create-course">
                 <button
                   style={{
                     padding: "10px 18px",
@@ -136,84 +158,52 @@ export default function Header({
                 >
                   + Criar Curso
                 </button>
-  user && (
+              </Link>
+            )}
 
-    <Link to="/create-course">
+            {/* NOME */}
+            <span
+              style={{
+                fontWeight: "bold",
+                color: "#ffffff"
+              }}
+            >
+              {user.username}
+            </span>
 
-      <button
-        style={{
-          padding: "10px 18px",
-          border: "none",
-          borderRadius: "10px",
-          background: "#2e7d5a",
-          color: "white",
-          fontWeight: "bold",
-          cursor: "pointer"
-        }}
-      >
-        + Criar Curso
-      </button>
-
-    </Link>
-
-  )
-}
-
-
-
-              {/* NOME */}
-              <span
-                style={{
-                  fontWeight: "bold",
-                  color: "#ffffff"
-                }}
-              >
-                {user.username}
-              </span>
-
-
-
-              {/* LOGOUT */}
-              <button
-                onClick={handleLogout}
-                style={{
-                  padding: "10px 15px",
-                  border: "none",
-                  borderRadius: "8px",
-                  background: "red",
-                  color: "white",
-                  cursor: "pointer"
-                }}
-              >
-                Sair
-              </button>
-
-            </>
-          ) : (
-
-            // NÃO LOGADO
-            <Link to="/login">
-
-              <button
-                style={{
-                  padding: "10px 15px",
-                  border: "none",
-                  borderRadius: "8px",
-                  background: "#56c596",
-                  color: "white",
-                  cursor: "pointer"
-                }}
-              >
-                Login
-              </button>
-
-            </Link>
-
-          )
-        }
-
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "10px 15px",
+                border: "none",
+                borderRadius: "8px",
+                background: "red",
+                color: "white",
+                cursor: "pointer"
+              }}
+            >
+              Sair
+            </button>
+          </>
+        ) : (
+          // NÃO LOGADO
+          <Link to="/login">
+            <button
+              style={{
+                padding: "10px 15px",
+                border: "none",
+                borderRadius: "8px",
+                background: "#56c596",
+                color: "white",
+                cursor: "pointer"
+              }}
+            >
+              Login
+            </button>
+          </Link>
+        )}
       </div>
-
     </div>
   )
 }

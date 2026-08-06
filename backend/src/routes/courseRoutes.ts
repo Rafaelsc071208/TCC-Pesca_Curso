@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { upload } from "../middlewares/upload"
+import { checkAdmin } from "../middlewares/checkAdmin"   // <-- ADICIONAR ESTA LINHA
 import { createCourse, getCourses, deleteCourse, getMyCourses } from "../controllers/courseController"
 
 const router = Router()
