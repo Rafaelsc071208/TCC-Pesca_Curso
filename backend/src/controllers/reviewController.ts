@@ -43,3 +43,16 @@ export function getReviewsByUser(req: Request, res: Response) {
     }
   )
 }
+
+// DELETAR AVALIAÇÃO (admin)
+export function deleteReview(req: Request, res: Response) {
+  const { id } = req.params
+
+  db.run(`DELETE FROM reviews WHERE id = ?`, [id], function (err) {
+    if (err) return res.status(500).json({ error: err.message })
+
+    db.run(`DELETE FROM reports WHERE target_type = 'review' AND target_id = ?`, [id])
+
+    return res.json({ message: "Avaliação deletada" })
+  })
+}

@@ -15,7 +15,10 @@ type Course = {
   description_det: string
   endereco: string
   institution_name: string
+  modality?: string
   images?: string[]
+  rating?: number
+  reviewCount?: number
 }
 
 export default function InstitutionDashboard() {

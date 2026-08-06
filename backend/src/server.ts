@@ -6,6 +6,7 @@ import reviewRoutes from "./routes/reviewRoutes"
 import "./database/init"
 import path from "path"
 import favoriteRoutes from "./routes/favoriteRoutes"
+import reportRoutes from "./routes/reportRoutes"
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use("/favorites", favoriteRoutes)
 app.use("/users", userRoutes)
 app.use("/courses", courseRoutes)
 app.use("/reviews", reviewRoutes)
+app.use("/reports", reportRoutes)
 
 app.get("/", (req, res) => {
   res.send("API rodando")

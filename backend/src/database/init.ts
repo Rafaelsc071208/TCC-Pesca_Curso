@@ -78,4 +78,18 @@ db.serialize(() => {
       FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
     )
   `)
+
+  // denúncias (cursos e avaliações)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      target_type TEXT NOT NULL CHECK (target_type IN ('course', 'review')),
+      target_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      reason TEXT NOT NULL,
+      description TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `)
 })

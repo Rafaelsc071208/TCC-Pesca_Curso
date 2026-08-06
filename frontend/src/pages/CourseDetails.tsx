@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import axios from "axios"
 import ImageCarousel from "../components/ImageCarousel"
 import StarRating from "../components/StarRating"
+import ReportModal from "../components/ReportModal"
 
 type Review = {
   id: number
@@ -23,6 +24,12 @@ type Course = {
   link: string
   description_det: string
   endereco: string
+  institution_name: string
+  modality?: string
+  payment_type?: string
+  location?: string
+  period?: string
+  duration?: string
   images?: string[]
 }
 
@@ -37,6 +44,9 @@ export default function CourseDetails() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [newRating, setNewRating] = useState(0)
   const [newComment, setNewComment] = useState("")
+
+  const [reportingCourse, setReportingCourse] = useState(false)
+  const [reportingReviewId, setReportingReviewId] = useState<number | null>(null)
 
   const averageRating =
     reviews.length > 0
@@ -123,7 +133,7 @@ export default function CourseDetails() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f5f5f5"
+        background: "var(--bg-page)"
       }}
     >
 
@@ -208,18 +218,18 @@ export default function CourseDetails() {
           {/* DESCRIÇÃO DETALHADA */}
           <div
             style={{
-              background: "white",
+              background: "var(--bg-card)",
               padding: "20px",
               borderRadius: "12px",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
             }}
           >
 
-            <h2>
+            <h2 style={{color: "var(--text-primary)"}}>
               Sobre o curso
             </h2>
 
-            <p>
+            <p style={{color: "var(--text-secondary)"}}>
               {course.description_det}
             </p>
 
@@ -228,14 +238,14 @@ export default function CourseDetails() {
           {/* AVALIAÇÕES */}
           <div
             style={{
-              background: "white",
+              background: "var(--bg-card)",
               padding: "20px",
               borderRadius: "12px",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "15px" }}>
-              <h2 style={{ margin: 0 }}>Avaliações</h2>
+              <h2 style={{ margin: 0, color: "var(--text-primary)" }}>Avaliações</h2>
               {reviews.length > 0 && (
                 <>
                   <StarRating rating={Math.round(averageRating)} readOnly size={18} />
@@ -269,7 +279,7 @@ export default function CourseDetails() {
                   style={{
                     padding: "12px",
                     borderRadius: "8px",
-                    border: "1px solid #ccc",
+                    border: "1px solid var(--border-color)",
                     fontFamily: "inherit",
                     resize: "vertical"
                   }}
@@ -299,17 +309,33 @@ export default function CourseDetails() {
 
             {/* LISTA DE AVALIAÇÕES */}
             {reviews.length === 0 ? (
-              <p style={{ color: "#999" }}>Ainda não há avaliações para este curso.</p>
+              <p style={{ color: "var(--text-secondary)"}}>Ainda não há avaliações para este curso.</p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {reviews.map(review => (
                   <div key={review.id} style={{ borderBottom: "1px solid #f0f0f0", paddingBottom: "12px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <strong>{review.username}</strong>
+                      <strong style={{color: "var(--text-primary)"}}>{review.username}</strong>
                       <StarRating rating={review.rating} readOnly size={16} />
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <strong>{review.username}</strong>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <StarRating rating={review.rating} readOnly size={16} />
+                          <button
+                            onClick={() => setReportingReviewId(review.id)}
+                            style={{
+                              background: "none", border: "none", cursor: "pointer",
+                              fontSize: "13px", color: "#999"
+                            }}
+                            title="Denunciar avaliação"
+                          >
+                            🚩
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     {review.comment && (
-                      <p style={{ margin: "6px 0 0", color: "#444" }}>{review.comment}</p>
+                      <p style={{ margin: "6px 0 0", color: "var(--text-secondary)"}}>{review.comment}</p>
                     )}
                   </div>
                 ))}
@@ -338,7 +364,21 @@ export default function CourseDetails() {
             {course.title}
           </h1>
 
-
+          <button
+            onClick={() => setReportingCourse(true)}
+            style={{
+              alignSelf: "flex-start",
+              background: "none",
+              border: "1px solid rgba(255,255,255,0.5)",
+              color: "white",
+              padding: "6px 12px",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontSize: "13px"
+            }}
+          >
+            🚩 Denunciar curso
+          </button>
 
           <div>
             <strong>Descrição:</strong>
@@ -378,7 +418,35 @@ export default function CourseDetails() {
             </p>
           </div>
 
+          <div>
+            <strong>Instituição:</strong>
+            <p>{course.institution_name}</p>
+          </div>
 
+          <div>
+            <strong>Modalidade:</strong>
+            <p>{course.modality}</p>
+          </div>
+
+          <div>
+            <strong>Forma de pagamento:</strong>
+            <p>{course.payment_type}</p>
+          </div>
+
+          <div>
+            <strong>Localização:</strong>
+            <p>{course.location}</p>
+          </div>
+
+          <div>
+            <strong>Período:</strong>
+            <p>{course.period}</p>
+          </div>
+
+          <div>
+            <strong>Duração:</strong>
+            <p>{course.duration}</p>
+          </div>
 
           {/* BOTÃO */}
           
@@ -409,7 +477,21 @@ export default function CourseDetails() {
         </div>
 
       </div>
+      {reportingCourse && (
+        <ReportModal
+          targetType="course"
+          targetId={course.id}
+          onClose={() => setReportingCourse(false)}
+        />
+      )}
 
+      {reportingReviewId !== null && (
+        <ReportModal
+          targetType="review"
+          targetId={reportingReviewId}
+          onClose={() => setReportingReviewId(null)}
+        />
+      )}
     </div>
   )
 }

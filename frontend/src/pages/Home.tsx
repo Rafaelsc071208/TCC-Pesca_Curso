@@ -15,7 +15,10 @@ type Course = {
   description_det: string
   endereco: string
   institution_name: string
-  images?: string[]       
+  modality?: string
+  images?: string[]
+  rating?: number
+  reviewCount?: number
 }
 
 export default function Home() {
@@ -29,6 +32,8 @@ export default function Home() {
   )
 
   const [selectedCategory, setSelectedCategory] = useState("")
+
+  const [selectedMinRating, setSelectedMinRating] = useState(0)
 
   const [courses, setCourses] = useState<Course[]>([])
 
@@ -131,32 +136,40 @@ export default function Home() {
     const matchesPrice =
       course.price >= minPrice &&
       course.price <= maxPrice
+    
+    const matchesRating =
+      selectedMinRating === 0 ||
+      (course.rating || 0) >= selectedMinRating
 
     return (
       matchesSearch &&
       matchesCategory &&
-      matchesPrice
+      matchesPrice &&
+      matchesRating
     )
   })
 
 
 
   return (
-    <div>
+    <div style={{ background: "var(--bg-page)", minHeight: "100vh" }}>
 
       <Header
         search={search}
         setSearch={setSearch}
         onOpenFilters={() => setShowFilters(prev => !prev)}
-    />
+      />
 
       {showFilters && (
         <FilterSidebar
+          selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           minPrice={minPrice}
           maxPrice={maxPrice}
           setMinPrice={setMinPrice}
           setMaxPrice={setMaxPrice}
+          selectedMinRating={selectedMinRating}
+          setSelectedMinRating={setSelectedMinRating}
           onClose={() => setShowFilters(false)}
         />
       )}

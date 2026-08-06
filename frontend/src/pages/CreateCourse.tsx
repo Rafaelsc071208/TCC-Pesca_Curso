@@ -92,7 +92,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f5f5f5"
+        background: "var(--bg-page)"
       }}
     >
 
@@ -118,7 +118,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
           style={{
             width: "700px",
             maxWidth: "90%",
-            background: "white",
+            background: "var(--bg-card)",
             padding: "35px",
             borderRadius: "16px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
@@ -129,14 +129,16 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
         >
           <div>
             <h1 style={{ color: "#2e7d5a", margin: 0 }}>Criar Curso</h1>
-            <p style={{ color: "#888", margin: "6px 0 0" }}>
+            <p style={{ color: "var(--text-secondary)", margin: "6px 0 0" }}>
               Preencha as informações abaixo para publicar seu curso na plataforma.
             </p>
           </div>
 
           {/* SEÇÃO: INFORMAÇÕES BÁSICAS */}
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid #f0f0f0", paddingBottom: "8px" }}>
+            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
+            color: "var(--text-primary)"
+            }}>
               Informações básicas
             </h3>
 
@@ -195,7 +197,9 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
           {/* SEÇÃO: INSTITUIÇÃO E MODALIDADE */}
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid #f0f0f0", paddingBottom: "8px" }}>
+            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
+            color: "var(--text-primary)"
+            }}>
               Instituição e modalidade
             </h3>
 
@@ -269,7 +273,9 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
           {/* SEÇÃO: LINK E IMAGENS */}
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid #f0f0f0", paddingBottom: "8px" }}>
+            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
+            color: "var(--text-primary)"
+            }}>
               Link e imagens
             </h3>
 

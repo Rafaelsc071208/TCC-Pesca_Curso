@@ -68,7 +68,7 @@ export default function Profile() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f5f5" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)" }}>
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
 
       <div style={{
@@ -85,7 +85,7 @@ export default function Profile() {
           onSubmit={handleSaveProfile}
           style={{
             width: "420px",
-            background: "white",
+            background: "var(--bg-card)",
             padding: "30px",
             borderRadius: "16px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
@@ -157,7 +157,7 @@ export default function Profile() {
           onSubmit={handleChangePassword}
           style={{
             width: "420px",
-            background: "white",
+            background: "var(--bg-card)",
             padding: "30px",
             borderRadius: "16px",
             boxShadow: "0 2px 12px rgba(0,0,0,0.1)",

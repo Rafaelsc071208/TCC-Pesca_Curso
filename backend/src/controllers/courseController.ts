@@ -50,8 +50,8 @@ export function createCourse(req: Request, res: Response) {
   )
 }
 
-//trazer imagens
-function attachImages(rows: any[], res: Response) {
+// trazer imagens + média de avaliações
+function attachExtras(rows: any[], res: Response) {
   if (rows.length === 0) return res.json([])
 
   const ids = rows.map(r => r.id)
@@ -63,14 +63,33 @@ function attachImages(rows: any[], res: Response) {
     (err, images: any[]) => {
       if (err) return res.status(500).json({ error: err.message })
 
-      const withImages = rows.map(course => ({
-        ...course,
-        images: images
-          .filter(img => img.course_id === course.id)
-          .map(img => img.image_url)
-      }))
+      db.all(
+        `
+        SELECT course_id, AVG(rating) as avgRating, COUNT(*) as reviewCount
+        FROM reviews
+        WHERE course_id IN (${placeholders})
+        GROUP BY course_id
+        `,
+        ids,
+        (err2, ratings: any[]) => {
+          if (err2) return res.status(500).json({ error: err2.message })
 
-      return res.json(withImages)
+          const withExtras = rows.map(course => {
+            const ratingInfo = ratings.find(r => r.course_id === course.id)
+
+            return {
+              ...course,
+              images: images
+                .filter(img => img.course_id === course.id)
+                .map(img => img.image_url),
+              rating: ratingInfo ? ratingInfo.avgRating : 0,
+              reviewCount: ratingInfo ? ratingInfo.reviewCount : 0
+            }
+          })
+
+          return res.json(withExtras)
+        }
+      )
     }
   )
 }
@@ -84,7 +103,7 @@ export function getCourses(req: Request, res: Response) {
     [`%${search}%`],
     (err, rows: any[]) => {
       if (err) return res.status(500).json({ error: err.message })
-      attachImages(rows, res)
+      attachExtras(rows, res)
     }
   )
 }
@@ -98,7 +117,7 @@ export function getMyCourses(req: Request, res: Response) {
     [userId],
     (err, rows: any[]) => {
       if (err) return res.status(500).json({ error: err.message })
-      attachImages(rows, res)
+      attachExtras(rows, res)
     }
   )
 }
@@ -114,6 +133,8 @@ export function deleteCourse(req: Request, res: Response) {
     WHERE id = ?
     `,
     [id],
+
+    db.run(`DELETE FROM reports WHERE target_type = 'course' AND target_id = ?`, [id]),
 
     function (err) {
 

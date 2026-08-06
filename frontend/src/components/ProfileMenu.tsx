@@ -36,7 +36,7 @@ export default function ProfileMenu({ user }: Props) {
           width: "42px",
           height: "42px",
           borderRadius: "50%",
-          border: "2px solid white",
+          border: "2px solid var(--border-color)",
           background: user.photo_url ? `url(${API_URL}${user.photo_url})` : "#2e7d5a",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -59,7 +59,7 @@ export default function ProfileMenu({ user }: Props) {
             top: "52px",
             right: 0,
             width: "220px",
-            background: "white",
+            background: "var(--bg-card)",
             borderRadius: "10px",
             boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
             overflow: "hidden",
@@ -67,8 +67,8 @@ export default function ProfileMenu({ user }: Props) {
           }}
         >
           <div style={{ padding: "14px 16px", borderBottom: "1px solid #eee" }}>
-            <strong style={{ display: "block", color: "#222" }}>{user.username}</strong>
-            <span style={{ fontSize: "13px", color: "#888" }}>{user.email}</span>
+            <strong style={{ display: "block", color: "var(--text-primary)" }}>{user.username}</strong>
+            <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{user.email}</span>
           </div>
 
           <MenuLink to="/profile" onClick={() => setOpen(false)}>Meu perfil</MenuLink>
@@ -91,7 +91,7 @@ export default function ProfileMenu({ user }: Props) {
               textAlign: "left",
               padding: "12px 16px",
               border: "none",
-              background: "white",
+              background: "var(--bg-card-alt)",
               color: "red",
               cursor: "pointer",
               fontSize: "14px"

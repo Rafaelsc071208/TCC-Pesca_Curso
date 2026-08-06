@@ -36,13 +36,13 @@ export default function ImageCarousel({ images, height = "180px" }: Props) {
         height,
         borderRadius: "10px",
         overflow: "hidden",
-        background: "#d9d9d9"
+        background: "var(--carousel-bg)"
       }}
     >
       {hasImages ? (
         <img
           src={`${API_URL}${images[index]}`}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
       ) : (
         <div style={{

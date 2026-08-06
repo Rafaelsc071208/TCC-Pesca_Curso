@@ -6,7 +6,10 @@ type Course = {
   category: string
   price: number
   institution_name: string
+  modality?: string
   images?: string[]
+  rating?: number
+  reviewCount?: number
 }
 
 type Props = {
@@ -31,11 +34,12 @@ export default function CourseList({ courses, favoriteIds, onToggleFavorite }: P
           category={course.category}
           price={course.price}
           institution_name={course.institution_name}
+          modality={course.modality}
           images={course.images}
+          rating={course.rating}
+          reviewCount={course.reviewCount}
           isFavorited={favoriteIds?.includes(course.id)}
-          onToggleFavorite={
-            onToggleFavorite ? () => onToggleFavorite(course.id) : undefined
-          }
+          onToggleFavorite={onToggleFavorite ? () => onToggleFavorite(course.id) : undefined}
         />
       ))}
     </div>

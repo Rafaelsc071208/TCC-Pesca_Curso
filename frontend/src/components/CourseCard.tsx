@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom"
 import axios from "axios"
 import ImageCarousel from "./ImageCarousel"
+import StarRating from "./StarRating"
 
 type Props = {
   id: string
   title: string
   institution_name: string
+  modality?: string
   price: number
   images?: string[]
   category: string
+  rating?: number
+  reviewCount?: number
   isFavorited?: boolean
   onToggleFavorite?: () => void
 }
@@ -43,25 +47,36 @@ export default function CourseCard({
 
   return (
     <div style={{
-      background: "#e8e8e8",
+      background: "var(--bg-card-alt)",
       padding: "2px",
       borderRadius: "10px",
       textAlign: "center"
     }}>
-      <h3>{title}</h3>
+      <h3 style={{ color: "var(--text-primary)" }}>{title}</h3>
       <div style={{
-        background: "#ffffff",
+        background: "var(--bg-card)",
         padding: "10px",
         borderRadius: "10px",
         textAlign: "left"
       }}>
         <ImageCarousel images={images || []} height="180px" />
 
-        <h3>{institution_name}</h3>
+        <h3 style={{ color: "var(--text-primary)" }}>{institution_name}</h3>
 
-        <p>{category}</p>
+        {modality && (
+          <p style={{ color: "var(--text-secondary)", margin: "2px 0" }}>{modality}</p>
+        )}
 
-        <p>R$ {price.toFixed(2)}/mês</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", margin: "4px 0" }}>
+          <StarRating rating={Math.round(rating || 0)} readOnly size={14} />
+          <span style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
+            ({reviewCount || 0})
+          </span>
+        </div>
+
+        <p style={{ color: "var(--text-secondary)" }}>{category}</p>
+
+        <p style={{ color: "var(--text-secondary)" }}>R$ {price.toFixed(2)}/mês</p>
 
         <Link to={`/course/${id}`}>
           <button
