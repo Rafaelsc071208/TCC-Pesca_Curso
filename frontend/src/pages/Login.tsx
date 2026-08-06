@@ -3,6 +3,9 @@ import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
 import Header from "../components/Header"
 
+const inputClass =
+  "px-3 py-3 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100"
+
 export default function Login() {
 
   const navigate = useNavigate()
@@ -33,11 +36,11 @@ export default function Login() {
         "user",
         JSON.stringify(response.data.user)
       )
-      
-      if(response.data.user.role === "institution"){
-      navigate("/institution")
+
+      if (response.data.user.role === "institution") {
+        navigate("/institution")
       }
-      else{
+      else {
         navigate("/")
       }
 
@@ -53,45 +56,21 @@ export default function Login() {
 
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#f5f5f5"
-    }}>
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-neutral-900">
 
       <Header
-      search={search}
-      setSearch={setSearch}
-      onOpenFilters={() => {}}
+        search={search}
+        setSearch={setSearch}
+        onOpenFilters={() => {}}
       />
 
-      <div
-      style={{
-        paddingTop: "120px",
-        display:"flex",
-        justifyContent:"center"
-      }}>
+      <div className="pt-[120px] flex justify-center">
         <form
           onSubmit={handleLogin}
-          style={{
-            background: "white",
-            padding: "30px",
-            borderRadius: "12px",
-            display: "flex",
-            boxShadow: "0 2px 10px rgba(0,0,0,0,1)",
-            flexDirection: "column",
-            gap: "15px",
-            width: "400px"
-          }}
+          className="bg-white dark:bg-neutral-800 p-[30px] rounded-xl flex flex-col gap-[15px] w-[400px] shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
         >
 
-          <h1
-            style={{
-              color:"#2e7d5a"
-            }}
-          >
+          <h1 className="text-brand-dark text-2xl font-bold m-0">
             Login
           </h1>
 
@@ -99,12 +78,7 @@ export default function Login() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           />
 
           <input
@@ -112,44 +86,21 @@ export default function Login() {
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           />
 
-          <button type="submit"
-            style={{
-              padding:"14px",
-              border:"none",
-              borderRadius:"10px",
-              backgroundColor:"#56c596",
-              color:"white",
-              fontSize:"16px",
-              fontWeight:"bold",
-              cursor:"pointer"
-            }}
+          <button
+            type="submit"
+            className="p-3.5 border-none rounded-[10px] bg-brand-green text-white text-base font-bold cursor-pointer hover:opacity-90"
           >
             Entrar
           </button>
-          <p
-            style={{
-            textAlign: "center",
-            margin:"0"
-            }}
-          >
-              Não possui conta?
 
+          <p className="text-center m-0 text-gray-700 dark:text-gray-300">
+            Não possui conta?
             <Link
               to="/register"
-              style={{
-                marginLeft:"5px",
-                color:"#2e7d5a",
-                fontWeight:"bold",
-                textDecoration:"none"
-              }}
+              className="ml-1.5 text-brand-dark font-bold no-underline"
             >
               Criar conta
             </Link>
@@ -158,6 +109,6 @@ export default function Login() {
       </div>
 
     </div>
-    
+
   )
 }

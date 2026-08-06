@@ -30,78 +30,49 @@ export default function ImageCarousel({ images, height = "180px" }: Props) {
     <div
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
-      style={{
-        position: "relative",
-        width: "100%",
-        height,
-        borderRadius: "10px",
-        overflow: "hidden",
-        background: "var(--carousel-bg)"
-      }}
+      style={{ height }}
+      className="relative w-full rounded-[10px] overflow-hidden bg-gray-300 dark:bg-neutral-700"
     >
       {hasImages ? (
         <img
           src={`${API_URL}${images[index]}`}
-          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+          className="w-full h-full object-contain"
         />
       ) : (
-        <div style={{
-          width: "100%", height: "100%",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "#777"
-        }}>
+        <div className="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
           Sem imagem
         </div>
       )}
 
       {showArrows && (
         <>
-          <button onClick={prev} style={arrowStyle("left")}>‹</button>
-          <button onClick={next} style={arrowStyle("right")}>›</button>
+          <button
+            onClick={prev}
+            className="absolute top-1/2 left-1.5 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white text-lg leading-none cursor-pointer"
+          >
+            ‹
+          </button>
+          <button
+            onClick={next}
+            className="absolute top-1/2 right-1.5 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 text-white text-lg leading-none cursor-pointer"
+          >
+            ›
+          </button>
         </>
       )}
 
       {hasImages && images.length > 1 && (
-        <div style={{
-          position: "absolute",
-          bottom: "8px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          gap: "6px"
-        }}>
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
           {images.map((_, i) => (
             <span
               key={i}
-              style={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                background: i === index ? "#26786e" : "#ffffffaa",
-                display: "inline-block"
-              }}
+              className={`w-2 h-2 rounded-full inline-block ${
+                i === index ? "bg-brand-teal" : "bg-white/70"
+              }`}
             />
           ))}
         </div>
       )}
     </div>
   )
-}
-
-function arrowStyle(side: "left" | "right"): React.CSSProperties {
-  return {
-    position: "absolute",
-    top: "50%",
-    [side]: "6px",
-    transform: "translateY(-50%)",
-    background: "rgba(0,0,0,0.4)",
-    color: "white",
-    border: "none",
-    borderRadius: "50%",
-    width: "28px",
-    height: "28px",
-    fontSize: "18px",
-    cursor: "pointer",
-    lineHeight: 1
-  }
 }

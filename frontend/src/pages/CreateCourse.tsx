@@ -1,6 +1,6 @@
 import { useState } from "react"
 import axios from "axios"
-import FormField, { fieldStyle } from "../components/FormField"
+import FormField, { fieldClass } from "../components/FormField"
 import { useNavigate } from "react-router-dom"
 
 import Header from "../components/Header"
@@ -33,68 +33,63 @@ export default function CreateCourse() {
 
   const [images, setImages] = useState<File[]>([])
 
-function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
-  const files = Array.from(e.target.files || [])
+  function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || [])
 
-  if (files.length > 10) {
-    alert("Você pode enviar no máximo 10 imagens")
-    return
+    if (files.length > 10) {
+      alert("Você pode enviar no máximo 10 imagens")
+      return
+    }
+
+    setImages(files)
   }
-
-  setImages(files)
-}
 
 
   async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault()
+    e.preventDefault()
 
-  const confirmed = window.confirm(
-    "Tem certeza que deseja publicar esse curso?"
-  )
-  if (!confirmed) return
-
-  try {
-    const formData = new FormData()
-
-    formData.append("title", title)
-    formData.append("description", description)
-    formData.append("category", category)
-    formData.append("link", link)
-    formData.append("endereco", endereco)
-    formData.append("institution_name", institutionName)
-    formData.append("modality", modality)
-    formData.append("payment_type", paymentType)
-    formData.append("location", location)
-    formData.append("period", period)
-    formData.append("duration", duration)
-    formData.append("price", price)
-    formData.append("description_det", descriptionDet)
-    formData.append("created_by", String(user.id))
-
-    images.forEach(file => formData.append("images", file))
-
-    await axios.post(
-      "http://localhost:3000/courses/create",
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
+    const confirmed = window.confirm(
+      "Tem certeza que deseja publicar esse curso?"
     )
+    if (!confirmed) return
 
-    navigate("/")
-  } catch (error) {
-    console.error(error)
-    alert("Erro ao criar curso")
+    try {
+      const formData = new FormData()
+
+      formData.append("title", title)
+      formData.append("description", description)
+      formData.append("category", category)
+      formData.append("link", link)
+      formData.append("endereco", endereco)
+      formData.append("institution_name", institutionName)
+      formData.append("modality", modality)
+      formData.append("payment_type", paymentType)
+      formData.append("location", location)
+      formData.append("period", period)
+      formData.append("duration", duration)
+      formData.append("price", price)
+      formData.append("description_det", descriptionDet)
+      formData.append("created_by", String(user.id))
+
+      images.forEach(file => formData.append("images", file))
+
+      await axios.post(
+        "http://localhost:3000/courses/create",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      )
+
+      navigate("/")
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao criar curso")
+    }
   }
-}
 
 
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "var(--bg-page)"
-      }}
-    >
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
       {/* HEADER */}
       <Header
@@ -104,47 +99,28 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
       />
 
       {/* CONTEÚDO */}
-      <div
-        style={{
-          paddingTop: "110px",
-          paddingBottom: "50px",
-          display: "flex",
-          justifyContent: "center"
-        }}
-      >
+      <div className="pt-[110px] pb-[50px] flex justify-center">
 
         <form
           onSubmit={handleSubmit}
-          style={{
-            width: "700px",
-            maxWidth: "90%",
-            background: "var(--bg-card)",
-            padding: "35px",
-            borderRadius: "16px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "28px"
-          }}
+          className="w-[700px] max-w-[90%] bg-white dark:bg-neutral-800 p-[35px] rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.1)] flex flex-col gap-7"
         >
           <div>
-            <h1 style={{ color: "#2e7d5a", margin: 0 }}>Criar Curso</h1>
-            <p style={{ color: "var(--text-secondary)", margin: "6px 0 0" }}>
+            <h1 className="text-brand-dark text-2xl font-bold m-0">Criar Curso</h1>
+            <p className="text-gray-500 dark:text-gray-400 mt-1.5 mb-0">
               Preencha as informações abaixo para publicar seu curso na plataforma.
             </p>
           </div>
 
           {/* SEÇÃO: INFORMAÇÕES BÁSICAS */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
-            color: "var(--text-primary)"
-            }}>
+          <div className="flex flex-col gap-4">
+            <h3 className="m-0 pb-2 border-b-2 border-gray-100 dark:border-neutral-700 text-gray-900 dark:text-gray-100 text-lg font-bold">
               Informações básicas
             </h3>
 
             <FormField label="Título do curso">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="Ex: Curso de Matemática para o ENEM"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -153,7 +129,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
             <FormField label="Descrição curta">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="Uma frase resumindo o curso"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -162,7 +138,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
             <FormField label="Descrição detalhada">
               <textarea
-                style={{ ...fieldStyle, resize: "vertical" }}
+                className={`${fieldClass} resize-y`}
                 placeholder="Explique o conteúdo, metodologia, para quem é indicado, etc."
                 value={descriptionDet}
                 onChange={(e) => setDescriptionDet(e.target.value)}
@@ -170,10 +146,10 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
               />
             </FormField>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className="grid grid-cols-2 gap-4">
               <FormField label="Categoria">
                 <select
-                  style={fieldStyle}
+                  className={fieldClass}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -186,7 +162,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
               <FormField label="Preço mensal (R$)">
                 <input
-                  style={fieldStyle}
+                  className={fieldClass}
                   placeholder="Ex: 99.90"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
@@ -196,26 +172,24 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
           </div>
 
           {/* SEÇÃO: INSTITUIÇÃO E MODALIDADE */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
-            color: "var(--text-primary)"
-            }}>
+          <div className="flex flex-col gap-4">
+            <h3 className="m-0 pb-2 border-b-2 border-gray-100 dark:border-neutral-700 text-gray-900 dark:text-gray-100 text-lg font-bold">
               Instituição e modalidade
             </h3>
 
             <FormField label="Nome da instituição">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="Ex: Escola Técnica Exemplo"
                 value={institutionName}
                 onChange={(e) => setInstitutionName(e.target.value)}
               />
             </FormField>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className="grid grid-cols-2 gap-4">
               <FormField label="Modalidade">
                 <input
-                  style={fieldStyle}
+                  className={fieldClass}
                   placeholder="Ex: Curso técnico"
                   value={modality}
                   onChange={(e) => setModality(e.target.value)}
@@ -224,7 +198,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
               <FormField label="Forma de pagamento">
                 <input
-                  style={fieldStyle}
+                  className={fieldClass}
                   placeholder="Ex: Mensal, à vista"
                   value={paymentType}
                   onChange={(e) => setPaymentType(e.target.value)}
@@ -232,10 +206,10 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
               </FormField>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className="grid grid-cols-2 gap-4">
               <FormField label="Período">
                 <input
-                  style={fieldStyle}
+                  className={fieldClass}
                   placeholder="Ex: Manhã, noite"
                   value={period}
                   onChange={(e) => setPeriod(e.target.value)}
@@ -244,7 +218,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
               <FormField label="Duração">
                 <input
-                  style={fieldStyle}
+                  className={fieldClass}
                   placeholder="Ex: 6 meses"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
@@ -254,7 +228,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
             <FormField label="Localização">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="Ex: Bairro, cidade"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
@@ -263,7 +237,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
 
             <FormField label="Endereço completo (se presencial)">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="Rua, número, cidade - estado"
                 value={endereco}
                 onChange={(e) => setEndereco(e.target.value)}
@@ -272,16 +246,14 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
           </div>
 
           {/* SEÇÃO: LINK E IMAGENS */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h3 style={{ margin: 0, borderBottom: "2px solid var(--border-color)", paddingBottom: "8px",
-            color: "var(--text-primary)"
-            }}>
+          <div className="flex flex-col gap-4">
+            <h3 className="m-0 pb-2 border-b-2 border-gray-100 dark:border-neutral-700 text-gray-900 dark:text-gray-100 text-lg font-bold">
               Link e imagens
             </h3>
 
             <FormField label="Link externo do curso">
               <input
-                style={fieldStyle}
+                className={fieldClass}
                 placeholder="https://..."
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
@@ -291,18 +263,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
             <FormField label={`Imagens do curso (${images.length}/10)`}>
               <label
                 htmlFor="course-images"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "24px",
-                  border: "2px dashed #56c596",
-                  borderRadius: "10px",
-                  color: "#2e7d5a",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  background: "#f5fbf9"
-                }}
+                className="flex items-center justify-center p-6 border-2 border-dashed border-brand-green rounded-[10px] text-brand-dark cursor-pointer font-bold bg-emerald-50 dark:bg-neutral-700"
               >
                 Clique para escolher até 10 imagens
               </label>
@@ -312,22 +273,16 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
                 accept="image/*"
                 multiple
                 onChange={handleImagesChange}
-                style={{ display: "none" }}
+                className="hidden"
               />
 
               {images.length > 0 && (
-                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px" }}>
+                <div className="flex gap-2.5 flex-wrap mt-2.5">
                   {images.map((file, i) => (
                     <img
                       key={i}
                       src={URL.createObjectURL(file)}
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        objectFit: "cover",
-                        borderRadius: "8px",
-                        border: "1px solid #ddd"
-                      }}
+                      className="w-[70px] h-[70px] object-cover rounded-lg border border-gray-200 dark:border-neutral-600"
                     />
                   ))}
                 </div>
@@ -338,16 +293,7 @@ function handleImagesChange(e: React.ChangeEvent<HTMLInputElement>) {
           {user.role === "institution" && (
             <button
               type="submit"
-              style={{
-                padding: "16px",
-                border: "none",
-                borderRadius: "10px",
-                background: "#56c596",
-                color: "white",
-                fontSize: "17px",
-                fontWeight: "bold",
-                cursor: "pointer"
-              }}
+              className="p-4 border-none rounded-[10px] bg-brand-green text-white text-[17px] font-bold cursor-pointer hover:opacity-90"
             >
               Publicar Curso
             </button>

@@ -36,6 +36,15 @@ type ReportedReview = {
   reports: ReportItem[]
 }
 
+const reportCardClass =
+  "bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-[10px] p-4 mb-3.5"
+
+const deleteButtonClass =
+  "bg-red-600 text-white border-none px-3 py-1.5 rounded-md cursor-pointer hover:bg-red-700"
+
+const dismissButtonClass =
+  "ml-2 text-xs cursor-pointer text-gray-600 dark:text-gray-300"
+
 export default function AdminPanel() {
   const [users, setUsers] = useState<User[]>([])
   const [reportedCourses, setReportedCourses] = useState<ReportedCourse[]>([])
@@ -100,34 +109,32 @@ export default function AdminPanel() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
-      <div style={{ paddingTop: "100px", padding: "100px 30px 30px", display: "flex", flexDirection: "column", gap: "40px" }}>
+
+      <div className="pt-[100px] px-[30px] pb-[30px] flex flex-col gap-10 text-gray-900 dark:text-gray-100">
 
         <div>
-          <h1>Cursos denunciados</h1>
+          <h1 className="text-2xl font-bold">Cursos denunciados</h1>
           {reportedCourses.length === 0 ? (
-            <p style={{ color: "#888" }}>Nenhum curso denunciado.</p>
+            <p className="text-gray-500 dark:text-gray-400">Nenhum curso denunciado.</p>
           ) : (
             reportedCourses.map(course => (
-              <div key={course.course_id} style={{
-                background: "var(--bg-card)", border: "1px solid var(--border-color)",
-                borderRadius: "10px", padding: "16px", marginBottom: "14px"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div key={course.course_id} className={reportCardClass}>
+                <div className="flex justify-between items-center">
                   <strong>{course.title}</strong>
-                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <span style={{ color: "red", fontWeight: "bold" }}>{course.report_count} denúncia(s)</span>
-                    <button onClick={() => handleDeleteCourse(course.course_id)} style={{ background: "red", color: "white", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer" }}>
+                  <div className="flex gap-2 items-center">
+                    <span className="text-red-600 font-bold">{course.report_count} denúncia(s)</span>
+                    <button onClick={() => handleDeleteCourse(course.course_id)} className={deleteButtonClass}>
                       Deletar curso
                     </button>
                   </div>
                 </div>
-                <ul>
+                <ul className="list-disc pl-5">
                   {course.reports.map(r => (
-                    <li key={r.id} style={{ margin: "6px 0" }}>
+                    <li key={r.id} className="my-1.5">
                       <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
-                      <button onClick={() => handleDismissReport(r.id)} style={{ marginLeft: "8px", fontSize: "12px", cursor: "pointer" }}>
+                      <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
                         Descartar
                       </button>
                     </li>
@@ -139,30 +146,27 @@ export default function AdminPanel() {
         </div>
 
         <div>
-          <h1>Avaliações denunciadas</h1>
+          <h1 className="text-2xl font-bold">Avaliações denunciadas</h1>
           {reportedReviews.length === 0 ? (
-            <p style={{ color: "#888" }}>Nenhuma avaliação denunciada.</p>
+            <p className="text-gray-500 dark:text-gray-400">Nenhuma avaliação denunciada.</p>
           ) : (
             reportedReviews.map(review => (
-              <div key={review.review_id} style={{
-                background: "var(--bg-card)", border: "1px solid var(--border-color)",
-                borderRadius: "10px", padding: "16px", marginBottom: "14px"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div key={review.review_id} className={reportCardClass}>
+                <div className="flex justify-between items-center">
                   <strong>Curso: {review.course_title}</strong>
-                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <span style={{ color: "red", fontWeight: "bold" }}>{review.report_count} denúncia(s)</span>
-                    <button onClick={() => handleDeleteReview(review.review_id)} style={{ background: "red", color: "white", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer" }}>
+                  <div className="flex gap-2 items-center">
+                    <span className="text-red-600 font-bold">{review.report_count} denúncia(s)</span>
+                    <button onClick={() => handleDeleteReview(review.review_id)} className={deleteButtonClass}>
                       Deletar avaliação
                     </button>
                   </div>
                 </div>
-                <p style={{ fontStyle: "italic" }}>"{review.comment}"</p>
-                <ul>
+                <p className="italic">"{review.comment}"</p>
+                <ul className="list-disc pl-5">
                   {review.reports.map(r => (
-                    <li key={r.id} style={{ margin: "6px 0" }}>
+                    <li key={r.id} className="my-1.5">
                       <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
-                      <button onClick={() => handleDismissReport(r.id)} style={{ marginLeft: "8px", fontSize: "12px", cursor: "pointer" }}>
+                      <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
                         Descartar
                       </button>
                     </li>
@@ -174,18 +178,27 @@ export default function AdminPanel() {
         </div>
 
         <div>
-          <h1>Usuários</h1>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <h1 className="text-2xl font-bold">Usuários</h1>
+          <table className="w-full border-collapse">
             <thead>
-              <tr><th>Usuário</th><th>Email</th><th>Papel</th><th></th></tr>
+              <tr className="text-left border-b border-gray-300 dark:border-neutral-700">
+                <th className="py-2">Usuário</th>
+                <th className="py-2">Email</th>
+                <th className="py-2">Papel</th>
+                <th className="py-2"></th>
+              </tr>
             </thead>
             <tbody>
               {users.map(u => (
-                <tr key={u.id}>
-                  <td>{u.username}</td>
-                  <td>{u.email}</td>
-                  <td>{u.role}</td>
-                  <td><button onClick={() => handleDeleteUser(u.id)}>Deletar</button></td>
+                <tr key={u.id} className="border-b border-gray-200 dark:border-neutral-800">
+                  <td className="py-2">{u.username}</td>
+                  <td className="py-2">{u.email}</td>
+                  <td className="py-2">{u.role}</td>
+                  <td className="py-2">
+                    <button onClick={() => handleDeleteUser(u.id)} className={deleteButtonClass}>
+                      Deletar
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

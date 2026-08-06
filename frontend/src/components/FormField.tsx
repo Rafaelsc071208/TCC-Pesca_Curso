@@ -7,8 +7,8 @@ type Props = {
 
 export default function FormField({ label, children }: Props) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "14px", fontWeight: "bold", color: "#2e7d5a" }}>
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-bold text-brand-dark">
         {label}
       </label>
       {children}
@@ -16,12 +16,7 @@ export default function FormField({ label, children }: Props) {
   )
 }
 
-export const fieldStyle: React.CSSProperties = {
-  padding: "12px",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-  fontFamily: "inherit",
-  fontSize: "15px",
-  width: "100%",
-  boxSizing: "border-box"
-}
+// classe padrão de input/select/textarea, usada nos formulários do site
+export const fieldClass =
+  "w-full px-3 py-3 rounded-lg border border-gray-300 dark:border-neutral-600 " +
+  "bg-white dark:bg-neutral-700 text-gray-900 dark:text-gray-100 text-[15px] font-sans"

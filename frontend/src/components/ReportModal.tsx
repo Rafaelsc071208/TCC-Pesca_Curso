@@ -64,34 +64,21 @@ export default function ReportModal({ targetType, targetId, onClose }: Props) {
   return (
     <div
       onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
-        display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000
-      }}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2000]"
     >
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
-        style={{
-          background: "var(--bg-card)",
-          color: "var(--text-primary)",
-          padding: "24px",
-          borderRadius: "12px",
-          width: "380px",
-          maxWidth: "90%",
-          display: "flex",
-          flexDirection: "column",
-          gap: "14px"
-        }}
+        className="bg-white dark:bg-neutral-800 text-gray-900 dark:text-gray-100 p-6 rounded-xl w-[380px] max-w-[90%] flex flex-col gap-3.5"
       >
-        <h3 style={{ margin: 0 }}>
+        <h3 className="m-0 text-lg font-bold">
           {targetType === "course" ? "Denunciar curso" : "Denunciar avaliação"}
         </h3>
 
         <select
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          style={{ padding: "10px", borderRadius: "8px", border: "1px solid #ccc" }}
+          className="px-2.5 py-2.5 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100"
         >
           <option value="">Selecione o motivo</option>
           {reasons.map(r => (
@@ -104,20 +91,20 @@ export default function ReportModal({ targetType, targetId, onClose }: Props) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          style={{ padding: "10px", borderRadius: "8px", border: "1px solid #ccc", fontFamily: "inherit", resize: "vertical" }}
+          className="px-2.5 py-2.5 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100 font-sans resize-y"
         />
 
-        <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+        <div className="flex gap-2.5 justify-end">
           <button
             type="button"
             onClick={onClose}
-            style={{ padding: "10px 16px", border: "none", borderRadius: "8px", background: "#ddd", cursor: "pointer" }}
+            className="px-4 py-2.5 rounded-lg border-none bg-gray-200 dark:bg-neutral-600 dark:text-gray-100 cursor-pointer"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            style={{ padding: "10px 16px", border: "none", borderRadius: "8px", background: "red", color: "white", cursor: "pointer" }}
+            className="px-4 py-2.5 rounded-lg border-none bg-red-600 text-white cursor-pointer hover:bg-red-700"
           >
             Enviar denúncia
           </button>

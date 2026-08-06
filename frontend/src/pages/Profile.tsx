@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 import Header from "../components/Header"
-import FormField, { fieldStyle } from "../components/FormField"
+import FormField, { fieldClass } from "../components/FormField"
 
 const API_URL = "http://localhost:3000"
 
@@ -68,54 +68,27 @@ export default function Profile() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-page)" }}>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
 
-      <div style={{
-        paddingTop: "110px",
-        paddingBottom: "50px",
-        display: "flex",
-        justifyContent: "center",
-        gap: "24px",
-        flexWrap: "wrap"
-      }}>
+      <div className="pt-[110px] pb-[50px] flex justify-center gap-6 flex-wrap">
 
         {/* DADOS DO PERFIL */}
         <form
           onSubmit={handleSaveProfile}
-          style={{
-            width: "420px",
-            background: "var(--bg-card)",
-            padding: "30px",
-            borderRadius: "16px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-            height: "fit-content"
-          }}
+          className="w-[420px] h-fit bg-white dark:bg-neutral-800 p-[30px] rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]"
         >
-          <h1 style={{ color: "#2e7d5a", margin: 0 }}>Meu perfil</h1>
+          <h1 className="text-brand-dark text-2xl font-bold m-0">Meu perfil</h1>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
+          <div className="flex flex-col items-center gap-2.5">
             <label
               htmlFor="profile-photo"
               style={{
-                width: "90px",
-                height: "90px",
-                borderRadius: "50%",
-                background: photoPreview ? `url(${photoPreview})` : "#e0e0e0",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                border: "3px solid #56c596",
-                fontSize: "13px",
-                color: "#777",
-                textAlign: "center"
+                backgroundImage: photoPreview ? `url(${photoPreview})` : undefined
               }}
+              className={`w-[90px] h-[90px] rounded-full bg-cover bg-center flex items-center
+                justify-center cursor-pointer border-[3px] border-brand-green text-[13px]
+                text-gray-500 text-center ${photoPreview ? "" : "bg-gray-200 dark:bg-neutral-700"}`}
             >
               {!photoPreview && "Adicionar foto"}
             </label>
@@ -124,29 +97,21 @@ export default function Profile() {
               type="file"
               accept="image/*"
               onChange={handlePhotoChange}
-              style={{ display: "none" }}
+              className="hidden"
             />
           </div>
 
           <FormField label="Nome de usuário">
-            <input style={fieldStyle} value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input className={fieldClass} value={username} onChange={(e) => setUsername(e.target.value)} />
           </FormField>
 
           <FormField label="Email">
-            <input style={fieldStyle} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className={fieldClass} value={email} onChange={(e) => setEmail(e.target.value)} />
           </FormField>
 
           <button
             type="submit"
-            style={{
-              padding: "14px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#56c596",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}
+            className="p-3.5 border-none rounded-[10px] bg-brand-green text-white font-bold cursor-pointer hover:opacity-90"
           >
             Salvar alterações
           </button>
@@ -155,24 +120,14 @@ export default function Profile() {
         {/* TROCAR SENHA */}
         <form
           onSubmit={handleChangePassword}
-          style={{
-            width: "420px",
-            background: "var(--bg-card)",
-            padding: "30px",
-            borderRadius: "16px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-            height: "fit-content"
-          }}
+          className="w-[420px] h-fit bg-white dark:bg-neutral-800 p-[30px] rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.1)] flex flex-col gap-[18px]"
         >
-          <h1 style={{ color: "#2e7d5a", margin: 0, fontSize: "22px" }}>Alterar senha</h1>
+          <h1 className="text-brand-dark text-[22px] font-bold m-0">Alterar senha</h1>
 
           <FormField label="Senha atual">
             <input
               type="password"
-              style={fieldStyle}
+              className={fieldClass}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
@@ -181,7 +136,7 @@ export default function Profile() {
           <FormField label="Nova senha">
             <input
               type="password"
-              style={fieldStyle}
+              className={fieldClass}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
@@ -189,15 +144,7 @@ export default function Profile() {
 
           <button
             type="submit"
-            style={{
-              padding: "14px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#26786e",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}
+            className="p-3.5 border-none rounded-[10px] bg-brand-teal text-white font-bold cursor-pointer hover:opacity-90"
           >
             Alterar senha
           </button>

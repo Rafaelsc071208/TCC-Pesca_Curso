@@ -20,12 +20,7 @@ type Props = {
 
 export default function CourseList({ courses, favoriteIds, onToggleFavorite }: Props) {
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-      gap: "20px",
-      padding: "20px"
-    }}>
+    <div className="grid gap-5 p-5 [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))]">
       {courses.map(course => (
         <CourseCard
           key={course.id}
@@ -39,7 +34,9 @@ export default function CourseList({ courses, favoriteIds, onToggleFavorite }: P
           rating={course.rating}
           reviewCount={course.reviewCount}
           isFavorited={favoriteIds?.includes(course.id)}
-          onToggleFavorite={onToggleFavorite ? () => onToggleFavorite(course.id) : undefined}
+          onToggleFavorite={
+            onToggleFavorite ? () => onToggleFavorite(course.id) : undefined
+          }
         />
       ))}
     </div>

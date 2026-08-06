@@ -22,96 +22,37 @@ export default function Header({
   )
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        left: 0,
-        height: "70px",
-        background: "#26786e",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 20px",
-        boxSizing: "border-box",
-        zIndex: 1000
-      }}
-    >
+    <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
 
       {/* LOGO */}
-      <Link
-        to="/"
-        style={{
-          textDecoration: "none",
-          color: "#ffffff",
-          fontWeight: "bold",
-          fontSize: "24px"
-        }}
-      >
+      <Link to="/" className="no-underline text-white font-bold text-2xl">
         Cursos
       </Link>
 
       {/* PESQUISA */}
-      <div
-        style={{
-          width: "40%",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px"
-        }}
-      >
+      <div className="w-2/5 flex items-center gap-2">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar cursos..."
-          style={{
-            flex: 1,
-            padding: "12px",
-            borderRadius: "20px",
-            border: "none"
-          }}
+          className="flex-1 px-3 py-3 rounded-[20px] border-none"
         />
 
         <button
           onClick={onOpenFilters}
-          style={{
-            width: "45px",
-            height: "45px",
-            border: "none",
-            borderRadius: "10px",
-            background: "#56c596",
-            color: "white",
-            cursor: "pointer",
-            fontSize: "20px",
-            fontWeight: "bold"
-          }}
+          className="w-[45px] h-[45px] rounded-[10px] bg-brand-green text-white cursor-pointer text-xl font-bold"
         >
           ☰
         </button>
       </div>
 
       {/* DIREITA */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px"
-        }}
-      >
+      <div className="flex items-center gap-2.5">
+
         {/* DARK MODE */}
         <button
           onClick={toggleTheme}
-          style={{
-            width: "40px",
-            height: "40px",
-            border: "none",
-            borderRadius: "50%",
-            background: "#2e7d5a",
-            color: "white",
-            cursor: "pointer",
-            fontSize: "18px"
-          }}
+          className="w-10 h-10 rounded-full bg-brand-dark text-white cursor-pointer text-lg"
         >
           {theme === "light" ? "🌙" : "☀️"}
         </button>
@@ -121,17 +62,7 @@ export default function Header({
             {/* ADMIN */}
             {user.isAdmin === 1 && (
               <Link to="/admin">
-                <button
-                  style={{
-                    padding: "10px 18px",
-                    border: "none",
-                    borderRadius: "10px",
-                    background: "#2e7d5a",
-                    color: "white",
-                    fontWeight: "bold",
-                    cursor: "pointer"
-                  }}
-                >
+                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer">
                   Painel Admin
                 </button>
               </Link>
@@ -140,17 +71,7 @@ export default function Header({
             {/* CRIAR CURSO (só para instituição) */}
             {user.role === "institution" && (
               <Link to="/create-course">
-                <button
-                  style={{
-                    padding: "10px 18px",
-                    border: "none",
-                    borderRadius: "10px",
-                    background: "#2e7d5a",
-                    color: "white",
-                    fontWeight: "bold",
-                    cursor: "pointer"
-                  }}
-                >
+                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer">
                   + Criar Curso
                 </button>
               </Link>
@@ -158,20 +79,11 @@ export default function Header({
 
             <ProfileMenu user={user} />
           </>
-          
+
         ) : (
           // NÃO LOGADO
           <Link to="/login">
-            <button
-              style={{
-                padding: "10px 15px",
-                border: "none",
-                borderRadius: "8px",
-                background: "#56c596",
-                color: "white",
-                cursor: "pointer"
-              }}
-            >
+            <button className="px-4 py-2.5 rounded-lg bg-brand-green text-white cursor-pointer">
               Login
             </button>
           </Link>

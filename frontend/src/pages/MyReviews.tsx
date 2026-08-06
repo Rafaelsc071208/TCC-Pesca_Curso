@@ -26,33 +26,31 @@ export default function MyReviews() {
   }, [])
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
-      <div style={{ marginTop: "90px", padding: "0 20px 40px", maxWidth: "700px" }}>
-        <h1>Minhas avaliações</h1>
+      <div className="pt-[90px] px-5 pb-10 max-w-[700px]">
+        <h1 className="text-gray-900 dark:text-gray-100 text-2xl font-bold">Minhas avaliações</h1>
 
         {reviews.length === 0 ? (
-          <p style={{ color: "#888" }}>Você ainda não avaliou nenhum curso.</p>
+          <p className="text-gray-500 dark:text-gray-400">Você ainda não avaliou nenhum curso.</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div className="flex flex-col gap-3.5">
             {reviews.map(review => (
               <div
                 key={review.id}
-                style={{
-                  background: "white",
-                  padding: "16px",
-                  borderRadius: "10px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
-                }}
+                className="bg-white dark:bg-neutral-800 p-4 rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <Link to={`/course/${review.course_id}`} style={{ fontWeight: "bold", color: "#26786e", textDecoration: "none" }}>
+                <div className="flex justify-between items-center">
+                  <Link
+                    to={`/course/${review.course_id}`}
+                    className="font-bold text-brand-teal no-underline"
+                  >
                     {review.course_title}
                   </Link>
                   <StarRating rating={review.rating} readOnly size={16} />
                 </div>
                 {review.comment && (
-                  <p style={{ margin: "8px 0 0", color: "#444" }}>{review.comment}</p>
+                  <p className="mt-2 mb-0 text-gray-700 dark:text-gray-300">{review.comment}</p>
                 )}
               </div>
             ))}

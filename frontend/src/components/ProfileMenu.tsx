@@ -29,46 +29,24 @@ export default function ProfileMenu({ user }: Props) {
   }
 
   return (
-    <div ref={menuRef} style={{ position: "relative" }}>
+    <div ref={menuRef} className="relative">
       <button
         onClick={() => setOpen(prev => !prev)}
         style={{
-          width: "42px",
-          height: "42px",
-          borderRadius: "50%",
-          border: "2px solid var(--border-color)",
-          background: user.photo_url ? `url(${API_URL}${user.photo_url})` : "#2e7d5a",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          color: "white",
-          fontSize: "16px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          backgroundImage: user.photo_url ? `url(${API_URL}${user.photo_url})` : undefined
         }}
+        className={`w-[42px] h-[42px] rounded-full border-2 border-white/70 bg-cover bg-center
+          text-white text-base font-bold cursor-pointer flex items-center justify-center
+          ${user.photo_url ? "" : "bg-brand-dark"}`}
       >
         {!user.photo_url && (user.username?.[0]?.toUpperCase() || "?")}
       </button>
 
       {open && (
-        <div
-          style={{
-            position: "absolute",
-            top: "52px",
-            right: 0,
-            width: "220px",
-            background: "var(--bg-card)",
-            borderRadius: "10px",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-            overflow: "hidden",
-            zIndex: 1100
-          }}
-        >
-          <div style={{ padding: "14px 16px", borderBottom: "1px solid #eee" }}>
-            <strong style={{ display: "block", color: "var(--text-primary)" }}>{user.username}</strong>
-            <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{user.email}</span>
+        <div className="absolute top-[52px] right-0 w-[220px] bg-white dark:bg-neutral-800 rounded-[10px] shadow-lg overflow-hidden z-[1100]">
+          <div className="px-4 py-3.5 border-b border-gray-200 dark:border-neutral-700">
+            <strong className="block text-gray-900 dark:text-gray-100">{user.username}</strong>
+            <span className="text-[13px] text-gray-500 dark:text-gray-400">{user.email}</span>
           </div>
 
           <MenuLink to="/profile" onClick={() => setOpen(false)}>Meu perfil</MenuLink>
@@ -86,16 +64,7 @@ export default function ProfileMenu({ user }: Props) {
 
           <button
             onClick={handleLogout}
-            style={{
-              width: "100%",
-              textAlign: "left",
-              padding: "12px 16px",
-              border: "none",
-              background: "var(--bg-card-alt)",
-              color: "red",
-              cursor: "pointer",
-              fontSize: "14px"
-            }}
+            className="w-full text-left px-4 py-3 border-none bg-gray-100 dark:bg-neutral-700 text-red-600 cursor-pointer text-sm"
           >
             Deslogar
           </button>
@@ -118,14 +87,7 @@ function MenuLink({
     <Link
       to={to}
       onClick={onClick}
-      style={{
-        display: "block",
-        padding: "12px 16px",
-        color: "#222",
-        textDecoration: "none",
-        fontSize: "14px",
-        borderBottom: "1px solid #f5f5f5"
-      }}
+      className="block px-4 py-3 text-gray-900 dark:text-gray-100 no-underline text-sm border-b border-gray-100 dark:border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-700"
     >
       {children}
     </Link>

@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom"
 
 import Header from "../components/Header"
 
+const inputClass =
+  "px-3 py-3 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100"
+
 export default function Register() {
 
   const navigate = useNavigate()
@@ -47,15 +50,7 @@ export default function Register() {
 
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f5f5f5"
-      }}
-    >
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-neutral-900">
 
       {/* HEADER */}
       <Header
@@ -64,130 +59,64 @@ export default function Register() {
         onOpenFilters={() => {}}
       />
 
-
-
       {/* FORM */}
-      <div
-        style={{
-          paddingTop: "120px",
-          display: "flex",
-          justifyContent: "center"
-        }}
-      >
+      <div className="pt-[120px] flex justify-center">
 
         <form
           onSubmit={handleRegister}
-          style={{
-            width: "400px",
-            background: "white",
-            padding: "30px",
-            borderRadius: "12px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px"
-          }}
+          className="w-[400px] bg-white dark:bg-neutral-800 p-[30px] rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.1)] flex flex-col gap-[15px]"
         >
 
-          <h1
-            style={{
-              color: "#2e7d5a"
-            }}
-          >
+          <h1 className="text-brand-dark text-2xl font-bold m-0">
             Criar Conta
           </h1>
-
-
 
           <input
             placeholder="Nome de usuário"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           />
-
-
 
           <input
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           />
 
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           >
             <option value="user">Aluno</option>
             <option value="institution">Instituição</option>
           </select>
-
 
           <input
             type="password"
             placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-
-            style={{
-              padding:"12px",
-              borderRadius:"8px",
-              border:"1px solid #ccc"
-            }}
+            className={inputClass}
           />
-
-
 
           <button
             type="submit"
-            style={{
-              padding: "14px",
-              border: "none",
-              borderRadius: "10px",
-              background: "#56c596",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}
+            className="p-3.5 border-none rounded-[10px] bg-brand-green text-white text-base font-bold cursor-pointer hover:opacity-90"
           >
             Criar Conta
           </button>
-          <p
-            style={{
-              textAlign:"center",
-              margin:"0"
-            }}
-          >
-            Já tem uma conta?
 
+          <p className="text-center m-0 text-gray-700 dark:text-gray-300">
+            Já tem uma conta?
             <Link
               to="/login"
-              style={{
-                marginLeft:"5px",
-                color:"#2e7d5a",
-                fontWeight:"bold",
-                textDecoration:"none"
-              }}
+              className="ml-1.5 text-brand-dark font-bold no-underline"
             >
-             Entrar 
-            </Link>  
+              Entrar
+            </Link>
           </p>
         </form>
 

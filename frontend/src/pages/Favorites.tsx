@@ -43,13 +43,15 @@ export default function Favorites() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
-      <div style={{ marginTop: "90px" }}>
-        <h1 style={{ padding: "0 20px" }}>Cursos favoritados</h1>
+      <div className="pt-[90px]">
+        <h1 className="px-5 text-gray-900 dark:text-gray-100 text-2xl font-bold">
+          Cursos favoritados
+        </h1>
 
         {courses.length === 0 ? (
-          <p style={{ padding: "0 20px", color: "#888" }}>
+          <p className="px-5 text-gray-500 dark:text-gray-400">
             Você ainda não favoritou nenhum curso.
           </p>
         ) : (

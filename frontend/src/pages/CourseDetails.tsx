@@ -116,7 +116,7 @@ export default function CourseDetails() {
         console.error(error)
       })
 
-    fetchReviews() 
+    fetchReviews()
 
   }, [id])
 
@@ -124,132 +124,52 @@ export default function CourseDetails() {
 
   // loading
   if (!course) {
-    return <h1>Carregando...</h1>
+    return <h1 className="p-5 text-gray-900 dark:text-gray-100">Carregando...</h1>
   }
 
 
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "var(--bg-page)"
-      }}
-    >
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
       {/* HEADER */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          width: "100%",
-          left: 0,
-          height: "70px",
-          background: "#26786e",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0 20px",
-          boxSizing: "border-box",
-          zIndex: 1000
-        }}
-      >
-
+      <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
         <Link to="/">
-
-          <button
-            style={{
-              padding: "10px 20px",
-              border: "none",
-              borderRadius: "8px",
-              background: "#56c596",
-              color: "white",
-              cursor: "pointer"
-            }}
-          >
+          <button className="px-5 py-2.5 border-none rounded-lg bg-brand-green text-white cursor-pointer">
             Voltar
           </button>
-
         </Link>
-
       </div>
 
-
-
       {/* CONTEÚDO */}
-      <div
-        style={{
-          display: "flex",
-          gap: "30px",
-          padding: "30px",
-          paddingTop: "70px",
-        }}
-      >
+      <div className="flex gap-[30px] p-[30px] pt-[70px] flex-col md:flex-row">
 
         {/* ESQUERDA */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px"
-          }}
-        >
+        <div className="flex-1 flex flex-col gap-5">
 
           {/* IMAGEM/PREVIEW */}
-          <div
-            style={{
-              width: "100%",
-              height: "400px",
-              background: "#d9d9d9",
-              borderRadius: "12px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "28px",
-              color: "#555"
-            }}
-          >
+          <div className="w-full h-[400px] rounded-xl overflow-hidden">
             <ImageCarousel images={course.images || []} height="400px" />
           </div>
 
-
-
           {/* DESCRIÇÃO DETALHADA */}
-          <div
-            style={{
-              background: "var(--bg-card)",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-            }}
-          >
-
-            <h2 style={{color: "var(--text-primary)"}}>
+          <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+            <h2 className="text-gray-900 dark:text-gray-100 text-xl font-bold">
               Sobre o curso
             </h2>
-
-            <p style={{color: "var(--text-secondary)"}}>
+            <p className="text-gray-600 dark:text-gray-400">
               {course.description_det}
             </p>
-
           </div>
 
           {/* AVALIAÇÕES */}
-          <div
-            style={{
-              background: "var(--bg-card)",
-              padding: "20px",
-              borderRadius: "12px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "15px" }}>
-              <h2 style={{ margin: 0, color: "var(--text-primary)" }}>Avaliações</h2>
+          <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+            <div className="flex items-center gap-2.5 mb-4">
+              <h2 className="m-0 text-gray-900 dark:text-gray-100 text-xl font-bold">Avaliações</h2>
               {reviews.length > 0 && (
                 <>
                   <StarRating rating={Math.round(averageRating)} readOnly size={18} />
-                  <span style={{ color: "#666", fontSize: "14px" }}>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">
                     {averageRating.toFixed(1)} ({reviews.length} avaliação{reviews.length > 1 ? "ões" : ""})
                   </span>
                 </>
@@ -260,14 +180,7 @@ export default function CourseDetails() {
             {user ? (
               <form
                 onSubmit={handleSubmitReview}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                  marginBottom: "25px",
-                  paddingBottom: "20px",
-                  borderBottom: "1px solid #eee"
-                }}
+                className="flex flex-col gap-2.5 mb-6 pb-5 border-b border-gray-200 dark:border-neutral-700"
               >
                 <StarRating rating={newRating} onRate={setNewRating} size={26} />
 
@@ -276,66 +189,44 @@ export default function CourseDetails() {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   rows={3}
-                  style={{
-                    padding: "12px",
-                    borderRadius: "8px",
-                    border: "1px solid var(--border-color)",
-                    fontFamily: "inherit",
-                    resize: "vertical"
-                  }}
+                  className="p-3 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100 font-sans resize-y"
                 />
 
                 <button
                   type="submit"
-                  style={{
-                    alignSelf: "flex-start",
-                    padding: "10px 20px",
-                    border: "none",
-                    borderRadius: "8px",
-                    background: "#26786e",
-                    color: "white",
-                    fontWeight: "bold",
-                    cursor: "pointer"
-                  }}
+                  className="self-start px-5 py-2.5 border-none rounded-lg bg-brand-teal text-white font-bold cursor-pointer hover:opacity-90"
                 >
                   Enviar avaliação
                 </button>
               </form>
             ) : (
-              <p style={{ color: "#666", marginBottom: "20px" }}>
-                <Link to="/login" style={{ color: "#26786e", fontWeight: "bold" }}>Faça login</Link> para avaliar este curso.
+              <p className="text-gray-500 dark:text-gray-400 mb-5">
+                <Link to="/login" className="text-brand-teal font-bold">Faça login</Link> para avaliar este curso.
               </p>
             )}
 
             {/* LISTA DE AVALIAÇÕES */}
             {reviews.length === 0 ? (
-              <p style={{ color: "var(--text-secondary)"}}>Ainda não há avaliações para este curso.</p>
+              <p className="text-gray-500 dark:text-gray-400">Ainda não há avaliações para este curso.</p>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div className="flex flex-col gap-4">
                 {reviews.map(review => (
-                  <div key={review.id} style={{ borderBottom: "1px solid #f0f0f0", paddingBottom: "12px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <strong style={{color: "var(--text-primary)"}}>{review.username}</strong>
-                      <StarRating rating={review.rating} readOnly size={16} />
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <strong>{review.username}</strong>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <StarRating rating={review.rating} readOnly size={16} />
-                          <button
-                            onClick={() => setReportingReviewId(review.id)}
-                            style={{
-                              background: "none", border: "none", cursor: "pointer",
-                              fontSize: "13px", color: "#999"
-                            }}
-                            title="Denunciar avaliação"
-                          >
-                            🚩
-                          </button>
-                        </div>
+                  <div key={review.id} className="border-b border-gray-100 dark:border-neutral-700 pb-3">
+                    <div className="flex justify-between items-center">
+                      <strong className="text-gray-900 dark:text-gray-100">{review.username}</strong>
+                      <div className="flex items-center gap-2.5">
+                        <StarRating rating={review.rating} readOnly size={16} />
+                        <button
+                          onClick={() => setReportingReviewId(review.id)}
+                          title="Denunciar avaliação"
+                          className="bg-transparent border-none cursor-pointer text-[13px] text-gray-400"
+                        >
+                          🚩
+                        </button>
                       </div>
                     </div>
                     {review.comment && (
-                      <p style={{ margin: "6px 0 0", color: "var(--text-secondary)"}}>{review.comment}</p>
+                      <p className="mt-1.5 mb-0 text-gray-600 dark:text-gray-400">{review.comment}</p>
                     )}
                   </div>
                 ))}
@@ -346,76 +237,37 @@ export default function CourseDetails() {
         </div>
 
         {/* DIREITA */}
-        <div
-          style={{
-            width: "350px",
-            background: "#2e7d5a",
-            color: "white",
-            padding: "25px",
-            borderRadius: "12px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            height: "fit-content"
-          }}
-        >
+        <div className="w-full md:w-[350px] h-fit bg-brand-dark text-white p-6 rounded-xl flex flex-col gap-5">
 
-          <h1>
+          <h1 className="text-2xl font-bold">
             {course.title}
           </h1>
 
           <button
             onClick={() => setReportingCourse(true)}
-            style={{
-              alignSelf: "flex-start",
-              background: "none",
-              border: "1px solid rgba(255,255,255,0.5)",
-              color: "white",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "13px"
-            }}
+            className="self-start bg-transparent border border-white/50 text-white px-3 py-1.5 rounded-lg cursor-pointer text-[13px]"
           >
             🚩 Denunciar curso
           </button>
 
           <div>
             <strong>Descrição:</strong>
-
-            <p>
-              {course.description}
-            </p>
+            <p>{course.description}</p>
           </div>
-
-
 
           <div>
             <strong>Categoria:</strong>
-
-            <p>
-              {course.category}
-            </p>
+            <p>{course.category}</p>
           </div>
-
-
 
           <div>
             <strong>Preço:</strong>
-
-            <p>
-              R$ {course.price}
-            </p>
+            <p>R$ {course.price}</p>
           </div>
-
-
 
           <div>
             <strong>Endereço:</strong>
-
-            <p>
-              {course.endereco}
-            </p>
+            <p>{course.endereco}</p>
           </div>
 
           <div>
@@ -449,34 +301,16 @@ export default function CourseDetails() {
           </div>
 
           {/* BOTÃO */}
-          
-          <a
-            href={getExternalLink(course.link)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-
-            <button
-              style={{
-                width: "100%",
-                padding: "14px",
-                border: "none",
-                borderRadius: "10px",
-                background: "#56c596",
-                color: "white",
-                cursor: "pointer",
-                fontSize: "16px",
-                fontWeight: "bold"
-              }}
-            >
+          <a href={getExternalLink(course.link)} target="_blank" rel="noopener noreferrer">
+            <button className="w-full p-3.5 border-none rounded-[10px] bg-brand-green text-white cursor-pointer text-base font-bold hover:opacity-90">
               Acessar Curso
             </button>
-
           </a>
 
         </div>
 
       </div>
+
       {reportingCourse && (
         <ReportModal
           targetType="course"

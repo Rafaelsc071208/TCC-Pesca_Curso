@@ -1,31 +1,20 @@
-:root {
-  --bg-page: #f5f5f5;
-  --bg-card: #ffffff;
-  --bg-card-alt: #e8e8e8;
-  --bg-input: #ffffff;
-  --text-primary: #222222;
-  --text-secondary: #666666;
-  --border-color: #e0e0e0;
-  --carousel-bg: #d9d9d9;
-}
+@import "tailwindcss";
 
-[data-theme="dark"] {
-  --bg-page: #121212;
-  --bg-card: #1e1e1e;
-  --bg-card-alt: #262626;
-  --bg-input: #2a2a2a;
-  --text-primary: #f0f0f0;
-  --text-secondary: #aaaaaa;
-  --border-color: #333333;
-  --carousel-bg: #2a2a2a;
+/* liga o prefixo dark: ao atributo data-theme="dark" que o ThemeContext já controla */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-brand-teal: #26786e;
+  --color-brand-teal-dark: #1c5b53;
+  --color-brand-dark: #2e7d5a;
+  --color-brand-green: #56c596;
+  --color-brand-mint: #4fb5a8;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  background: var(--bg-page);
-  transition: background 0.2s ease;
 }
 
 #root {

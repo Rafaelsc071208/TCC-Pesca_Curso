@@ -33,6 +33,8 @@ export default function InstitutionDashboard() {
 
   const [selectedCategory, setSelectedCategory] = useState("")
 
+  const [selectedMinRating, setSelectedMinRating] = useState(0)
+
   const [courses, setCourses] = useState<Course[]>([])
 
   const [minPrice, setMinPrice] = useState(0)
@@ -96,7 +98,7 @@ export default function InstitutionDashboard() {
 
       ||
 
-      (   
+      (
         selectedCategory === "Misto" &&
         course.category === "Misto"
       )
@@ -105,40 +107,44 @@ export default function InstitutionDashboard() {
       course.price >= minPrice &&
       course.price <= maxPrice
 
+    const matchesRating =
+      selectedMinRating === 0 ||
+      (course.rating || 0) >= selectedMinRating
+
     return (
       matchesSearch &&
       matchesCategory &&
-      matchesPrice
+      matchesPrice &&
+      matchesRating
     )
   })
 
 
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
       <Header
         search={search}
         setSearch={setSearch}
         onOpenFilters={() => setShowFilters(prev => !prev)}
-    />
+      />
 
       {showFilters && (
         <FilterSidebar
+          selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           minPrice={minPrice}
           maxPrice={maxPrice}
           setMinPrice={setMinPrice}
           setMaxPrice={setMaxPrice}
+          selectedMinRating={selectedMinRating}
+          setSelectedMinRating={setSelectedMinRating}
           onClose={() => setShowFilters(false)}
         />
       )}
 
-      <div
-        style={{
-          marginTop: "90px"
-        }}
-      >
+      <div className="pt-[90px]">
         <CourseList courses={filteredCourses} />
       </div>
 

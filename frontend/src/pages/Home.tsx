@@ -128,7 +128,7 @@ export default function Home() {
 
       ||
 
-      (   
+      (
         selectedCategory === "Misto" &&
         course.category === "Misto"
       )
@@ -136,7 +136,7 @@ export default function Home() {
     const matchesPrice =
       course.price >= minPrice &&
       course.price <= maxPrice
-    
+
     const matchesRating =
       selectedMinRating === 0 ||
       (course.rating || 0) >= selectedMinRating
@@ -152,7 +152,7 @@ export default function Home() {
 
 
   return (
-    <div style={{ background: "var(--bg-page)", minHeight: "100vh" }}>
+    <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
       <Header
         search={search}
@@ -174,11 +174,7 @@ export default function Home() {
         />
       )}
 
-      <div
-        style={{
-          marginTop: "90px"
-        }}
-      >
+      <div className="pt-[90px]">
         <CourseList
           courses={filteredCourses}
           favoriteIds={favoriteIds}
