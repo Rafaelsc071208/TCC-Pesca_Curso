@@ -128,13 +128,8 @@ export function deleteCourse(req: Request, res: Response) {
   const { id } = req.params
 
   db.run(
-    `
-    DELETE FROM courses
-    WHERE id = ?
-    `,
+    `DELETE FROM courses WHERE id = ?`,
     [id],
-
-    db.run(`DELETE FROM reports WHERE target_type = 'course' AND target_id = ?`, [id]),
 
     function (err) {
 
@@ -143,6 +138,9 @@ export function deleteCourse(req: Request, res: Response) {
           error: err.message
         })
       }
+
+      // limpa denúncias associadas a esse curso, já que ele não existe mais
+      db.run(`DELETE FROM reports WHERE target_type = 'course' AND target_id = ?`, [id])
 
       return res.json({
         message: "Curso deletado"

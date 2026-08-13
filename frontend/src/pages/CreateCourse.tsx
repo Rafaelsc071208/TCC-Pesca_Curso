@@ -162,6 +162,9 @@ export default function CreateCourse() {
 
               <FormField label="Preço mensal (R$)">
                 <input
+                  type="number"
+                  step="0.01"
+                  min="0"
                   className={fieldClass}
                   placeholder="Ex: 99.90"
                   value={price}

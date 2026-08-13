@@ -36,7 +36,7 @@ export default function ProfileMenu({ user }: Props) {
           backgroundImage: user.photo_url ? `url(${API_URL}${user.photo_url})` : undefined
         }}
         className={`w-[42px] h-[42px] rounded-full border-2 border-white/70 bg-cover bg-center
-          text-white text-base font-bold cursor-pointer flex items-center justify-center
+          text-white text-base font-bold cursor-pointer flex items-center justify-center transition-transform hover:scale-105
           ${user.photo_url ? "" : "bg-brand-dark"}`}
       >
         {!user.photo_url && (user.username?.[0]?.toUpperCase() || "?")}

@@ -25,7 +25,7 @@ export default function Header({
     <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
 
       {/* LOGO */}
-      <Link to="/" className="no-underline text-white font-bold text-2xl">
+      <Link to="/" className="no-underline text-white font-bold text-2xl transition-opacity hover:opacity-80">
         Cursos
       </Link>
 
@@ -35,12 +35,12 @@ export default function Header({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar cursos..."
-          className="flex-1 px-3 py-3 rounded-[20px] border-none"
+          className="flex-1 px-3 py-3 rounded-[20px] border-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-mint transition-shadow"
         />
 
         <button
           onClick={onOpenFilters}
-          className="w-[45px] h-[45px] rounded-[10px] bg-brand-green text-white cursor-pointer text-xl font-bold"
+          className="w-[45px] h-[45px] rounded-[10px] bg-brand-green text-white cursor-pointer text-xl font-bold transition-transform hover:scale-105 hover:brightness-110 active:scale-95"
         >
           ☰
         </button>
@@ -52,7 +52,7 @@ export default function Header({
         {/* DARK MODE */}
         <button
           onClick={toggleTheme}
-          className="w-10 h-10 rounded-full bg-brand-dark text-white cursor-pointer text-lg"
+          className="w-10 h-10 rounded-full bg-brand-dark text-white cursor-pointer text-lg transition-transform hover:scale-110 hover:brightness-110 active:scale-95"
         >
           {theme === "light" ? "🌙" : "☀️"}
         </button>
@@ -62,7 +62,7 @@ export default function Header({
             {/* ADMIN */}
             {user.isAdmin === 1 && (
               <Link to="/admin">
-                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer">
+                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer transition-colors hover:bg-brand-teal-dark">
                   Painel Admin
                 </button>
               </Link>
@@ -71,7 +71,7 @@ export default function Header({
             {/* CRIAR CURSO (só para instituição) */}
             {user.role === "institution" && (
               <Link to="/create-course">
-                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer">
+                <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer transition-colors hover:bg-brand-teal-dark">
                   + Criar Curso
                 </button>
               </Link>
@@ -83,7 +83,7 @@ export default function Header({
         ) : (
           // NÃO LOGADO
           <Link to="/login">
-            <button className="px-4 py-2.5 rounded-lg bg-brand-green text-white cursor-pointer">
+            <button className="px-4 py-2.5 rounded-lg bg-brand-green text-white cursor-pointer transition-transform hover:scale-105 hover:brightness-110 active:scale-95">
               Login
             </button>
           </Link>

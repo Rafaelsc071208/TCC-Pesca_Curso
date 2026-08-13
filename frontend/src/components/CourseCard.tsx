@@ -73,11 +73,11 @@ export default function CourseCard({
         <p className="text-gray-500 dark:text-gray-400">{category}</p>
 
         <p className="text-gray-700 dark:text-gray-300 font-medium">
-          R$ {price.toFixed(2)}/mês
+          R$ {Number(price || 0).toFixed(2)}/mês
         </p>
 
         <Link to={`/course/${id}`}>
-          <button className="mt-2.5 px-3 py-2 rounded-md bg-brand-teal text-white cursor-pointer hover:opacity-90">
+          <button className="mt-2.5 px-3 py-2 rounded-md bg-brand-teal text-white cursor-pointer transition-transform hover:opacity-90 hover:scale-105 active:scale-95">
             Ver mais
           </button>
         </Link>
@@ -85,7 +85,7 @@ export default function CourseCard({
         {onToggleFavorite && (
           <button
             onClick={onToggleFavorite}
-            className="mt-2.5 ml-2 px-3 py-2 rounded-md border border-gray-300 dark:border-neutral-600 bg-transparent cursor-pointer text-base"
+            className="mt-2.5 ml-2 px-3 py-2 rounded-md border border-gray-300 dark:border-neutral-600 bg-transparent cursor-pointer text-base transition-transform hover:scale-110 active:scale-95"
           >
             {isFavorited ? "❤️" : "🤍"}
           </button>
@@ -94,7 +94,7 @@ export default function CourseCard({
         {user?.isAdmin === 1 && (
           <button
             onClick={handleDelete}
-            className="mt-2.5 ml-2 px-3 py-2 rounded-md bg-red-600 text-white cursor-pointer hover:bg-red-700"
+            className="mt-2.5 ml-2 px-3 py-2 rounded-md bg-red-600 text-white cursor-pointer transition-colors hover:bg-red-700 active:scale-95"
           >
             Deletar
           </button>

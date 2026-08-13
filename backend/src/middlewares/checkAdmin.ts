@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { db } from "../database/database"
 
 export function checkAdmin(req: Request, res: Response, next: NextFunction) {
-  const requesterId = req.body.requesterId || req.query.requesterId
+  const requesterId = req.body?.requesterId || req.query.requesterId
 
   if (!requesterId) {
     return res.status(401).json({ error: "Usuário não informado" })

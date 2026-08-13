@@ -62,16 +62,15 @@ export default function InstitutionDashboard() {
   const filteredCourses = courses.filter(course => {
 
     const matchesSearch =
-      course.title
+      (course.title || "")
         .toLowerCase()
         .includes(search.toLowerCase())
 
       ||
 
-      course.description
+      (course.description || "")
         .toLowerCase()
         .includes(search.toLowerCase())
-
     const matchesCategory =
 
       selectedCategory === ""
@@ -104,8 +103,8 @@ export default function InstitutionDashboard() {
       )
 
     const matchesPrice =
-      course.price >= minPrice &&
-      course.price <= maxPrice
+      Number(course.price || 0) >= minPrice &&
+      Number(course.price || 0) <= maxPrice
 
     const matchesRating =
       selectedMinRating === 0 ||
@@ -132,6 +131,7 @@ export default function InstitutionDashboard() {
 
       {showFilters && (
         <FilterSidebar
+          open={showFilters}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           minPrice={minPrice}
