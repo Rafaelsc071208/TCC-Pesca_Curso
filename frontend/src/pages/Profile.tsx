@@ -2,6 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import Header from "../components/Header"
 import FormField, { fieldClass } from "../components/FormField"
+import BackButton from "../components/BackButton"
 
 const API_URL = "http://localhost:3000"
 
@@ -70,6 +71,10 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
+      
+      <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+        <BackButton />
+      </div>
 
       <div className="pt-[110px] pb-[50px] flex justify-center gap-6 flex-wrap">
 

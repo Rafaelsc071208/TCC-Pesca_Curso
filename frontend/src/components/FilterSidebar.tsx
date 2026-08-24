@@ -12,6 +12,12 @@ type Props = {
   selectedMinRating: number
   setSelectedMinRating: (value: number) => void
 
+  userLocation: { lat: number, lng: number } | null
+  radiusKm: number
+  setRadiusKm: (value: number) => void
+  locationDenied: boolean
+  onRequestLocation: () => void
+
   onClose: () => void
 }
 
@@ -21,6 +27,7 @@ const inputClass =
   "w-full px-2.5 py-2.5 rounded-lg border-none bg-brand-teal text-white text-[15px] box-border transition-colors focus:outline-none focus:ring-2 focus:ring-white/60"
 
 export default function FilterSidebar({
+  open,
   selectedCategory,
   setSelectedCategory,
   minPrice,
@@ -93,6 +100,39 @@ export default function FilterSidebar({
             {cat} {selectedCategory === cat && "✓"}
           </button>
         ))}
+
+        <h2 className="text-lg font-bold mt-5">Localização</h2>
+
+        {!userLocation ? (
+          <button
+            onClick={onRequestLocation}
+            className="w-full px-4 py-2.5 rounded-lg bg-brand-teal text-white cursor-pointer transition-colors hover:bg-brand-teal-dark"
+          >
+            📍 Ativar minha localização
+          </button>
+        ) : (
+          <>
+            <p className="text-sm text-white/80 mb-2">📍 Localização ativa</p>
+
+            <select
+              value={radiusKm}
+              onChange={(e) => setRadiusKm(Number(e.target.value))}
+              className={inputClass}
+            >
+              <option value={0}>Qualquer distância</option>
+              <option value={5}>Até 5 km</option>
+              <option value={10}>Até 10 km</option>
+              <option value={25}>Até 25 km</option>
+              <option value={50}>Até 50 km</option>
+            </select>
+          </>
+        )}
+
+        {locationDenied && (
+          <p className="text-sm text-white/80 mt-2">
+            Não foi possível acessar sua localização. Verifique a permissão do navegador.
+          </p>
+        )}
 
         <h2 className="text-lg font-bold mt-5">Avaliação mínima</h2>
 

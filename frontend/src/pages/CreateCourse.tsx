@@ -2,6 +2,8 @@ import { useState } from "react"
 import axios from "axios"
 import FormField, { fieldClass } from "../components/FormField"
 import { useNavigate } from "react-router-dom"
+import { useToast } from "../context/ToastContext"
+import BackButton from "../components/BackButton"
 
 import Header from "../components/Header"
 
@@ -12,6 +14,8 @@ export default function CreateCourse() {
   const [search, setSearch] = useState("")
 
   const [title, setTitle] = useState("")
+
+  const { showToast } = useToast()
 
   const [institutionName, setInstitutionName] = useState("")
   const [modality, setModality] = useState("")
@@ -79,6 +83,7 @@ export default function CreateCourse() {
         { headers: { "Content-Type": "multipart/form-data" } }
       )
 
+      showToast("Curso criado")
       navigate("/")
     } catch (error) {
       console.error(error)
@@ -99,7 +104,11 @@ export default function CreateCourse() {
       />
 
       {/* CONTEÚDO */}
-      <div className="pt-[110px] pb-[50px] flex justify-center">
+      <div className="pt-[110px] pb-[50px] flex flex-col items-center gap-4">
+
+        <div className="w-[700px] max-w-[90%]">
+          <BackButton />
+        </div>
 
         <form
           onSubmit={handleSubmit}

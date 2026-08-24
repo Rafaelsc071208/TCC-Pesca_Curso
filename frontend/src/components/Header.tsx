@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
 import { useTheme } from "../context/ThemeContext"
 import ProfileMenu from "./ProfileMenu"
+import logoUrl from "../assets/logo.svg"
+import iconUrl from "../assets/icon.svg"
 
 type Props = {
   search: string
@@ -25,18 +27,25 @@ export default function Header({
     <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
 
       {/* LOGO */}
-      <Link to="/" className="no-underline text-white font-bold text-2xl transition-opacity hover:opacity-80">
-        Cursos
+      <Link to="/" className="flex items-center transition-opacity hover:opacity-80">
+        <img src={logoUrl} alt="Cursos" className="h-10 w-auto" />
       </Link>
 
       {/* PESQUISA */}
       <div className="w-2/5 flex items-center gap-2">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar cursos..."
-          className="flex-1 px-3 py-3 rounded-[20px] border-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-mint transition-shadow"
-        />
+        <div className="relative flex-1">
+          <img
+            src={iconUrl}
+            alt=""
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-auto pointer-events-none"
+          />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar cursos..."
+            className="w-full pl-10 pr-3 py-3 rounded-[20px] border-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-mint transition-shadow"
+          />
+        </div>
 
         <button
           onClick={onOpenFilters}

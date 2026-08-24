@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { db } from "../database/database"
+import { sendTwoFactorEmail } from "../utils/mailer"
 
 export function registerUser(req: Request, res: Response) {
     
@@ -44,7 +45,7 @@ export function loginUser(req: Request, res: Response) {
     `,
     [email, password],
 
-    (err, user) => {
+    async (err, user: any) => {
 
       if (err) {
         return res.status(500).json({
@@ -58,14 +59,76 @@ export function loginUser(req: Request, res: Response) {
         })
       }
 
-      return res.json({
-        message: "Login realizado",
-        user
-      })
+      // gera código de 6 dígitos, válido por 10 minutos
+      const code = String(Math.floor(100000 + Math.random() * 900000))
+      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+
+      db.run(
+        `UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?`,
+        [code, expires, user.id],
+        async (updateErr) => {
+          if (updateErr) {
+            return res.status(500).json({ error: updateErr.message })
+          }
+
+          try {
+            await sendTwoFactorEmail(user.email, code)
+          } catch (mailError) {
+            console.error("Erro ao enviar email de 2FA:", mailError)
+            return res.status(500).json({ error: "Não foi possível enviar o código por email" })
+          }
+
+          return res.json({
+            message: "Código enviado por email",
+            requiresTwoFactor: true,
+            userId: user.id
+          })
+        }
+      )
     }
   )
 }
 
+// VERIFICAR CÓDIGO DE DUAS ETAPAS
+export function verifyTwoFactor(req: Request, res: Response) {
+
+  const { userId, code } = req.body
+
+  db.get(
+    `SELECT * FROM users WHERE id = ?`,
+    [userId],
+
+    (err, user: any) => {
+
+      if (err) return res.status(500).json({ error: err.message })
+
+      if (!user || user.two_factor_code !== code) {
+        return res.status(401).json({ message: "Código inválido" })
+      }
+
+      if (!user.two_factor_expires || new Date(user.two_factor_expires) < new Date()) {
+        return res.status(401).json({ message: "Código expirado, faça login novamente" })
+      }
+
+      // código usado, limpa pra não poder ser reaproveitado
+      db.run(
+        `UPDATE users SET two_factor_code = NULL, two_factor_expires = NULL WHERE id = ?`,
+        [user.id],
+        (clearErr) => {
+          if (clearErr) return res.status(500).json({ error: clearErr.message })
+
+          delete user.two_factor_code
+          delete user.two_factor_expires
+
+          return res.json({
+            message: "Login realizado",
+            user
+          })
+        }
+      )
+    }
+  )
+}
 export function deleteUser(req: Request, res: Response) {
   const { id } = req.params
 

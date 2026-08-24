@@ -36,6 +36,15 @@ db.serialize(() => {
     )
   `)
 
+  // colunas do código de verificação em duas etapas
+  db.run(`ALTER TABLE users ADD COLUMN two_factor_code TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
+  db.run(`ALTER TABLE users ADD COLUMN two_factor_expires TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
   // imagens do curso
   db.run(`
     CREATE TABLE IF NOT EXISTS course_images (
@@ -92,4 +101,13 @@ db.serialize(() => {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `)
+
+  // coordenadas geográficas do curso (preenchidas automaticamente a partir do endereço)
+  db.run(`ALTER TABLE courses ADD COLUMN lat REAL`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
+  db.run(`ALTER TABLE courses ADD COLUMN lng REAL`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
 })

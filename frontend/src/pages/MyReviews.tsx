@@ -3,6 +3,7 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 import Header from "../components/Header"
 import StarRating from "../components/StarRating"
+import BackButton from "../components/BackButton"
 
 type Review = {
   id: number
@@ -29,6 +30,9 @@ export default function MyReviews() {
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
       <div className="pt-[90px] px-5 pb-10 max-w-[700px]">
+        <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+        <BackButton />
+      </div>
         <h1 className="text-gray-900 dark:text-gray-100 text-2xl font-bold">Minhas avaliações</h1>
 
         {reviews.length === 0 ? (

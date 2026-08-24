@@ -1,6 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
+import { useToast } from "../context/ToastContext"
 
 import Header from "../components/Header"
 
@@ -10,6 +11,8 @@ const inputClass =
 export default function Register() {
 
   const navigate = useNavigate()
+
+  const { showToast } = useToast()
 
   const [search, setSearch] = useState("")
 
@@ -35,7 +38,7 @@ export default function Register() {
         }
       )
 
-      alert("Conta criada!")
+      showToast("Conta criada")
 
       navigate("/login")
 

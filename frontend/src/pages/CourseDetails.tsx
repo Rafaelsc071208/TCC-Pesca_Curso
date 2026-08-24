@@ -4,6 +4,8 @@ import axios from "axios"
 import ImageCarousel from "../components/ImageCarousel"
 import StarRating from "../components/StarRating"
 import ReportModal from "../components/ReportModal"
+import { useToast } from "../context/ToastContext"
+import BackButton from "../components/BackButton"
 
 type Review = {
   id: number
@@ -31,6 +33,8 @@ type Course = {
   period?: string
   duration?: string
   images?: string[]
+  lat?: number
+  lng?: number
 }
 
 export default function CourseDetails() {
@@ -40,6 +44,8 @@ export default function CourseDetails() {
   const [course, setCourse] = useState<Course | null>(null)
 
   const user = JSON.parse(localStorage.getItem("user") || "null")
+
+  const { showToast } = useToast()
 
   const [reviews, setReviews] = useState<Review[]>([])
   const [newRating, setNewRating] = useState(0)
@@ -79,6 +85,7 @@ export default function CourseDetails() {
       setNewRating(0)
       setNewComment("")
       fetchReviews()
+      showToast("Avaliação enviada")
     } catch (error) {
       console.error(error)
       alert("Erro ao enviar avaliação")
@@ -134,11 +141,7 @@ export default function CourseDetails() {
 
       {/* HEADER */}
       <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
-        <Link to="/">
-          <button className="px-5 py-2.5 border-none rounded-lg bg-brand-green text-white cursor-pointer">
-            Voltar
-          </button>
-        </Link>
+        <BackButton />
       </div>
 
       {/* CONTEÚDO */}
@@ -161,6 +164,21 @@ export default function CourseDetails() {
               {course.description_det}
             </p>
           </div>
+
+          {/* MAPA */}
+          {course.lat && course.lng && (
+            <div className="bg-white dark:bg-neutral-800 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+              <iframe
+                title="Localização do curso"
+                width="100%"
+                height="300"
+                style={{ border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${course.lat},${course.lng}&output=embed`}
+              />
+            </div>
+          )}
 
           {/* AVALIAÇÕES */}
           <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)]">

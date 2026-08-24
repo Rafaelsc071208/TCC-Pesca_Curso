@@ -7,6 +7,8 @@ import "./database/init"
 import path from "path"
 import favoriteRoutes from "./routes/favoriteRoutes"
 import reportRoutes from "./routes/reportRoutes"
+import dotenv from "dotenv"
+dotenv.config()
 
 const app = express()
 

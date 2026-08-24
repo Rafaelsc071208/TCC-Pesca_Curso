@@ -4,6 +4,7 @@ import axios from "axios"
 import Header from "../components/Header"
 import FilterSidebar from "../components/FilterSidebar"
 import CourseList from "../components/CourseList"
+import { calculateDistanceKm } from "../utils/distance"
 
 type Course = {
   id: number
@@ -19,6 +20,8 @@ type Course = {
   images?: string[]
   rating?: number
   reviewCount?: number
+  lat?: number
+  lng?: number
 }
 
 export default function Home() {
@@ -42,6 +45,30 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState(999999)
 
   const [favoriteIds, setFavoriteIds] = useState<number[]>([])
+
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null)
+  const [radiusKm, setRadiusKm] = useState(0) // 0 = sem limite de distância
+  const [locationDenied, setLocationDenied] = useState(false)
+
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      setLocationDenied(true)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        })
+        setLocationDenied(false)
+      },
+      () => {
+        setLocationDenied(true)
+      }
+    )
+  }
 
   useEffect(() => {
     if (!user?.id) return
@@ -141,12 +168,37 @@ export default function Home() {
       selectedMinRating === 0 ||
       (course.rating || 0) >= selectedMinRating
 
+    const distanceKm =
+    userLocation && course.lat && course.lng
+      ? calculateDistanceKm(userLocation.lat, userLocation.lng, course.lat, course.lng)
+      : null
+
+    const matchesRadius =
+      radiusKm === 0 ||
+      distanceKm === null ||
+      distanceKm <= radiusKm
+
     return (
       matchesSearch &&
       matchesCategory &&
       matchesPrice &&
-      matchesRating
+      matchesRating &&
+      matchesRadius
     )
+  })
+
+  // combina distância e nota num único critério de ordenação, só quando a localização está ativa
+  const sortedCourses = [...filteredCourses].sort((a, b) => {
+    if (!userLocation) return 0
+
+    const distA = a.lat && a.lng ? calculateDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) : 999
+    const distB = b.lat && b.lng ? calculateDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng) : 999
+
+    // cada 20km "custam" o equivalente a 1 estrela de nota — ajuste o divisor pra pesar mais ou menos a distância
+    const scoreA = (a.rating || 0) - distA / 20
+    const scoreB = (b.rating || 0) - distB / 20
+
+    return scoreB - scoreA
   })
 
 
@@ -160,24 +212,27 @@ export default function Home() {
         onOpenFilters={() => setShowFilters(prev => !prev)}
       />
 
-      {showFilters && (
-        <FilterSidebar
-          open={showFilters}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          setMinPrice={setMinPrice}
-          setMaxPrice={setMaxPrice}
-          selectedMinRating={selectedMinRating}
-          setSelectedMinRating={setSelectedMinRating}
-          onClose={() => setShowFilters(false)}
-        />
-      )}
+      <FilterSidebar
+        open={showFilters}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        setMinPrice={setMinPrice}
+        setMaxPrice={setMaxPrice}
+        selectedMinRating={selectedMinRating}
+        setSelectedMinRating={setSelectedMinRating}
+        userLocation={userLocation}
+        radiusKm={radiusKm}
+        setRadiusKm={setRadiusKm}
+        locationDenied={locationDenied}
+        onRequestLocation={requestLocation}
+        onClose={() => setShowFilters(false)}
+      />
 
       <div className="pt-[90px]">
         <CourseList
-          courses={filteredCourses}
+          courses={sortedCourses}
           favoriteIds={favoriteIds}
           onToggleFavorite={handleToggleFavorite}
         />

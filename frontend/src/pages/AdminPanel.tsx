@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Header from "../components/Header"
+import { useToast } from "../context/ToastContext"
+import BackButton from "../components/BackButton"
 
 const API_URL = "http://localhost:3000"
 
@@ -51,6 +53,8 @@ export default function AdminPanel() {
   const [reportedReviews, setReportedReviews] = useState<ReportedReview[]>([])
   const [search, setSearch] = useState("")
 
+  const { showToast } = useToast()
+
   const admin = JSON.parse(localStorage.getItem("user") || "{}")
 
   function fetchAll() {
@@ -71,6 +75,7 @@ export default function AdminPanel() {
     try {
       await axios.delete(`${API_URL}/users/${id}?requesterId=${admin.id}`)
       setUsers(prev => prev.filter(u => u.id !== id))
+      showToast("Usuário excluído")
     } catch (error) {
       console.error(error)
       alert("Erro ao deletar usuário")
@@ -82,6 +87,7 @@ export default function AdminPanel() {
     try {
       await axios.delete(`${API_URL}/courses/${id}?requesterId=${admin.id}`)
       setReportedCourses(prev => prev.filter(c => c.course_id !== id))
+      showToast("Curso excluído")
     } catch (error) {
       console.error(error)
       alert("Erro ao deletar curso")
@@ -93,6 +99,7 @@ export default function AdminPanel() {
     try {
       await axios.delete(`${API_URL}/reviews/${id}?requesterId=${admin.id}`)
       setReportedReviews(prev => prev.filter(r => r.review_id !== id))
+      showToast("Avaliação excluída")
     } catch (error) {
       console.error(error)
       alert("Erro ao deletar avaliação")
@@ -111,6 +118,9 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
+        <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+        <BackButton />
+      </div>
 
       <div className="pt-[100px] px-[30px] pb-[30px] flex flex-col gap-10 text-gray-900 dark:text-gray-100">
 
