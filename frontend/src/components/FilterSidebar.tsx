@@ -50,6 +50,12 @@ export default function FilterSidebar({
   setRadiusKm,
   locationDenied,
   onRequestLocation,
+  selectedModality,
+  setSelectedModality,
+  selectedPaymentType,
+  setSelectedPaymentType,
+  selectedPeriod,
+  setSelectedPeriod,
   onClose
 }: Props) {
 
@@ -103,7 +109,7 @@ export default function FilterSidebar({
           className={`${inputClass} mb-5`}
         />
 
-        <h2 className="text-lg font-bold">Categoria</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">Categoria</h2>
 
         <button className={categoryButtonClass("")} onClick={() => setSelectedCategory("")}>
           Todos {selectedCategory === "" && "✓"}
@@ -115,7 +121,7 @@ export default function FilterSidebar({
           </button>
         ))}
 
-        <h2 className="text-lg font-bold mt-5">Modalidade</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">Modalidade</h2>
 
         <select
           value={selectedModality}
@@ -130,7 +136,7 @@ export default function FilterSidebar({
           <option value="Profissionalizante">Profissionalizante</option>
         </select>
 
-        <h2 className="text-lg font-bold mt-5">Forma de pagamento</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">Forma de pagamento</h2>
 
         <select
           value={selectedPaymentType}
@@ -145,7 +151,7 @@ export default function FilterSidebar({
           <option value="Bolsa integral">Bolsa integral</option>
         </select>
 
-        <h2 className="text-lg font-bold mt-5">Horário</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2"> Horário</h2>
 
         <select
           value={selectedPeriod}
@@ -158,7 +164,7 @@ export default function FilterSidebar({
           <option value="Noite">Noite</option>
         </select>
 
-        <h2 className="text-lg font-bold mt-5">Localização</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2"> Localização</h2>
 
         {!userLocation ? (
           <button
@@ -169,7 +175,7 @@ export default function FilterSidebar({
           </button>
         ) : (
           <>
-            <p className="text-sm text-white/80 mb-2">📍 Localização ativa</p>
+            <p className="text-sm text-white/80 mb-2"> Localização ativa</p>
 
             <select
               value={radiusKm}
@@ -191,7 +197,7 @@ export default function FilterSidebar({
           </p>
         )}
 
-        <h2 className="text-lg font-bold mt-5">Avaliação mínima</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2"> Avaliação mínima</h2>
 
         <select
           value={selectedMinRating}

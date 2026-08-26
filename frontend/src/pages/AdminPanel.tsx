@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext"
 import BackButton from "../components/BackButton"
 
 const API_URL = "http://localhost:3000"
+const USERS_PER_PAGE = 10
 
 type User = {
   id: number
@@ -38,17 +39,24 @@ type ReportedReview = {
   reports: ReportItem[]
 }
 
+type Tab = "courses" | "reviews" | "users"
+
 const reportCardClass =
   "bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-[10px] p-4 mb-3.5"
 
 const deleteButtonClass =
-  "bg-red-600 text-white border-none px-3 py-1.5 rounded-md cursor-pointer hover:bg-red-700"
+  "bg-red-600 text-white border-none px-3 py-1.5 rounded-md cursor-pointer transition-colors hover:bg-red-700"
 
 const dismissButtonClass =
   "ml-2 text-xs cursor-pointer text-gray-600 dark:text-gray-300"
 
 export default function AdminPanel() {
+  const [tab, setTab] = useState<Tab>("courses")
+
   const [users, setUsers] = useState<User[]>([])
+  const [userSearch, setUserSearch] = useState("")
+  const [userPage, setUserPage] = useState(1)
+
   const [reportedCourses, setReportedCourses] = useState<ReportedCourse[]>([])
   const [reportedReviews, setReportedReviews] = useState<ReportedReview[]>([])
   const [search, setSearch] = useState("")
@@ -115,105 +123,174 @@ export default function AdminPanel() {
     }
   }
 
+  const filteredUsers = users.filter(u =>
+    u.username.toLowerCase().includes(userSearch.toLowerCase()) ||
+    u.email.toLowerCase().includes(userSearch.toLowerCase())
+  )
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / USERS_PER_PAGE))
+  const paginatedUsers = filteredUsers.slice(
+    (userPage - 1) * USERS_PER_PAGE,
+    userPage * USERS_PER_PAGE
+  )
+
+  function tabButtonClass(value: Tab) {
+    const active = tab === value
+    return `px-4 py-2.5 rounded-lg cursor-pointer font-bold transition-colors ${
+      active
+        ? "bg-brand-teal text-white"
+        : "bg-gray-200 dark:bg-neutral-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-neutral-600"
+    }`
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
       <Header search={search} setSearch={setSearch} onOpenFilters={() => {}} />
-        <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+      <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
         <BackButton />
       </div>
 
-      <div className="pt-[100px] px-[30px] pb-[30px] flex flex-col gap-10 text-gray-900 dark:text-gray-100">
+      <div className="pt-[100px] px-[30px] pb-[30px] text-gray-900 dark:text-gray-100">
 
-        <div>
-          <h1 className="text-2xl font-bold">Cursos denunciados</h1>
-          {reportedCourses.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400">Nenhum curso denunciado.</p>
-          ) : (
-            reportedCourses.map(course => (
-              <div key={course.course_id} className={reportCardClass}>
-                <div className="flex justify-between items-center">
-                  <strong>{course.title}</strong>
-                  <div className="flex gap-2 items-center">
-                    <span className="text-red-600 font-bold">{course.report_count} denúncia(s)</span>
-                    <button onClick={() => handleDeleteCourse(course.course_id)} className={deleteButtonClass}>
-                      Deletar curso
-                    </button>
-                  </div>
-                </div>
-                <ul className="list-disc pl-5">
-                  {course.reports.map(r => (
-                    <li key={r.id} className="my-1.5">
-                      <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
-                      <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
-                        Descartar
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          )}
+        {/* ABAS */}
+        <div className="flex gap-2.5 mb-6">
+          <button className={tabButtonClass("courses")} onClick={() => setTab("courses")}>
+            Cursos denunciados {reportedCourses.length > 0 && `(${reportedCourses.length})`}
+          </button>
+          <button className={tabButtonClass("reviews")} onClick={() => setTab("reviews")}>
+            Avaliações denunciadas {reportedReviews.length > 0 && `(${reportedReviews.length})`}
+          </button>
+          <button className={tabButtonClass("users")} onClick={() => setTab("users")}>
+            Usuários ({users.length})
+          </button>
         </div>
 
-        <div>
-          <h1 className="text-2xl font-bold">Avaliações denunciadas</h1>
-          {reportedReviews.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400">Nenhuma avaliação denunciada.</p>
-          ) : (
-            reportedReviews.map(review => (
-              <div key={review.review_id} className={reportCardClass}>
-                <div className="flex justify-between items-center">
-                  <strong>Curso: {review.course_title}</strong>
-                  <div className="flex gap-2 items-center">
-                    <span className="text-red-600 font-bold">{review.report_count} denúncia(s)</span>
-                    <button onClick={() => handleDeleteReview(review.review_id)} className={deleteButtonClass}>
-                      Deletar avaliação
-                    </button>
-                  </div>
-                </div>
-                <p className="italic">"{review.comment}"</p>
-                <ul className="list-disc pl-5">
-                  {review.reports.map(r => (
-                    <li key={r.id} className="my-1.5">
-                      <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
-                      <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
-                        Descartar
+        {tab === "courses" && (
+          <div>
+            {reportedCourses.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400">Nenhum curso denunciado.</p>
+            ) : (
+              reportedCourses.map(course => (
+                <div key={course.course_id} className={reportCardClass}>
+                  <div className="flex justify-between items-center">
+                    <strong>{course.title}</strong>
+                    <div className="flex gap-2 items-center">
+                      <span className="text-red-600 font-bold">{course.report_count} denúncia(s)</span>
+                      <button onClick={() => handleDeleteCourse(course.course_id)} className={deleteButtonClass}>
+                        Deletar curso
                       </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          )}
-        </div>
+                    </div>
+                  </div>
+                  <ul className="list-disc pl-5">
+                    {course.reports.map(r => (
+                      <li key={r.id} className="my-1.5">
+                        <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
+                        <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
+                          Descartar
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
-        <div>
-          <h1 className="text-2xl font-bold">Usuários</h1>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="text-left border-b border-gray-300 dark:border-neutral-700">
-                <th className="py-2">Usuário</th>
-                <th className="py-2">Email</th>
-                <th className="py-2">Papel</th>
-                <th className="py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.id} className="border-b border-gray-200 dark:border-neutral-800">
-                  <td className="py-2">{u.username}</td>
-                  <td className="py-2">{u.email}</td>
-                  <td className="py-2">{u.role}</td>
-                  <td className="py-2">
-                    <button onClick={() => handleDeleteUser(u.id)} className={deleteButtonClass}>
-                      Deletar
-                    </button>
-                  </td>
+        {tab === "reviews" && (
+          <div>
+            {reportedReviews.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400">Nenhuma avaliação denunciada.</p>
+            ) : (
+              reportedReviews.map(review => (
+                <div key={review.review_id} className={reportCardClass}>
+                  <div className="flex justify-between items-center">
+                    <strong>Curso: {review.course_title}</strong>
+                    <div className="flex gap-2 items-center">
+                      <span className="text-red-600 font-bold">{review.report_count} denúncia(s)</span>
+                      <button onClick={() => handleDeleteReview(review.review_id)} className={deleteButtonClass}>
+                        Deletar avaliação
+                      </button>
+                    </div>
+                  </div>
+                  <p className="italic">"{review.comment}"</p>
+                  <ul className="list-disc pl-5">
+                    {review.reports.map(r => (
+                      <li key={r.id} className="my-1.5">
+                        <strong>{r.reason}</strong> — {r.description || "sem detalhes"} <em>({r.username})</em>{" "}
+                        <button onClick={() => handleDismissReport(r.id)} className={dismissButtonClass}>
+                          Descartar
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {tab === "users" && (
+          <div>
+            <input
+              placeholder="Buscar por nome ou email..."
+              value={userSearch}
+              onChange={(e) => { setUserSearch(e.target.value); setUserPage(1) }}
+              className="w-full max-w-md px-3 py-2.5 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 dark:text-gray-100 mb-4"
+            />
+
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="text-left border-b border-gray-300 dark:border-neutral-700">
+                  <th className="py-2">Usuário</th>
+                  <th className="py-2">Email</th>
+                  <th className="py-2">Papel</th>
+                  <th className="py-2"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {paginatedUsers.map(u => (
+                  <tr key={u.id} className="border-b border-gray-200 dark:border-neutral-800">
+                    <td className="py-2">{u.username}</td>
+                    <td className="py-2">{u.email}</td>
+                    <td className="py-2">{u.role}</td>
+                    <td className="py-2">
+                      <button onClick={() => handleDeleteUser(u.id)} className={deleteButtonClass}>
+                        Deletar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {filteredUsers.length === 0 && (
+              <p className="text-gray-500 dark:text-gray-400 mt-3">Nenhum usuário encontrado.</p>
+            )}
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-3 mt-4">
+                <button
+                  disabled={userPage === 1}
+                  onClick={() => setUserPage(p => p - 1)}
+                  className="px-3 py-1.5 rounded-md bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  ← Anterior
+                </button>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Página {userPage} de {totalPages}
+                </span>
+                <button
+                  disabled={userPage === totalPages}
+                  onClick={() => setUserPage(p => p + 1)}
+                  className="px-3 py-1.5 rounded-md bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  Próxima →
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
       </div>
     </div>

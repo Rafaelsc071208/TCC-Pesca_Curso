@@ -31,6 +31,8 @@ export default function CreateCourse() {
   const [link, setLink] = useState("")
   const [descriptionDet, setDescriptionDet] = useState("")
   const [endereco, setEndereco] = useState("")
+  const [manualLat, setManualLat] = useState("")
+  const [manualLng, setManualLng] = useState("")
 
   const user = JSON.parse(
     localStorage.getItem("user") || "{}"
@@ -66,6 +68,8 @@ export default function CreateCourse() {
       formData.append("category", category)
       formData.append("link", link)
       formData.append("endereco", endereco)
+      if (manualLat) formData.append("lat", manualLat)
+      if (manualLng) formData.append("lng", manualLng)
       formData.append("institution_name", institutionName)
       formData.append("modality", modality)
       formData.append("payment_type", paymentType)
@@ -279,6 +283,34 @@ export default function CreateCourse() {
                 onChange={(e) => setEndereco(e.target.value)}
               />
             </FormField>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField label="Latitude (opcional)">
+                <input
+                  type="number"
+                  step="any"
+                  className={fieldClass}
+                  placeholder="Preenchido automaticamente se vazio"
+                  value={manualLat}
+                  onChange={(e) => setManualLat(e.target.value)}
+                />
+              </FormField>
+
+              <FormField label="Longitude (opcional)">
+                <input
+                  type="number"
+                  step="any"
+                  className={fieldClass}
+                  placeholder="Preenchido automaticamente se vazio"
+                  value={manualLng}
+                  onChange={(e) => setManualLng(e.target.value)}
+                />
+              </FormField>
+            </div>
+
+            <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2">
+              Deixe em branco para calcular automaticamente a partir do endereço. Se o mapa do curso aparecer no lugar errado, volte aqui e preencha manualmente (pegue as coordenadas clicando com o botão direito no local certo dentro do Google Maps).
+            </p>
           </div>
 
           {/* SEÇÃO: LINK E IMAGENS */}

@@ -30,6 +30,15 @@ export default function Login() {
         { email, password }
       )
 
+      // admin: o backend já devolve o login pronto, sem pedir código
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user))
+        showToast("Login realizado")
+        navigate("/")
+        return
+      }
+
+      // qualquer outro papel: segue pro passo do código de verificação
       setPendingUserId(response.data.userId)
       setStep("code")
 
@@ -52,11 +61,7 @@ export default function Login() {
 
       showToast("Login realizado")
 
-      if (response.data.user.role === "institution") {
-        navigate("/institution")
-      } else {
-        navigate("/")
-      }
+      navigate("/")
 
     } catch (error) {
       console.error(error)

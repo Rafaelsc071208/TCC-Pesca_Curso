@@ -6,6 +6,7 @@ import StarRating from "../components/StarRating"
 import ReportModal from "../components/ReportModal"
 import { useToast } from "../context/ToastContext"
 import BackButton from "../components/BackButton"
+import InfoRow from "../components/InfoRow"
 
 type Review = {
   id: number
@@ -145,7 +146,7 @@ export default function CourseDetails() {
       </div>
 
       {/* CONTEÚDO */}
-      <div className="flex gap-[30px] p-[30px] pt-[70px] flex-col md:flex-row">
+      <div className="flex gap-[30px] p-[30px] pt-[70px] flex-col md:flex-row md:items-start">
 
         {/* ESQUERDA */}
         <div className="flex-1 flex flex-col gap-5">
@@ -255,7 +256,7 @@ export default function CourseDetails() {
         </div>
 
         {/* DIREITA */}
-        <div className="w-full md:w-[350px] h-fit bg-brand-dark text-white p-6 rounded-xl flex flex-col gap-5">
+        <div className="w-full md:w-[350px] md:sticky md:top-[90px] md:self-start bg-brand-dark text-white p-6 rounded-xl flex flex-col gap-5">
 
           <h1 className="text-2xl font-bold">
             {course.title}
@@ -263,64 +264,27 @@ export default function CourseDetails() {
 
           <button
             onClick={() => setReportingCourse(true)}
-            className="self-start bg-transparent border border-white/50 text-white px-3 py-1.5 rounded-lg cursor-pointer text-[13px]"
+            className="self-start bg-transparent border border-white/50 text-white px-3 py-1.5 rounded-lg cursor-pointer text-[13px] transition-colors hover:bg-white/10"
           >
             🚩 Denunciar curso
           </button>
 
-          <div>
-            <strong>Descrição:</strong>
-            <p>{course.description}</p>
-          </div>
-
-          <div>
-            <strong>Categoria:</strong>
-            <p>{course.category}</p>
-          </div>
-
-          <div>
-            <strong>Preço:</strong>
-            <p>R$ {course.price}</p>
-          </div>
-
-          <div>
-            <strong>Endereço:</strong>
-            <p>{course.endereco}</p>
-          </div>
-
-          <div>
-            <strong>Instituição:</strong>
-            <p>{course.institution_name}</p>
-          </div>
-
-          <div>
-            <strong>Modalidade:</strong>
-            <p>{course.modality}</p>
-          </div>
-
-          <div>
-            <strong>Forma de pagamento:</strong>
-            <p>{course.payment_type}</p>
-          </div>
-
-          <div>
-            <strong>Localização:</strong>
-            <p>{course.location}</p>
-          </div>
-
-          <div>
-            <strong>Horário:</strong>
-            <p>{course.period || "Não informado"}</p>
-          </div>
-          
-          <div>
-            <strong>Duração:</strong>
-            <p>{course.duration}</p>
+          <div className="flex flex-col">
+            <InfoRow icon="📝" label="Descrição" value={course.description} />
+            <InfoRow icon="🏷️" label="Categoria" value={course.category} />
+            <InfoRow icon="💰" label="Preço" value={`R$ ${course.price}`} />
+            <InfoRow icon="🏫" label="Instituição" value={course.institution_name} />
+            <InfoRow icon="🎓" label="Modalidade" value={course.modality} />
+            <InfoRow icon="💳" label="Forma de pagamento" value={course.payment_type} />
+            <InfoRow icon="📍" label="Endereço" value={course.endereco} />
+            <InfoRow icon="🗺️" label="Localização" value={course.location} />
+            <InfoRow icon="🕒" label="Horário" value={course.period} />
+            <InfoRow icon="⏳" label="Duração" value={course.duration} />
           </div>
 
           {/* BOTÃO */}
           <a href={getExternalLink(course.link)} target="_blank" rel="noopener noreferrer">
-            <button className="w-full p-3.5 border-none rounded-[10px] bg-brand-green text-white cursor-pointer text-base font-bold hover:opacity-90">
+            <button className="w-full p-3.5 border-none rounded-[10px] bg-brand-green text-white cursor-pointer text-base font-bold transition-transform hover:opacity-90 hover:scale-[1.02] active:scale-95">
               Acessar Curso
             </button>
           </a>
