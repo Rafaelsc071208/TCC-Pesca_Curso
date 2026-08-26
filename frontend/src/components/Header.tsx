@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom"
 import { useTheme } from "../context/ThemeContext"
 import ProfileMenu from "./ProfileMenu"
-import logoUrl from "../assets/logo.svg"
-import iconUrl from "../assets/icon.svg"
+import logoUrl from "../assets/Logo.svg"
+import iconUrl from "../assets/Icon.svg"
 
 type Props = {
   search: string

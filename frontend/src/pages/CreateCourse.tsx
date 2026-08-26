@@ -21,7 +21,8 @@ export default function CreateCourse() {
   const [modality, setModality] = useState("")
   const [paymentType, setPaymentType] = useState("")
   const [location, setLocation] = useState("")
-  const [period, setPeriod] = useState("")
+  const [startTime, setStartTime] = useState("")
+  const [endTime, setEndTime] = useState("")
   const [duration, setDuration] = useState("")
 
   const [description, setDescription] = useState("")
@@ -69,7 +70,7 @@ export default function CreateCourse() {
       formData.append("modality", modality)
       formData.append("payment_type", paymentType)
       formData.append("location", location)
-      formData.append("period", period)
+      formData.append("period", startTime && endTime ? `${startTime} às ${endTime}` : "")
       formData.append("duration", duration)
       formData.append("price", price)
       formData.append("description_det", descriptionDet)
@@ -200,33 +201,56 @@ export default function CreateCourse() {
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Modalidade">
-                <input
+                <select
                   className={fieldClass}
-                  placeholder="Ex: Curso técnico"
                   value={modality}
                   onChange={(e) => setModality(e.target.value)}
-                />
+                >
+                  <option value="">Selecione</option>
+                  <option value="Curso técnico">Curso técnico</option>
+                  <option value="Curso livre">Curso livre</option>
+                  <option value="Graduação">Graduação</option>
+                  <option value="Pós-graduação">Pós-graduação</option>
+                  <option value="Profissionalizante">Profissionalizante</option>
+                </select>
               </FormField>
 
               <FormField label="Forma de pagamento">
-                <input
+                <select
                   className={fieldClass}
-                  placeholder="Ex: Mensal, à vista"
                   value={paymentType}
                   onChange={(e) => setPaymentType(e.target.value)}
-                />
+                >
+                  <option value="">Selecione</option>
+                  <option value="Gratuito">Gratuito</option>
+                  <option value="Mensalidade">Mensalidade</option>
+                  <option value="Pagamento único">Pagamento único</option>
+                  <option value="Bolsa parcial">Bolsa parcial</option>
+                  <option value="Bolsa integral">Bolsa integral</option>
+                </select>
               </FormField>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <FormField label="Período">
-                <input
-                  className={fieldClass}
-                  placeholder="Ex: Manhã, noite"
-                  value={period}
-                  onChange={(e) => setPeriod(e.target.value)}
-                />
-              </FormField>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField label="Horário de início">
+                  <input
+                    type="time"
+                    className={fieldClass}
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                  />
+                </FormField>
+
+                <FormField label="Horário de término">
+                  <input
+                    type="time"
+                    className={fieldClass}
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                  />
+                </FormField>
+              </div>
 
               <FormField label="Duração">
                 <input

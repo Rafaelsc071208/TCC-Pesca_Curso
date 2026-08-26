@@ -5,6 +5,7 @@ import Header from "../components/Header"
 import FilterSidebar from "../components/FilterSidebar"
 import CourseList from "../components/CourseList"
 import { calculateDistanceKm } from "../utils/distance"
+import { getPeriodBucket } from "../utils/period"
 
 type Course = {
   id: number
@@ -17,6 +18,8 @@ type Course = {
   endereco: string
   institution_name: string
   modality?: string
+  payment_type?: string
+  period?: string
   images?: string[]
   rating?: number
   reviewCount?: number
@@ -33,6 +36,10 @@ export default function Home() {
   const user = JSON.parse(
     localStorage.getItem("user") || "{}"
   )
+
+  const [selectedModality, setSelectedModality] = useState("")
+  const [selectedPaymentType, setSelectedPaymentType] = useState("")
+  const [selectedPeriod, setSelectedPeriod] = useState("")
 
   const [selectedCategory, setSelectedCategory] = useState("")
 
@@ -178,12 +185,24 @@ export default function Home() {
       distanceKm === null ||
       distanceKm <= radiusKm
 
+    const matchesModality =
+      selectedModality === "" || course.modality === selectedModality
+
+    const matchesPaymentType =
+      selectedPaymentType === "" || course.payment_type === selectedPaymentType
+
+    const matchesPeriod =
+      selectedPeriod === "" || getPeriodBucket(course.period) === selectedPeriod
+
     return (
       matchesSearch &&
       matchesCategory &&
       matchesPrice &&
       matchesRating &&
-      matchesRadius
+      matchesRadius &&
+      matchesModality &&
+      matchesPaymentType &&
+      matchesPeriod
     )
   })
 
@@ -222,6 +241,12 @@ export default function Home() {
         setMaxPrice={setMaxPrice}
         selectedMinRating={selectedMinRating}
         setSelectedMinRating={setSelectedMinRating}
+        selectedModality={selectedModality}
+        setSelectedModality={setSelectedModality}
+        selectedPaymentType={selectedPaymentType}
+        setSelectedPaymentType={setSelectedPaymentType}
+        selectedPeriod={selectedPeriod}
+        setSelectedPeriod={setSelectedPeriod}
         userLocation={userLocation}
         radiusKm={radiusKm}
         setRadiusKm={setRadiusKm}

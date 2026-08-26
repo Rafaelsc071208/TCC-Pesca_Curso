@@ -129,20 +129,23 @@ export default function InstitutionDashboard() {
         onOpenFilters={() => setShowFilters(prev => !prev)}
       />
 
-      {showFilters && (
-        <FilterSidebar
-          open={showFilters}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          setMinPrice={setMinPrice}
-          setMaxPrice={setMaxPrice}
-          selectedMinRating={selectedMinRating}
-          setSelectedMinRating={setSelectedMinRating}
-          onClose={() => setShowFilters(false)}
-        />
-      )}
+      <FilterSidebar
+        open={showFilters}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+        setMinPrice={setMinPrice}
+        setMaxPrice={setMaxPrice}
+        selectedMinRating={selectedMinRating}
+        setSelectedMinRating={setSelectedMinRating}
+        userLocation={null}
+        radiusKm={0}
+        setRadiusKm={() => {}}
+        locationDenied={false}
+        onRequestLocation={() => {}}
+        onClose={() => setShowFilters(false)}
+      />
 
       <div className="pt-[90px]">
         <CourseList courses={filteredCourses} />

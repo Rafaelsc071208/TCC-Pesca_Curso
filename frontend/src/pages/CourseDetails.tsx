@@ -309,10 +309,10 @@ export default function CourseDetails() {
           </div>
 
           <div>
-            <strong>Período:</strong>
-            <p>{course.period}</p>
+            <strong>Horário:</strong>
+            <p>{course.period || "Não informado"}</p>
           </div>
-
+          
           <div>
             <strong>Duração:</strong>
             <p>{course.duration}</p>

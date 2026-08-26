@@ -18,6 +18,15 @@ type Props = {
   locationDenied: boolean
   onRequestLocation: () => void
 
+  selectedModality: string
+  setSelectedModality: (value: string) => void
+
+  selectedPaymentType: string
+  setSelectedPaymentType: (value: string) => void
+
+  selectedPeriod: string
+  setSelectedPeriod: (value: string) => void
+
   onClose: () => void
 }
 
@@ -36,6 +45,11 @@ export default function FilterSidebar({
   setMaxPrice,
   selectedMinRating,
   setSelectedMinRating,
+  userLocation,
+  radiusKm,
+  setRadiusKm,
+  locationDenied,
+  onRequestLocation,
   onClose
 }: Props) {
 
@@ -100,6 +114,49 @@ export default function FilterSidebar({
             {cat} {selectedCategory === cat && "✓"}
           </button>
         ))}
+
+        <h2 className="text-lg font-bold mt-5">Modalidade</h2>
+
+        <select
+          value={selectedModality}
+          onChange={(e) => setSelectedModality(e.target.value)}
+          className={inputClass}
+        >
+          <option value="">Todas</option>
+          <option value="Curso técnico">Curso técnico</option>
+          <option value="Curso livre">Curso livre</option>
+          <option value="Graduação">Graduação</option>
+          <option value="Pós-graduação">Pós-graduação</option>
+          <option value="Profissionalizante">Profissionalizante</option>
+        </select>
+
+        <h2 className="text-lg font-bold mt-5">Forma de pagamento</h2>
+
+        <select
+          value={selectedPaymentType}
+          onChange={(e) => setSelectedPaymentType(e.target.value)}
+          className={inputClass}
+        >
+          <option value="">Todas</option>
+          <option value="Gratuito">Gratuito</option>
+          <option value="Mensalidade">Mensalidade</option>
+          <option value="Pagamento único">Pagamento único</option>
+          <option value="Bolsa parcial">Bolsa parcial</option>
+          <option value="Bolsa integral">Bolsa integral</option>
+        </select>
+
+        <h2 className="text-lg font-bold mt-5">Horário</h2>
+
+        <select
+          value={selectedPeriod}
+          onChange={(e) => setSelectedPeriod(e.target.value)}
+          className={inputClass}
+        >
+          <option value="">Qualquer horário</option>
+          <option value="Manhã">Manhã</option>
+          <option value="Tarde">Tarde</option>
+          <option value="Noite">Noite</option>
+        </select>
 
         <h2 className="text-lg font-bold mt-5">Localização</h2>
 
