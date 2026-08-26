@@ -59,9 +59,16 @@ export function loginUser(req: Request, res: Response) {
         })
       }
 
+      // admin pula a verificação em duas etapas e já entra direto
+      if (user.isAdmin === 1) {
+        return res.json({
+          message: "Login realizado",
+          user
+        })
+      }
+
       // gera código de 6 dígitos, válido por 10 minutos
       const code = String(Math.floor(100000 + Math.random() * 900000))
-      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
       db.run(
         `UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?`,

@@ -10,12 +10,16 @@ export async function createCourse(req: Request, res: Response) {
   const {
     title, description, category, link, endereco,
     institution_name, modality, payment_type,
-    location, period, duration, price, description_det, created_by
+    location, period, duration, price, description_det, created_by,
+    lat: manualLat, lng: manualLng
   } = req.body
 
   const files = req.files as Express.Multer.File[] | undefined
 
-  const coords = await geocodeAddress(endereco)
+  const coords =
+    manualLat && manualLng
+      ? { lat: parseFloat(manualLat), lng: parseFloat(manualLng) }
+      : await geocodeAddress(endereco)
 
   db.run(
     `
