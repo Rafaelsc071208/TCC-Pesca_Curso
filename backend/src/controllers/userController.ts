@@ -69,6 +69,7 @@ export function loginUser(req: Request, res: Response) {
 
       // gera código de 6 dígitos, válido por 10 minutos
       const code = String(Math.floor(100000 + Math.random() * 900000))
+      const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
       db.run(
         `UPDATE users SET two_factor_code = ?, two_factor_expires = ? WHERE id = ?`,
@@ -164,7 +165,7 @@ export function getUsers(req: Request, res: Response) {
 export function updateUser(req: Request, res: Response) {
   const { id } = req.params
   const { username, email } = req.body
-  const file = req.file as Express.Multer.File | undefined
+  const file = req.file as any
 
   const fields: string[] = []
   const values: any[] = []
