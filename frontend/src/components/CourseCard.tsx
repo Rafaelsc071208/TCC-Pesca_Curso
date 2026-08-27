@@ -2,6 +2,8 @@ import { Link } from "react-router-dom"
 import axios from "axios"
 import ImageCarousel from "./ImageCarousel"
 import StarRating from "./StarRating"
+import { useState } from "react"
+import ConfirmDeleteModal from "./ConfirmDeleteModal"
 
 type Props = {
   id: string
@@ -35,12 +37,13 @@ export default function CourseCard({
     localStorage.getItem("user") || "null"
   )
 
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+
   async function handleDelete() {
     try {
       await axios.delete(
         `http://localhost:3000/courses/${id}?requesterId=${user.id}`
       )
-      alert("Curso deletado")
       window.location.reload()
     } catch (error) {
       console.error(error)
@@ -93,11 +96,25 @@ export default function CourseCard({
 
         {user?.isAdmin === 1 && (
           <button
-            onClick={handleDelete}
+            onClick={() => setConfirmingDelete(true)}
             className="mt-2.5 ml-2 px-3 py-2 rounded-md bg-red-600 text-white cursor-pointer transition-colors hover:bg-red-700 active:scale-95"
           >
             Deletar
           </button>
+        )}
+
+        {confirmingDelete && (
+          <ConfirmDeleteModal
+            title="Deletar este curso?"
+            onCancel={() => setConfirmingDelete(false)}
+            onConfirm={() => {
+              handleDelete()
+              setConfirmingDelete(false)
+            }}
+          >
+            <strong className="block mb-1">{title}</strong>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{institution_name}</span>
+          </ConfirmDeleteModal>
         )}
       </div>
     </div>

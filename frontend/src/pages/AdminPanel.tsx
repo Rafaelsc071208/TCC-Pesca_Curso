@@ -3,9 +3,12 @@ import axios from "axios"
 import Header from "../components/Header"
 import { useToast } from "../context/ToastContext"
 import BackButton from "../components/BackButton"
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal"
+import StarRating from "../components/StarRating"
 
 const API_URL = "http://localhost:3000"
-const USERS_PER_PAGE = 10
+const USERS_PER_PAGE = 20
+const MARKED_THRESHOLD = 10 // a partir de quantas denúncias a conta aparece marcada
 
 type User = {
   id: number
@@ -13,6 +16,7 @@ type User = {
   email: string
   isAdmin: number
   role: string
+  total_reports: number
 }
 
 type ReportItem = {
@@ -50,12 +54,20 @@ const deleteButtonClass =
 const dismissButtonClass =
   "ml-2 text-xs cursor-pointer text-gray-600 dark:text-gray-300"
 
+const [confirmingCourse, setConfirmingCourse] = useState<ReportedCourse | null>(null)
+const [confirmingUser, setConfirmingUser] = useState<User | null>(null)
+const [confirmingReview, setConfirmingReview] = useState<ReportedReview | null>(null)
+
 export default function AdminPanel() {
   const [tab, setTab] = useState<Tab>("courses")
 
   const [users, setUsers] = useState<User[]>([])
   const [userSearch, setUserSearch] = useState("")
   const [userPage, setUserPage] = useState(1)
+
+  const [courseReportPage, setCourseReportPage] = useState(1)
+  const [reviewReportPage, setReviewReportPage] = useState(1)
+  const REPORTS_PER_PAGE = 20
 
   const [reportedCourses, setReportedCourses] = useState<ReportedCourse[]>([])
   const [reportedReviews, setReportedReviews] = useState<ReportedReview[]>([])
@@ -79,7 +91,6 @@ export default function AdminPanel() {
   useEffect(() => { fetchAll() }, [])
 
   async function handleDeleteUser(id: number) {
-    if (!confirm("Tem certeza que deseja deletar esta conta?")) return
     try {
       await axios.delete(`${API_URL}/users/${id}?requesterId=${admin.id}`)
       setUsers(prev => prev.filter(u => u.id !== id))
@@ -91,7 +102,6 @@ export default function AdminPanel() {
   }
 
   async function handleDeleteCourse(id: number) {
-    if (!confirm("Deletar este curso?")) return
     try {
       await axios.delete(`${API_URL}/courses/${id}?requesterId=${admin.id}`)
       setReportedCourses(prev => prev.filter(c => c.course_id !== id))
@@ -103,7 +113,6 @@ export default function AdminPanel() {
   }
 
   async function handleDeleteReview(id: number) {
-    if (!confirm("Deletar esta avaliação?")) return
     try {
       await axios.delete(`${API_URL}/reviews/${id}?requesterId=${admin.id}`)
       setReportedReviews(prev => prev.filter(r => r.review_id !== id))
@@ -132,6 +141,18 @@ export default function AdminPanel() {
   const paginatedUsers = filteredUsers.slice(
     (userPage - 1) * USERS_PER_PAGE,
     userPage * USERS_PER_PAGE
+  )
+
+  const courseReportTotalPages = Math.max(1, Math.ceil(reportedCourses.length / REPORTS_PER_PAGE))
+  const paginatedCourseReports = reportedCourses.slice(
+    (courseReportPage - 1) * REPORTS_PER_PAGE,
+    courseReportPage * REPORTS_PER_PAGE
+  )
+
+  const reviewReportTotalPages = Math.max(1, Math.ceil(reportedReviews.length / REPORTS_PER_PAGE))
+  const paginatedReviewReports = reportedReviews.slice(
+    (reviewReportPage - 1) * REPORTS_PER_PAGE,
+    reviewReportPage * REPORTS_PER_PAGE
   )
 
   function tabButtonClass(value: Tab) {
@@ -170,13 +191,13 @@ export default function AdminPanel() {
             {reportedCourses.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">Nenhum curso denunciado.</p>
             ) : (
-              reportedCourses.map(course => (
+              paginatedCourseReports.map(course => (
                 <div key={course.course_id} className={reportCardClass}>
                   <div className="flex justify-between items-center">
                     <strong>{course.title}</strong>
                     <div className="flex gap-2 items-center">
                       <span className="text-red-600 font-bold">{course.report_count} denúncia(s)</span>
-                      <button onClick={() => handleDeleteCourse(course.course_id)} className={deleteButtonClass}>
+                      <button onClick={() => setConfirmingCourse(course)} className={deleteButtonClass}>
                         Deletar curso
                       </button>
                     </div>
@@ -190,6 +211,27 @@ export default function AdminPanel() {
                         </button>
                       </li>
                     ))}
+                    {courseReportTotalPages > 1 && (
+                  <div className="flex items-center justify-center gap-3 mt-4">
+                    <button
+                      disabled={courseReportPage === 1}
+                      onClick={() => setCourseReportPage(p => p - 1)}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                    >
+                      ← Anterior
+                    </button>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Página {courseReportPage} de {courseReportTotalPages}
+                    </span>
+                    <button
+                      disabled={courseReportPage === courseReportTotalPages}
+                      onClick={() => setCourseReportPage(p => p + 1)}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                    >
+                      Próxima →
+                    </button>
+                  </div>
+                )}
                   </ul>
                 </div>
               ))
@@ -208,7 +250,7 @@ export default function AdminPanel() {
                     <strong>Curso: {review.course_title}</strong>
                     <div className="flex gap-2 items-center">
                       <span className="text-red-600 font-bold">{review.report_count} denúncia(s)</span>
-                      <button onClick={() => handleDeleteReview(review.review_id)} className={deleteButtonClass}>
+                      <button onClick={() => setConfirmingReview(review)} className={deleteButtonClass}>
                         Deletar avaliação
                       </button>
                     </div>
@@ -223,6 +265,27 @@ export default function AdminPanel() {
                         </button>
                       </li>
                     ))}
+                    {reviewReportTotalPages > 1 && (
+                  <div className="flex items-center justify-center gap-3 mt-4">
+                    <button
+                      disabled={reviewReportPage === 1}
+                      onClick={() => setCourseReportPage(p => p - 1)}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                    >
+                      ← Anterior
+                    </button>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Página {reviewReportPage} de {reviewReportTotalPages}
+                    </span>
+                    <button
+                      disabled={reviewReportPage === reviewReportTotalPages}
+                      onClick={() => setReviewReportPage(p => p + 1)}
+                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                    >
+                      Próxima →
+                    </button>
+                  </div>
+                )}
                   </ul>
                 </div>
               ))
@@ -241,21 +304,33 @@ export default function AdminPanel() {
 
             <table className="w-full border-collapse">
               <thead>
-                <tr className="text-left border-b border-gray-300 dark:border-neutral-700">
+                 <tr className="text-left border-b border-gray-300 dark:border-neutral-700">
                   <th className="py-2">Usuário</th>
                   <th className="py-2">Email</th>
                   <th className="py-2">Papel</th>
+                  <th className="py-2">Denúncias</th>
                   <th className="py-2"></th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedUsers.map(u => (
                   <tr key={u.id} className="border-b border-gray-200 dark:border-neutral-800">
-                    <td className="py-2">{u.username}</td>
+                    <td className="py-2">
+                      {u.username}
+                      {u.total_reports >= MARKED_THRESHOLD && (
+                        <span
+                          title={`${u.total_reports} denúncias no total`}
+                          className="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-600 text-white font-bold"
+                        >
+                          🚩 Marcado
+                        </span>
+                      )}
+                    </td>
                     <td className="py-2">{u.email}</td>
                     <td className="py-2">{u.role}</td>
+                    <td className="py-2">{u.total_reports}</td>
                     <td className="py-2">
-                      <button onClick={() => handleDeleteUser(u.id)} className={deleteButtonClass}>
+                      <button onClick={() => setConfirmingUser(u)} className={deleteButtonClass}>
                         Deletar
                       </button>
                     </td>
@@ -291,8 +366,50 @@ export default function AdminPanel() {
             )}
           </div>
         )}
-
       </div>
+      {confirmingCourse && (
+        <ConfirmDeleteModal
+          title="Deletar este curso?"
+          onCancel={() => setConfirmingCourse(null)}
+          onConfirm={() => {
+            handleDeleteCourse(confirmingCourse.course_id)
+            setConfirmingCourse(null)
+          }}
+        >
+          <strong className="block mb-1">{confirmingCourse.title}</strong>
+          <span className="text-sm text-red-600">{confirmingCourse.report_count} denúncia(s)</span>
+        </ConfirmDeleteModal>
+      )}
+
+      {confirmingUser && (
+        <ConfirmDeleteModal
+          title="Deletar esta conta?"
+          onCancel={() => setConfirmingUser(null)}
+          onConfirm={() => {
+            handleDeleteUser(confirmingUser.id)
+            setConfirmingUser(null)
+          }}
+        >
+          <strong className="block">{confirmingUser.username}</strong>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{confirmingUser.email}</span>
+          <span className="block text-sm text-gray-600 dark:text-gray-400">Papel: {confirmingUser.role}</span>
+        </ConfirmDeleteModal>
+      )}
+
+      {confirmingReview && (
+        <ConfirmDeleteModal
+          title="Deletar esta avaliação?"
+          onCancel={() => setConfirmingReview(null)}
+          onConfirm={() => {
+            handleDeleteReview(confirmingReview.review_id)
+            setConfirmingReview(null)
+          }}
+        >
+          <strong className="block mb-1">{confirmingReview.course_title}</strong>
+          <StarRating rating={confirmingReview.rating} readOnly size={16} />
+          <p className="italic mt-2 mb-0">"{confirmingReview.comment}"</p>
+        </ConfirmDeleteModal>
+      )}
     </div>
   )
 }

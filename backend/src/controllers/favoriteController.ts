@@ -4,14 +4,22 @@ import { db } from "../database/database"
 export function addFavorite(req: Request, res: Response) {
   const { user_id, course_id } = req.body
 
-  db.run(
-    `INSERT OR IGNORE INTO favorites (user_id, course_id) VALUES (?, ?)`,
-    [user_id, course_id],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message })
-      return res.status(201).json({ message: "Curso favoritado" })
+  db.get(`SELECT role FROM users WHERE id = ?`, [user_id], (err, requester: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    if (!requester || requester.role !== "user") {
+      return res.status(403).json({ error: "Apenas alunos podem favoritar cursos" })
     }
-  )
+
+    db.run(
+      `INSERT OR IGNORE INTO favorites (user_id, course_id) VALUES (?, ?)`,
+      [user_id, course_id],
+      function (err2) {
+        if (err2) return res.status(500).json({ error: err2.message })
+        return res.status(201).json({ message: "Curso favoritado" })
+      }
+    )
+  })
 }
 
 export function removeFavorite(req: Request, res: Response) {

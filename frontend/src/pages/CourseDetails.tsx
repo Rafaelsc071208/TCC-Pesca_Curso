@@ -146,10 +146,10 @@ export default function CourseDetails() {
       </div>
 
       {/* CONTEÚDO */}
-      <div className="flex gap-[30px] p-[30px] pt-[70px] flex-col md:flex-row md:items-start">
+      <div className="course-details-grid p-[30px] pt-[90px]">
 
-        {/* ESQUERDA */}
-        <div className="flex-1 flex flex-col gap-5">
+        {/* PRINCIPAL: imagem + descrição + mapa */}
+        <div className="course-details-main flex flex-col gap-5">
 
           {/* IMAGEM/PREVIEW */}
           <div className="w-full h-[400px] rounded-xl overflow-hidden">
@@ -180,94 +180,23 @@ export default function CourseDetails() {
               />
             </div>
           )}
-
-          {/* AVALIAÇÕES */}
-          <div className="bg-white dark:bg-neutral-800 p-5 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
-            <div className="flex items-center gap-2.5 mb-4">
-              <h2 className="m-0 text-gray-900 dark:text-gray-100 text-xl font-bold">Avaliações</h2>
-              {reviews.length > 0 && (
-                <>
-                  <StarRating rating={Math.round(averageRating)} readOnly size={18} />
-                  <span className="text-gray-500 dark:text-gray-400 text-sm">
-                    {averageRating.toFixed(1)} ({reviews.length} avaliação{reviews.length > 1 ? "ões" : ""})
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* FORMULÁRIO DE NOVA AVALIAÇÃO */}
-            {user ? (
-              <form
-                onSubmit={handleSubmitReview}
-                className="flex flex-col gap-2.5 mb-6 pb-5 border-b border-gray-200 dark:border-neutral-700"
-              >
-                <StarRating rating={newRating} onRate={setNewRating} size={26} />
-
-                <textarea
-                  placeholder="Conte como foi sua experiência com esse curso..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  rows={3}
-                  className="p-3 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100 font-sans resize-y"
-                />
-
-                <button
-                  type="submit"
-                  className="self-start px-5 py-2.5 border-none rounded-lg bg-brand-teal text-white font-bold cursor-pointer hover:opacity-90"
-                >
-                  Enviar avaliação
-                </button>
-              </form>
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400 mb-5">
-                <Link to="/login" className="text-brand-teal font-bold">Faça login</Link> para avaliar este curso.
-              </p>
-            )}
-
-            {/* LISTA DE AVALIAÇÕES */}
-            {reviews.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400">Ainda não há avaliações para este curso.</p>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {reviews.map(review => (
-                  <div key={review.id} className="border-b border-gray-100 dark:border-neutral-700 pb-3">
-                    <div className="flex justify-between items-center">
-                      <strong className="text-gray-900 dark:text-gray-100">{review.username}</strong>
-                      <div className="flex items-center gap-2.5">
-                        <StarRating rating={review.rating} readOnly size={16} />
-                        <button
-                          onClick={() => setReportingReviewId(review.id)}
-                          title="Denunciar avaliação"
-                          className="bg-transparent border-none cursor-pointer text-[13px] text-gray-400"
-                        >
-                          🚩
-                        </button>
-                      </div>
-                    </div>
-                    {review.comment && (
-                      <p className="mt-1.5 mb-0 text-gray-600 dark:text-gray-400">{review.comment}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
         </div>
 
         {/* DIREITA */}
-        <div className="w-full md:w-[350px] md:sticky md:top-[90px] md:self-start bg-brand-dark text-white p-6 rounded-xl flex flex-col gap-5">
+        <div className="course-details-side md:sticky md:top-[90px] bg-brand-dark text-white p-6 rounded-xl flex flex-col gap-5">
 
           <h1 className="text-2xl font-bold">
             {course.title}
           </h1>
 
-          <button
-            onClick={() => setReportingCourse(true)}
-            className="self-start bg-transparent border border-white/50 text-white px-3 py-1.5 rounded-lg cursor-pointer text-[13px] transition-colors hover:bg-white/10"
-          >
-            🚩 Denunciar curso
-          </button>
+          {user?.role === "user" && (
+            <button
+              onClick={() => setReportingCourse(true)}
+              className="self-start bg-transparent border border-white/50 text-white px-3 py-1.5 rounded-lg cursor-pointer text-[13px] transition-colors hover:bg-white/10"
+            >
+              🚩 Denunciar curso
+            </button>
+          )}
 
           <div className="flex flex-col">
             <InfoRow icon="📝" label="Descrição" value={course.description} />
@@ -289,6 +218,82 @@ export default function CourseDetails() {
             </button>
           </a>
 
+        </div>
+
+        {/* AVALIAÇÕES */}
+        <div className="course-details-reviews bg-white dark:bg-neutral-800 p-5 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+          <div className="flex items-center gap-2.5 mb-4">
+            <h2 className="m-0 text-gray-900 dark:text-gray-100 text-xl font-bold">Avaliações</h2>
+            {reviews.length > 0 && (
+              <>
+                <StarRating rating={Math.round(averageRating)} readOnly size={18} />
+                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                  {averageRating.toFixed(1)} ({reviews.length} avaliação{reviews.length > 1 ? "ões" : ""})
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* FORMULÁRIO DE NOVA AVALIAÇÃO */}
+          {user?.role === "user" ? (
+            <form
+              onSubmit={handleSubmitReview}
+              className="flex flex-col gap-2.5 mb-6 pb-5 border-b border-gray-200 dark:border-neutral-700"
+            >
+              <StarRating rating={newRating} onRate={setNewRating} size={26} />
+
+              <textarea
+                placeholder="Conte como foi sua experiência com esse curso..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                rows={3}
+                className="p-3 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 dark:text-gray-100 font-sans resize-y"
+              />
+
+              <button
+                type="submit"
+                className="self-start px-5 py-2.5 border-none rounded-lg bg-brand-teal text-white font-bold cursor-pointer hover:opacity-90"
+              >
+                Enviar avaliação
+              </button>
+            </form>
+          ) : user ? (
+            <p className="text-gray-500 dark:text-gray-400 mb-5">
+              Apenas contas de aluno podem avaliar cursos.
+            </p>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400 mb-5">
+              <Link to="/login" className="text-brand-teal font-bold">Faça login</Link> para avaliar este curso.
+            </p>
+          )}
+
+          {/* LISTA DE AVALIAÇÕES */}
+          {reviews.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400">Ainda não há avaliações para este curso.</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {reviews.map(review => (
+                <div key={review.id} className="border-b border-gray-100 dark:border-neutral-700 pb-3">
+                  <div className="flex justify-between items-center">
+                    <strong className="text-gray-900 dark:text-gray-100">{review.username}</strong>
+                    <div className="flex items-center gap-2.5">
+                      <StarRating rating={review.rating} readOnly size={16} />
+                      <button
+                        onClick={() => setReportingReviewId(review.id)}
+                        title="Denunciar avaliação"
+                        className="bg-transparent border-none cursor-pointer text-[13px] text-gray-400"
+                      >
+                        🚩
+                      </button>
+                    </div>
+                  </div>
+                  {review.comment && (
+                    <p className="mt-1.5 mb-0 text-gray-600 dark:text-gray-400">{review.comment}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>

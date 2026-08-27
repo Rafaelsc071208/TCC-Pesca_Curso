@@ -152,7 +152,27 @@ export function deleteUser(req: Request, res: Response) {
 
 export function getUsers(req: Request, res: Response) {
   db.all(
-    `SELECT id, username, email, isAdmin, role FROM users`,
+    `
+    SELECT
+      users.id, users.username, users.email, users.isAdmin, users.role,
+      COALESCE(course_reports.cnt, 0) + COALESCE(review_reports.cnt, 0) as total_reports
+    FROM users
+    LEFT JOIN (
+      SELECT courses.created_by as user_id, COUNT(reports.id) as cnt
+      FROM reports
+      JOIN courses ON courses.id = reports.target_id
+      WHERE reports.target_type = 'course'
+      GROUP BY courses.created_by
+    ) course_reports ON course_reports.user_id = users.id
+    LEFT JOIN (
+      SELECT reviews.user_id as user_id, COUNT(reports.id) as cnt
+      FROM reports
+      JOIN reviews ON reviews.id = reports.target_id
+      WHERE reports.target_type = 'review'
+      GROUP BY reviews.user_id
+    ) review_reports ON review_reports.user_id = users.id
+    ORDER BY total_reports DESC
+    `,
     [],
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message })

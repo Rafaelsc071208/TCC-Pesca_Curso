@@ -37,6 +37,9 @@ export default function Home() {
     localStorage.getItem("user") || "{}"
   )
 
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
+
   const [selectedModality, setSelectedModality] = useState("")
   const [selectedPaymentType, setSelectedPaymentType] = useState("")
   const [selectedPeriod, setSelectedPeriod] = useState("")
@@ -220,7 +223,12 @@ export default function Home() {
     return scoreB - scoreA
   })
 
+  const totalPages = Math.max(1, Math.ceil(sortedCourses.length / PAGE_SIZE))
+  const paginatedCourses = sortedCourses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
+  useEffect(() => {
+    setPage(1)
+  }, [search, selectedCategory, minPrice, maxPrice, selectedMinRating, selectedModality, selectedPaymentType, selectedPeriod, radiusKm, userLocation])
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
@@ -255,12 +263,34 @@ export default function Home() {
         onClose={() => setShowFilters(false)}
       />
 
-      <div className="pt-[90px]">
+      <div className="pt-[90px] pb-10">
         <CourseList
-          courses={sortedCourses}
+          courses={paginatedCourses}
           favoriteIds={favoriteIds}
-          onToggleFavorite={handleToggleFavorite}
+          onToggleFavorite={user?.role === "user" ? handleToggleFavorite : undefined}
         />
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(p => p - 1)}
+              className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
+            >
+              ← Anterior
+            </button>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Página {page} de {totalPages}
+            </span>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(p => p + 1)}
+              className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
+            >
+              Próxima →
+            </button>
+          </div>
+        )}
       </div>
 
     </div>

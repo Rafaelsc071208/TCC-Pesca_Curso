@@ -35,6 +35,9 @@ export default function InstitutionDashboard() {
 
   const [selectedMinRating, setSelectedMinRating] = useState(0)
 
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
+
   const [courses, setCourses] = useState<Course[]>([])
 
   const [minPrice, setMinPrice] = useState(0)
@@ -118,7 +121,9 @@ export default function InstitutionDashboard() {
     )
   })
 
-
+  useEffect(() => {
+    setPage(1)
+  }, [search, selectedCategory, minPrice, maxPrice, selectedMinRating])
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">

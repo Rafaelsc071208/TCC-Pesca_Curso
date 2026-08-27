@@ -30,8 +30,6 @@ type Props = {
   onClose: () => void
 }
 
-const categories = ["Presencial", "Online", "Misto"]
-
 const inputClass =
   "w-full px-2.5 py-2.5 rounded-lg border-none bg-brand-teal text-white text-[15px] box-border transition-colors focus:outline-none focus:ring-2 focus:ring-white/60"
 
@@ -59,15 +57,6 @@ export default function FilterSidebar({
   onClose
 }: Props) {
 
-  function categoryButtonClass(value: string) {
-    const active = selectedCategory === value
-    return `w-full px-4 py-2.5 rounded-lg mb-2 flex items-center justify-between text-left text-[15px] cursor-pointer transition-colors duration-150 ${
-      active
-        ? "border-2 border-white bg-brand-teal-dark font-bold"
-        : "border-2 border-transparent bg-brand-teal font-normal hover:bg-brand-teal-dark"
-    }`
-  }
-
   return (
     <>
       {/* fundo escurecido, fecha ao clicar fora */}
@@ -80,7 +69,7 @@ export default function FilterSidebar({
 
       {/* painel de filtros, desliza a partir da direita */}
       <div
-        className={`fixed right-0 top-0 w-[270px] h-full bg-brand-mint text-white p-5 overflow-y-auto z-[999]
+        className={`fixed right-0 top-0 w-[270px] h-full bg-brand-mint text-white p-5 overflow-y-auto hide-scrollbar z-[999]
           transition-transform duration-300 ease-out
           ${open ? "translate-x-0" : "translate-x-full"}`}
       >
@@ -109,17 +98,18 @@ export default function FilterSidebar({
           className={`${inputClass} mb-5`}
         />
 
-        <h2 className="text-lg font-bold flex items-center gap-2">Categoria</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">🏷️ Categoria</h2>
 
-        <button className={categoryButtonClass("")} onClick={() => setSelectedCategory("")}>
-          Todos {selectedCategory === "" && "✓"}
-        </button>
-
-        {categories.map(cat => (
-          <button key={cat} className={categoryButtonClass(cat)} onClick={() => setSelectedCategory(cat)}>
-            {cat} {selectedCategory === cat && "✓"}
-          </button>
-        ))}
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className={inputClass}
+        >
+          <option value="">Todas</option>
+          <option value="Presencial">Presencial</option>
+          <option value="Online">Online</option>
+          <option value="Misto">Misto</option>
+        </select>
 
         <h2 className="text-lg font-bold flex items-center gap-2">Modalidade</h2>
 

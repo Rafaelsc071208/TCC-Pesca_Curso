@@ -102,18 +102,12 @@ export default function CreateCourse() {
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
       {/* HEADER */}
-      <Header
-        search={search}
-        setSearch={setSearch}
-        onOpenFilters={() => {}}
-      />
+      <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+        <BackButton />
+      </div>
 
       {/* CONTEÚDO */}
       <div className="pt-[110px] pb-[50px] flex flex-col items-center gap-4">
-
-        <div className="w-[700px] max-w-[90%]">
-          <BackButton />
-        </div>
 
         <form
           onSubmit={handleSubmit}

@@ -9,14 +9,26 @@ export function createReport(req: Request, res: Response) {
     return res.status(400).json({ error: "Tipo de denúncia inválido" })
   }
 
-  db.run(
-    `INSERT INTO reports (target_type, target_id, user_id, reason, description) VALUES (?, ?, ?, ?, ?)`,
-    [target_type, target_id, user_id, reason, description],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message })
-      return res.status(201).json({ message: "Denúncia enviada" })
+  db.get(`SELECT role FROM users WHERE id = ?`, [user_id], (err, requester: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    if (!requester) {
+      return res.status(401).json({ error: "Usuário não encontrado" })
     }
-  )
+
+    if (target_type === "course" && requester.role === "institution") {
+      return res.status(403).json({ error: "Instituições não podem denunciar cursos, apenas avaliações" })
+    }
+
+    db.run(
+      `INSERT INTO reports (target_type, target_id, user_id, reason, description) VALUES (?, ?, ?, ?, ?)`,
+      [target_type, target_id, user_id, reason, description],
+      function (err2) {
+        if (err2) return res.status(500).json({ error: err2.message })
+        return res.status(201).json({ message: "Denúncia enviada" })
+      }
+    )
+  })
 }
 
 // CURSOS DENUNCIADOS, ORDENADOS POR QUANTIDADE DE DENÚNCIAS

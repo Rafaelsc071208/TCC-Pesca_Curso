@@ -4,14 +4,22 @@ import { db } from "../database/database"
 export function createReview(req: Request, res: Response) {
   const { course_id, user_id, rating, comment } = req.body
 
-  db.run(
-    `INSERT INTO reviews (course_id, user_id, rating, comment) VALUES (?, ?, ?, ?)`,
-    [course_id, user_id, rating, comment],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message })
-      return res.status(201).json({ message: "Avaliação enviada", reviewId: this.lastID })
+  db.get(`SELECT role FROM users WHERE id = ?`, [user_id], (err, requester: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    if (!requester || requester.role !== "user") {
+      return res.status(403).json({ error: "Apenas alunos podem avaliar cursos" })
     }
-  )
+
+    db.run(
+      `INSERT INTO reviews (course_id, user_id, rating, comment) VALUES (?, ?, ?, ?)`,
+      [course_id, user_id, rating, comment],
+      function (err2) {
+        if (err2) return res.status(500).json({ error: err2.message })
+        return res.status(201).json({ message: "Avaliação enviada", reviewId: this.lastID })
+      }
+    )
+  })
 }
 
 export function getReviewsByCourse(req: Request, res: Response) {
