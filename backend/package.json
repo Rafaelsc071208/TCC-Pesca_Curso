@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "seed": "ts-node-dev --transpile-only --once src/scripts/seed.ts",
     "dev": "ts-node-dev src/server.ts"
   },
   "keywords": [],
