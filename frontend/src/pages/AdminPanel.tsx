@@ -54,11 +54,11 @@ const deleteButtonClass =
 const dismissButtonClass =
   "ml-2 text-xs cursor-pointer text-gray-600 dark:text-gray-300"
 
-const [confirmingCourse, setConfirmingCourse] = useState<ReportedCourse | null>(null)
-const [confirmingUser, setConfirmingUser] = useState<User | null>(null)
-const [confirmingReview, setConfirmingReview] = useState<ReportedReview | null>(null)
-
 export default function AdminPanel() {
+  const [confirmingCourse, setConfirmingCourse] = useState<ReportedCourse | null>(null)
+  const [confirmingUser, setConfirmingUser] = useState<User | null>(null)
+  const [confirmingReview, setConfirmingReview] = useState<ReportedReview | null>(null)
+
   const [tab, setTab] = useState<Tab>("courses")
 
   const [users, setUsers] = useState<User[]>([])
@@ -211,34 +211,39 @@ export default function AdminPanel() {
                         </button>
                       </li>
                     ))}
-                    {courseReportTotalPages > 1 && (
-                  <div className="flex items-center justify-center gap-3 mt-4">
-                    <button
-                      disabled={courseReportPage === 1}
-                      onClick={() => setCourseReportPage(p => p - 1)}
-                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
-                    >
-                      ← Anterior
-                    </button>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Página {courseReportPage} de {courseReportTotalPages}
-                    </span>
-                    <button
-                      disabled={courseReportPage === courseReportTotalPages}
-                      onClick={() => setCourseReportPage(p => p + 1)}
-                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
-                    >
-                      Próxima →
-                    </button>
-                  </div>
-                )}
                   </ul>
                 </div>
               ))
             )}
+            {courseReportTotalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button
+                  disabled={courseReportPage === 1}
+                  onClick={() => {
+                    setCourseReportPage(p => p - 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  ← Anterior
+                </button>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Página {courseReportPage} de {courseReportTotalPages}
+                </span>
+                 <button
+                  disabled={courseReportPage === courseReportTotalPages}
+                  onClick={() => {
+                    setCourseReportPage(p => p + 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  Próxima →
+                </button>
+              </div>
+            )}
           </div>
         )}
-
         {tab === "reviews" && (
           <div>
             {reportedReviews.length === 0 ? (
@@ -268,18 +273,24 @@ export default function AdminPanel() {
                     {reviewReportTotalPages > 1 && (
                   <div className="flex items-center justify-center gap-3 mt-4">
                     <button
-                      disabled={reviewReportPage === 1}
-                      onClick={() => setCourseReportPage(p => p - 1)}
-                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
-                    >
-                      ← Anterior
-                    </button>
+                    disabled={reviewReportPage === 1}
+                    onClick={() => {
+                      setReviewReportPage(p => p - 1)
+                      window.scrollTo({ top: 0, behavior: "smooth" })
+                    }}
+                    className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                  >
+                    ← Anterior
+                  </button>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
                       Página {reviewReportPage} de {reviewReportTotalPages}
                     </span>
                     <button
                       disabled={reviewReportPage === reviewReportTotalPages}
-                      onClick={() => setReviewReportPage(p => p + 1)}
+                      onClick={() => {
+                        setReviewReportPage(p => p + 1)
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      }}
                       className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
                     >
                       Próxima →
@@ -347,7 +358,10 @@ export default function AdminPanel() {
               <div className="flex items-center gap-3 mt-4">
                 <button
                   disabled={userPage === 1}
-                  onClick={() => setUserPage(p => p - 1)}
+                  onClick={() => {
+                    setUserPage(p => p - 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
                   className="px-3 py-1.5 rounded-md bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
                 >
                   ← Anterior
@@ -357,7 +371,10 @@ export default function AdminPanel() {
                 </span>
                 <button
                   disabled={userPage === totalPages}
-                  onClick={() => setUserPage(p => p + 1)}
+                  onClick={() => {
+                    setUserPage(p => p + 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
                   className="px-3 py-1.5 rounded-md bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
                 >
                   Próxima →

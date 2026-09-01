@@ -272,9 +272,12 @@ export default function Home() {
 
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-3 mt-4">
-            <button
+             <button
               disabled={page === 1}
-              onClick={() => setPage(p => p - 1)}
+              onClick={() => {
+                setPage(p => p - 1)
+                window.scrollTo({ top: 0, behavior: "smooth" })
+              }}
               className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
             >
               ← Anterior
@@ -284,7 +287,10 @@ export default function Home() {
             </span>
             <button
               disabled={page === totalPages}
-              onClick={() => setPage(p => p + 1)}
+              onClick={() => {
+                setPage(p => p + 1)
+                window.scrollTo({ top: 0, behavior: "smooth" })
+              }}
               className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
             >
               Próxima →
