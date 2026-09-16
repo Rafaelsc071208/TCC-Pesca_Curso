@@ -23,3 +23,16 @@ export async function sendTwoFactorEmail(to: string, code: string) {
     `
   })
 }
+
+export async function sendPasswordResetEmail(to: string, code: string) {
+  await transporter.sendMail({
+    from: `"Cursos" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: "Redefinição de senha",
+    html: `
+      <p>Use o código abaixo para redefinir sua senha:</p>
+      <h2 style="letter-spacing: 4px;">${code}</h2>
+      <p>Esse código expira em 15 minutos. Se você não pediu isso, ignore este email.</p>
+    `
+  })
+}

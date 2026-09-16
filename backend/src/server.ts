@@ -7,6 +7,8 @@ import "./database/init"
 import path from "path"
 import favoriteRoutes from "./routes/favoriteRoutes"
 import reportRoutes from "./routes/reportRoutes"
+import verificationRoutes from "./routes/verificationRoutes"
+import institutionRoutes from "./routes/institutionRoutes"
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -19,6 +21,8 @@ app.use("/users", userRoutes)
 app.use("/courses", courseRoutes)
 app.use("/reviews", reviewRoutes)
 app.use("/reports", reportRoutes)
+app.use("/institutions", institutionRoutes)
+app.use("/verification", verificationRoutes)
 
 app.get("/", (req, res) => {
   res.send("API rodando")

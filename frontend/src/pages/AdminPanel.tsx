@@ -43,7 +43,7 @@ type ReportedReview = {
   reports: ReportItem[]
 }
 
-type Tab = "courses" | "reviews" | "users"
+type Tab = "courses" | "reviews" | "users" | "verification"
 
 const reportCardClass =
   "bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700 rounded-[10px] p-4 mb-3.5"

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 type Props = {
   images: string[]
@@ -13,6 +13,16 @@ export default function ImageCarousel({ images, height = "180px" }: Props) {
 
   const hasImages = images && images.length > 0
   const showArrows = hasImages && images.length > 1 && hovering
+
+  useEffect(() => {
+    if (!hasImages || images.length <= 1 || hovering) return
+
+    const timer = setTimeout(() => {
+      setIndex(i => (i === images.length - 1 ? 0 : i + 1))
+    }, 3500)
+
+    return () => clearTimeout(timer)
+  }, [index, hovering, hasImages, images.length])
 
   function prev(e: React.MouseEvent) {
     e.preventDefault()
@@ -62,14 +72,21 @@ export default function ImageCarousel({ images, height = "180px" }: Props) {
       )}
 
       {hasImages && images.length > 1 && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+        <div className="absolute bottom-2 left-2 right-2 flex gap-1">
           {images.map((_, i) => (
-            <span
-              key={i}
-              className={`w-2 h-2 rounded-full inline-block ${
-                i === index ? "bg-brand-teal" : "bg-white/70"
-              }`}
-            />
+            <div key={i} className="flex-1 h-1 rounded-full bg-white/40 overflow-hidden">
+              {i < index && <div className="h-full w-full bg-white" />}
+              {i === index && (
+                <div
+                  key={`${i}-${index}-${hovering}`}
+                  className="h-full bg-white"
+                  style={{
+                    width: hovering ? "100%" : "0%",
+                    transition: hovering ? "none" : "width 3500ms linear"
+                  }}
+                />
+              )}
+            </div>
           ))}
         </div>
       )}

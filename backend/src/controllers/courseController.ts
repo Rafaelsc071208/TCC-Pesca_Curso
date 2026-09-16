@@ -61,37 +61,48 @@ function attachExtras(rows: any[], res: Response) {
   const ids = rows.map(r => r.id)
   const placeholders = ids.map(() => "?").join(",")
 
+  const creatorIds = [...new Set(rows.map(r => r.created_by))]
+  const creatorPlaceholders = creatorIds.map(() => "?").join(",")
+
   db.all(
-    `SELECT * FROM course_images WHERE course_id IN (${placeholders})`,
-    ids,
-    (err, images: any[]) => {
-      if (err) return res.status(500).json({ error: err.message })
+    `SELECT id, is_verified FROM users WHERE id IN (${creatorPlaceholders})`,
+    creatorIds,
+    (errCreators, creators: any[]) => {
+      if (errCreators) return res.status(500).json({ error: errCreators.message })
 
       db.all(
-        `
-        SELECT course_id, AVG(rating) as avgRating, COUNT(*) as reviewCount
-        FROM reviews
-        WHERE course_id IN (${placeholders})
-        GROUP BY course_id
-        `,
+        `SELECT * FROM course_images WHERE course_id IN (${placeholders})`,
         ids,
-        (err2, ratings: any[]) => {
-          if (err2) return res.status(500).json({ error: err2.message })
+        (err, images: any[]) => {
+          if (err) return res.status(500).json({ error: err.message })
 
-          const withExtras = rows.map(course => {
-            const ratingInfo = ratings.find(r => r.course_id === course.id)
+          db.all(
+            `
+            SELECT course_id, AVG(rating) as avgRating, COUNT(*) as reviewCount
+            FROM reviews
+            WHERE course_id IN (${placeholders})
+            GROUP BY course_id
+            `,
+            ids,
+            (err2, ratings: any[]) => {
+              if (err2) return res.status(500).json({ error: err2.message })
 
-            return {
-              ...course,
-              images: images
-                .filter(img => img.course_id === course.id)
-                .map(img => img.image_url),
-              rating: ratingInfo ? ratingInfo.avgRating : 0,
-              reviewCount: ratingInfo ? ratingInfo.reviewCount : 0
+              const withExtras = rows.map(course => {
+                const ratingInfo = ratings.find(r => r.course_id === course.id)
+                const creator = creators.find(c => c.id === course.created_by)
+
+                return {
+                  ...course,
+                  images: images.filter(img => img.course_id === course.id).map(img => img.image_url),
+                  rating: ratingInfo ? ratingInfo.avgRating : 0,
+                  reviewCount: ratingInfo ? ratingInfo.reviewCount : 0,
+                  institution_verified: creator ? creator.is_verified === 1 : false
+                }
+              })
+
+              return res.json(withExtras)
             }
-          })
-
-          return res.json(withExtras)
+          )
         }
       )
     }
@@ -151,4 +162,50 @@ export function deleteCourse(req: Request, res: Response) {
       })
     }
   )
+}
+
+export function updateCourse(req: Request, res: Response) {
+  const { id } = req.params
+  const { requesterId, ...fields } = req.body
+
+  db.get(`SELECT * FROM courses WHERE id = ?`, [id], (err, course: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+    if (!course) return res.status(404).json({ error: "Curso não encontrado" })
+
+    db.get(`SELECT isAdmin FROM users WHERE id = ?`, [requesterId], (err2, requester: any) => {
+      if (err2) return res.status(500).json({ error: err2.message })
+
+      const isOwner = course.created_by === Number(requesterId)
+      const isAdminUser = requester?.isAdmin === 1
+
+      if (!isOwner && !isAdminUser) {
+        return res.status(403).json({ error: "Você não pode editar este curso" })
+      }
+
+      // guarda o estado anterior antes de sobrescrever
+      db.run(
+        `INSERT INTO course_edit_history (course_id, edited_by, previous_data) VALUES (?, ?, ?)`,
+        [id, requesterId, JSON.stringify(course)]
+      )
+
+      const allowedFields = [
+        "title", "description", "category", "price", "link", "description_det",
+        "endereco", "institution_name", "modality", "payment_type", "location",
+        "period", "duration"
+      ]
+
+      const updates = allowedFields.filter(f => fields[f] !== undefined)
+      const setClause = updates.map(f => `${f} = ?`).join(", ")
+      const values = updates.map(f => fields[f])
+
+      db.run(
+        `UPDATE courses SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [...values, id],
+        (updateErr) => {
+          if (updateErr) return res.status(500).json({ error: updateErr.message })
+          return res.json({ message: "Curso atualizado" })
+        }
+      )
+    })
+  })
 }

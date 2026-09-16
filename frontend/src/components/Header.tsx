@@ -18,47 +18,64 @@ export default function Header({
 
   const { theme, toggleTheme } = useTheme()
 
-  // pega usuário logado
   const user = JSON.parse(
     localStorage.getItem("user") || "null"
   )
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[70px] bg-brand-teal flex items-center justify-between px-5 box-border z-[1000]">
+    <div className="fixed top-0 left-0 w-full bg-brand-teal z-[1000] px-3 md:px-5 py-2 md:py-0 md:h-[70px] flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
 
-      {/* LOGO */}
-      <Link to="/" className="flex items-center transition-opacity hover:opacity-80">
-        <img src={logoUrl} alt="Cursos" className="h-10 w-auto" />
-      </Link>
+      {/* LINHA DE CIMA no celular / esquerda no desktop */}
+      <div className="flex items-center justify-between md:justify-start md:contents">
+        <Link to="/" className="flex items-center transition-opacity hover:opacity-80">
+          <img src={logoUrl} alt="Cursos" className="h-8 md:h-10 w-auto" />
+        </Link>
 
-      {/* PESQUISA */}
-      <div className="w-2/5 flex items-center gap-2">
+        {/* no celular, o resto da direita (tema/perfil) já aparece aqui em cima */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-full bg-brand-dark text-white cursor-pointer text-base"
+          >
+            {theme === "light" ? "🌙" : "☀️"}
+          </button>
+          {user ? <ProfileMenu user={user} /> : (
+            <Link to="/login">
+              <button className="px-3 py-2 rounded-lg bg-brand-green text-white text-sm cursor-pointer">
+                Login
+              </button>
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* BUSCA — sempre largura cheia no celular */}
+      <div className="w-full md:w-2/5 flex items-center gap-2 md:mx-4">
         <div className="relative flex-1">
           <img
             src={iconUrl}
             alt=""
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-auto pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 md:h-5 w-auto pointer-events-none"
           />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar cursos..."
-            className="w-full pl-10 pr-3 py-3 rounded-[20px] border-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-mint transition-shadow"
+            className="w-full pl-9 md:pl-10 pr-3 py-2.5 md:py-3 rounded-[20px] border-none bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-mint transition-shadow text-sm md:text-base"
           />
         </div>
 
         <button
           onClick={onOpenFilters}
-          className="w-[45px] h-[45px] rounded-[10px] bg-brand-green text-white cursor-pointer text-xl font-bold transition-transform hover:scale-105 hover:brightness-110 active:scale-95"
+          className="w-10 h-10 md:w-[45px] md:h-[45px] rounded-[10px] bg-brand-green text-white cursor-pointer text-lg md:text-xl font-bold transition-transform hover:scale-105 hover:brightness-110 active:scale-95 shrink-0"
         >
           ☰
         </button>
       </div>
 
-      {/* DIREITA */}
-      <div className="flex items-center gap-2.5">
+      {/* DIREITA — só aparece aqui a partir de tablet; no celular já foi mostrada em cima */}
+      <div className="hidden md:flex items-center gap-2.5">
 
-        {/* DARK MODE */}
         <button
           onClick={toggleTheme}
           className="w-10 h-10 rounded-full bg-brand-dark text-white cursor-pointer text-lg transition-transform hover:scale-110 hover:brightness-110 active:scale-95"
@@ -68,7 +85,6 @@ export default function Header({
 
         {user ? (
           <>
-            {/* ADMIN */}
             {user.isAdmin === 1 && (
               <Link to="/admin">
                 <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer transition-colors hover:bg-brand-teal-dark">
@@ -77,7 +93,6 @@ export default function Header({
               </Link>
             )}
 
-            {/* CRIAR CURSO (só para instituição) */}
             {user.role === "institution" && (
               <Link to="/create-course">
                 <button className="px-[18px] py-2.5 rounded-[10px] bg-brand-dark text-white font-bold cursor-pointer transition-colors hover:bg-brand-teal-dark">
@@ -88,9 +103,7 @@ export default function Header({
 
             <ProfileMenu user={user} />
           </>
-
         ) : (
-          // NÃO LOGADO
           <Link to="/login">
             <button className="px-4 py-2.5 rounded-lg bg-brand-green text-white cursor-pointer transition-transform hover:scale-105 hover:brightness-110 active:scale-95">
               Login

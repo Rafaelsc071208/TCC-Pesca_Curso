@@ -1,5 +1,6 @@
 import { Router } from "express"
 import { checkAdmin } from "../middlewares/checkAdmin"
+import { reportLimiter } from "../middlewares/rateLimit"
 import {
   createReport,
   getCourseReports,
@@ -9,6 +10,7 @@ import {
 
 const router = Router()
 
+router.post("/", reportLimiter, createReport)
 router.post("/", createReport)
 router.get("/courses", checkAdmin, getCourseReports)
 router.get("/reviews", checkAdmin, getReviewReports)

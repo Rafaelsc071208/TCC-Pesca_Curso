@@ -1,19 +1,79 @@
 import { Request, Response } from "express"
 import { db } from "../database/database"
 import { sendTwoFactorEmail } from "../utils/mailer"
+import bcrypt from "bcrypt"
+import { sendPasswordResetEmail } from "../utils/mailer"
 
-export function registerUser(req: Request, res: Response) {
-    
-    console.log(req.body)
 
+// PEDIR CÓDIGO DE RECUPERAÇÃO
+export function forgotPassword(req: Request, res: Response) {
+  const { email } = req.body
+
+  db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    // não revela se o email existe ou não, por segurança
+    if (!user) {
+      return res.json({ message: "Se esse email existir, um código foi enviado." })
+    }
+
+    const code = String(Math.floor(100000 + Math.random() * 900000))
+    const expires = new Date(Date.now() + 15 * 60 * 1000).toISOString()
+
+    db.run(
+      `UPDATE users SET reset_password_code = ?, reset_password_expires = ? WHERE id = ?`,
+      [code, expires, user.id],
+      async (updateErr) => {
+        if (updateErr) return res.status(500).json({ error: updateErr.message })
+
+        try {
+          await sendPasswordResetEmail(user.email, code)
+        } catch (mailError) {
+          console.error("Erro ao enviar email de recuperação:", mailError)
+        }
+
+        return res.json({ message: "Se esse email existir, um código foi enviado." })
+      }
+    )
+  })
+}
+
+// REDEFINIR A SENHA
+export function resetPassword(req: Request, res: Response) {
+  const { email, code, newPassword } = req.body
+
+  db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    if (!user || user.reset_password_code !== code) {
+      return res.status(401).json({ error: "Código inválido" })
+    }
+
+    if (!user.reset_password_expires || new Date(user.reset_password_expires) < new Date()) {
+      return res.status(401).json({ error: "Código expirado, peça um novo" })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+    db.run(
+      `UPDATE users SET password = ?, reset_password_code = NULL, reset_password_expires = NULL WHERE id = ?`,
+      [hashedPassword, user.id],
+      (updateErr) => {
+        if (updateErr) return res.status(500).json({ error: updateErr.message })
+        return res.json({ message: "Senha redefinida com sucesso" })
+      }
+    )
+  })
+}
+
+export async function registerUser(req: Request, res: Response) {
   const { username, email, password, role } = req.body
 
+  const hashedPassword = await bcrypt.hash(password, 10)
+
   db.run(
-    `
-    INSERT INTO users (username, email, password, role)
-    VALUES (?, ?, ?, ?)
-    `,
-    [username, email, password, role],
+    `INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)`,
+    [username, email, hashedPassword, role],
 
     function (err) {
 
@@ -39,24 +99,23 @@ export function loginUser(req: Request, res: Response) {
   const { email, password } = req.body
 
   db.get(
-    `
-    SELECT * FROM users
-    WHERE email = ? AND password = ?
-    `,
-    [email, password],
+    `SELECT * FROM users WHERE email = ?`,
+    [email],
 
     async (err, user: any) => {
 
       if (err) {
-        return res.status(500).json({
-          error: err.message
-        })
+        return res.status(500).json({ error: err.message })
       }
 
       if (!user) {
-        return res.status(401).json({
-          message: "Email ou senha inválidos"
-        })
+        return res.status(401).json({ message: "Email ou senha inválidos" })
+      }
+
+      const passwordMatches = await bcrypt.compare(password, user.password)
+
+      if (!passwordMatches) {
+        return res.status(401).json({ message: "Email ou senha inválidos" })
       }
 
       // admin pula a verificação em duas etapas e já entra direto

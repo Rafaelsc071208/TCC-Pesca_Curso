@@ -16,6 +16,7 @@ type Props = {
   rating?: number
   reviewCount?: number
   isFavorited?: boolean
+  institutionVerified?: boolean
   onToggleFavorite?: () => void
 }
 
@@ -58,8 +59,9 @@ export default function CourseCard({
       <div className="bg-white dark:bg-neutral-900 p-2.5 rounded-[10px] text-left">
         <ImageCarousel images={images || []} height="180px" />
 
-        <h3 className="text-gray-900 dark:text-gray-100 font-semibold mt-2 mb-0.5">
+        <h3 className="text-gray-900 dark:text-gray-100 font-semibold mt-2 mb-0.5 flex items-center">
           {institution_name}
+          {institutionVerified && <VerifiedBadge size={14} />}
         </h3>
 
         {modality && (
@@ -67,7 +69,7 @@ export default function CourseCard({
         )}
 
         <div className="flex items-center gap-1.5 my-1">
-          <StarRating rating={Math.round(rating || 0)} readOnly size={14} />
+          <StarRating rating={rating || 0} readOnly size={14} precise />
           <span className="text-gray-500 dark:text-gray-400 text-xs">
             ({reviewCount || 0})
           </span>

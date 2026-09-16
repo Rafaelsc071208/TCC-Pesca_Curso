@@ -7,6 +7,7 @@ import ReportModal from "../components/ReportModal"
 import { useToast } from "../context/ToastContext"
 import BackButton from "../components/BackButton"
 import InfoRow from "../components/InfoRow"
+import ShareButton from "../components/ShareButton"
 
 type Review = {
   id: number
@@ -49,7 +50,7 @@ export default function CourseDetails() {
   const { showToast } = useToast()
 
   const [reviews, setReviews] = useState<Review[]>([])
-  const [newRating, setNewRating] = useState(0)
+  const [newRating, setNewRating] = useState<number | null>(null)
   const [newComment, setNewComment] = useState("")
 
   const [reportingCourse, setReportingCourse] = useState(false)
@@ -70,8 +71,8 @@ export default function CourseDetails() {
   async function handleSubmitReview(e: React.FormEvent) {
     e.preventDefault()
 
-    if (newRating === 0) {
-      alert("Selecione uma nota de 1 a 5 estrelas")
+    if (newRating === null) {
+      alert("Selecione uma nota, de 0 a 5 estrelas")
       return
     }
 
@@ -198,6 +199,8 @@ export default function CourseDetails() {
             </button>
           )}
 
+          <ShareButton title={course.title} url={window.location.href} />
+
           <div className="flex flex-col">
             <InfoRow icon="📝" label="Descrição" value={course.description} />
             <InfoRow icon="🏷️" label="Categoria" value={course.category} />
@@ -226,7 +229,7 @@ export default function CourseDetails() {
             <h2 className="m-0 text-gray-900 dark:text-gray-100 text-xl font-bold">Avaliações</h2>
             {reviews.length > 0 && (
               <>
-                <StarRating rating={Math.round(averageRating)} readOnly size={18} />
+                <StarRating rating={averageRating} readOnly size={18} precise />
                 <span className="text-gray-500 dark:text-gray-400 text-sm">
                   {averageRating.toFixed(1)} ({reviews.length} avaliação{reviews.length > 1 ? "ões" : ""})
                 </span>
@@ -240,7 +243,7 @@ export default function CourseDetails() {
               onSubmit={handleSubmitReview}
               className="flex flex-col gap-2.5 mb-6 pb-5 border-b border-gray-200 dark:border-neutral-700"
             >
-              <StarRating rating={newRating} onRate={setNewRating} size={26} />
+              <StarRating rating={newRating} onRate={setNewRating} size={26} allowZero />
 
               <textarea
                 placeholder="Conte como foi sua experiência com esse curso..."

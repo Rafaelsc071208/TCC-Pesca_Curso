@@ -6,6 +6,7 @@ import FilterSidebar from "../components/FilterSidebar"
 import CourseList from "../components/CourseList"
 import { calculateDistanceKm } from "../utils/distance"
 import { getPeriodBucket } from "../utils/period"
+import FeaturedCarousel from "../components/FeaturedCarousel"
 
 type Course = {
   id: number
@@ -49,6 +50,11 @@ export default function Home() {
   const [selectedMinRating, setSelectedMinRating] = useState(0)
 
   const [courses, setCourses] = useState<Course[]>([])
+
+  const featuredCourses = [...courses]
+    .filter(c => (c.reviewCount || 0) > 0)
+    .sort((a, b) => ((b.rating || 0) * Math.log((b.reviewCount || 0) + 1)) - ((a.rating || 0) * Math.log((a.reviewCount || 0) + 1)))
+    .slice(0, 6)
 
   const [minPrice, setMinPrice] = useState(0)
 
@@ -263,7 +269,11 @@ export default function Home() {
         onClose={() => setShowFilters(false)}
       />
 
-      <div className="pt-[90px] pb-10">
+      <div className="pt-[130px] md:pt-[90px] pb-10 px-5">
+        <FeaturedCarousel courses={featuredCourses} />
+      </div>
+
+      <div className="pb-10">
         <CourseList
           courses={paginatedCourses}
           favoriteIds={favoriteIds}

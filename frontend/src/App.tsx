@@ -10,6 +10,7 @@ import AdminPanel from "./pages/AdminPanel"
 import Profile from "./pages/Profile"
 import Favorites from "./pages/Favorites"
 import MyReviews from "./pages/MyReviews"
+import ForgotPassword from "./pages/ForgotPassword"
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/my-reviews" element={<MyReviews />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
   )

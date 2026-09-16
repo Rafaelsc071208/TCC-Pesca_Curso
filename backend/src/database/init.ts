@@ -61,7 +61,7 @@ db.serialize(() => {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     course_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 0 AND 5),
     comment TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
@@ -102,12 +102,56 @@ db.serialize(() => {
     )
   `)
 
+  // recuperar a senha
+  db.run(`ALTER TABLE users ADD COLUMN reset_password_code TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
+  db.run(`ALTER TABLE users ADD COLUMN reset_password_expires TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
   // coordenadas geográficas do curso (preenchidas automaticamente a partir do endereço)
   db.run(`ALTER TABLE courses ADD COLUMN lat REAL`, (err) => {
     if (err && !err.message.includes("duplicate column name")) console.error(err)
   })
 
   db.run(`ALTER TABLE courses ADD COLUMN lng REAL`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
+  // contas verificadas
+
+  db.run(`ALTER TABLE users ADD COLUMN is_verified INTEGER DEFAULT 0`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS verification_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      document_url TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      reviewed_at TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `)
+
+  // editar cursos
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS course_edit_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL,
+      edited_by INTEGER NOT NULL,
+      previous_data TEXT NOT NULL,
+      edited_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )
+  `)
+
+  db.run(`ALTER TABLE courses ADD COLUMN updated_at TEXT`, (err) => {
     if (err && !err.message.includes("duplicate column name")) console.error(err)
   })
 })

@@ -105,6 +105,10 @@ export default function Login() {
               Entrar
             </button>
 
+            <Link to="/forgot-password" className="text-center text-sm text-gray-500 dark:text-gray-400 no-underline">
+              Esqueci minha senha
+            </Link>
+
             <p className="text-center m-0 text-gray-700 dark:text-gray-300">
               Não possui conta?
               <Link to="/register" className="ml-1.5 text-brand-dark font-bold no-underline">

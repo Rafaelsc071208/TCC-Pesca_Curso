@@ -9,5 +9,6 @@ router.post("/create", upload.array("images", 10), createCourse)
 router.delete("/:id", checkAdmin, deleteCourse)
 router.get("/", getCourses)
 router.get("/my/:userId", getMyCourses)
+router.put("/:id", updateCourse)
 
 export default router
