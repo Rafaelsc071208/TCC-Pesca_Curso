@@ -37,6 +37,7 @@ type Course = {
   images?: string[]
   lat?: number
   lng?: number
+  created_by?: number
 }
 
 export default function CourseDetails() {
@@ -127,6 +128,8 @@ export default function CourseDetails() {
 
     fetchReviews()
 
+    axios.post(`http://localhost:3000/courses/${id}/view`).catch(() => {})
+
   }, [id])
 
 
@@ -201,6 +204,14 @@ export default function CourseDetails() {
 
           <ShareButton title={course.title} url={window.location.href} />
 
+          {(user?.id === course.created_by || user?.isAdmin === 1) && (
+            <Link to={`/edit-course/${course.id}`}>
+              <button className="w-full px-3 py-2 rounded-lg bg-brand-green text-white cursor-pointer transition-transform hover:scale-[1.02]">
+                ✏️ Editar curso
+              </button>
+            </Link>
+          )}
+
           <div className="flex flex-col">
             <InfoRow icon="📝" label="Descrição" value={course.description} />
             <InfoRow icon="🏷️" label="Categoria" value={course.category} />
@@ -215,7 +226,12 @@ export default function CourseDetails() {
           </div>
 
           {/* BOTÃO */}
-          <a href={getExternalLink(course.link)} target="_blank" rel="noopener noreferrer">
+          <a
+            href={getExternalLink(course.link)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => axios.post(`http://localhost:3000/courses/${course.id}/click`).catch(() => {})}
+          >
             <button className="w-full p-3.5 border-none rounded-[10px] bg-brand-green text-white cursor-pointer text-base font-bold transition-transform hover:opacity-90 hover:scale-[1.02] active:scale-95">
               Acessar Curso
             </button>
@@ -243,7 +259,7 @@ export default function CourseDetails() {
               onSubmit={handleSubmitReview}
               className="flex flex-col gap-2.5 mb-6 pb-5 border-b border-gray-200 dark:border-neutral-700"
             >
-              <StarRating rating={newRating} onRate={setNewRating} size={26} allowZero />
+              <StarRating rating={newRating ?? 0} onRate={setNewRating} size={26} allowZero />
 
               <textarea
                 placeholder="Conte como foi sua experiência com esse curso..."

@@ -285,16 +285,24 @@ export function changePassword(req: Request, res: Response) {
   db.get(
     `SELECT password FROM users WHERE id = ?`,
     [id],
-    (err, row: any) => {
+    async (err, row: any) => {
       if (err) return res.status(500).json({ error: err.message })
 
-      if (!row || row.password !== currentPassword) {
+      if (!row) {
+        return res.status(404).json({ error: "Usuário não encontrado" })
+      }
+
+      const passwordMatches = await bcrypt.compare(currentPassword, row.password)
+
+      if (!passwordMatches) {
         return res.status(401).json({ error: "Senha atual incorreta" })
       }
 
+      const hashedPassword = await bcrypt.hash(newPassword, 10)
+
       db.run(
         `UPDATE users SET password = ? WHERE id = ?`,
-        [newPassword, id],
+        [hashedPassword, id],
         (err2) => {
           if (err2) return res.status(500).json({ error: err2.message })
           return res.json({ message: "Senha alterada" })

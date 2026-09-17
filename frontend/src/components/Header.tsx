@@ -8,12 +8,16 @@ type Props = {
   search: string
   setSearch: (value: string) => void
   onOpenFilters: () => void
+  searchMode?: "courses" | "institutions"
+  setSearchMode?: (value: "courses" | "institutions") => void
 }
 
 export default function Header({
   search,
   setSearch,
-  onOpenFilters
+  onOpenFilters,
+  searchMode,
+  setSearchMode
 }: Props) {
 
   const { theme, toggleTheme } = useTheme()
@@ -51,6 +55,17 @@ export default function Header({
 
       {/* BUSCA — sempre largura cheia no celular */}
       <div className="w-full md:w-2/5 flex items-center gap-2 md:mx-4">
+        {setSearchMode && (
+          <select
+            value={searchMode}
+            onChange={(e) => setSearchMode(e.target.value as "courses" | "institutions")}
+            className="rounded-[20px] border-none bg-brand-dark text-white px-2 py-2.5 md:py-3 text-sm cursor-pointer shrink-0"
+          >
+            <option value="courses">Cursos</option>
+            <option value="institutions">Instituições</option>
+          </select>
+        )}
+
         <div className="relative flex-1">
           <img
             src={iconUrl}

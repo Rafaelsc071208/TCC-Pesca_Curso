@@ -59,7 +59,10 @@ export default function ProfileMenu({ user }: Props) {
           )}
 
           {user.role === "institution" && (
-            <MenuLink to="/institution" onClick={() => setOpen(false)}>Meus cursos</MenuLink>
+            <>
+              <MenuLink to="/institution" onClick={() => setOpen(false)}>Meus cursos</MenuLink>
+              <MenuLink to="/stats" onClick={() => setOpen(false)}>Estatísticas</MenuLink>
+            </>
           )}
 
           <button

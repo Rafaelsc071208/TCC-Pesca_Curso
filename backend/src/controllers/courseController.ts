@@ -13,7 +13,7 @@ export async function createCourse(req: Request, res: Response) {
     location, period, duration, price, description_det, created_by
   } = req.body
 
-  const files = req.files as Express.Multer.File[] | undefined
+  const files = req.files as any[] | undefined
 
   const coords = await geocodeAddress(endereco)
 
@@ -206,6 +206,131 @@ export function updateCourse(req: Request, res: Response) {
           return res.json({ message: "Curso atualizado" })
         }
       )
+    })
+  })
+}
+
+// BUSCAR UM CURSO ESPECÍFICO
+export function getCourseById(req: Request, res: Response) {
+  const { id } = req.params
+
+  db.get(`SELECT * FROM courses WHERE id = ?`, [id], (err, course) => {
+    if (err) return res.status(500).json({ error: err.message })
+    if (!course) return res.status(404).json({ error: "Curso não encontrado" })
+    return res.json(course)
+  })
+}
+
+// REGISTRAR UMA VISUALIZAÇÃO
+export function trackView(req: Request, res: Response) {
+  const { id } = req.params
+  db.run(`INSERT INTO course_views (course_id) VALUES (?)`, [id])
+  return res.status(204).send()
+}
+
+// REGISTRAR UM CLIQUE NO LINK
+export function trackClick(req: Request, res: Response) {
+  const { id } = req.params
+  db.run(`INSERT INTO course_link_clicks (course_id) VALUES (?)`, [id])
+  return res.status(204).send()
+}
+
+// ESTATÍSTICAS DE UM CURSO
+export function getCourseStats(req: Request, res: Response) {
+  const { id } = req.params
+
+  db.get(`SELECT COUNT(*) as count FROM course_views WHERE course_id = ?`, [id], (err, views: any) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    db.get(`SELECT COUNT(*) as count FROM course_link_clicks WHERE course_id = ?`, [id], (err2, clicks: any) => {
+      if (err2) return res.status(500).json({ error: err2.message })
+
+      db.get(`SELECT COUNT(*) as count FROM favorites WHERE course_id = ?`, [id], (err3, favorites: any) => {
+        if (err3) return res.status(500).json({ error: err3.message })
+
+        db.all(
+          `SELECT reviews.*, users.username FROM reviews
+           JOIN users ON users.id = reviews.user_id
+           WHERE course_id = ? ORDER BY created_at DESC`,
+          [id],
+          (err4, reviews: any[]) => {
+            if (err4) return res.status(500).json({ error: err4.message })
+
+            const avg = reviews.length > 0
+              ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+              : 0
+
+            return res.json({
+              views: views?.count || 0,
+              clicks: clicks?.count || 0,
+              favorites: favorites?.count || 0,
+              reviewCount: reviews.length,
+              averageRating: avg,
+              reviews
+            })
+          }
+        )
+      })
+    })
+  })
+}
+
+// EVOLUÇÃO DAS AVALIAÇÕES DE UM CURSO, MÊS A MÊS
+export function getRatingHistory(req: Request, res: Response) {
+  const { id } = req.params
+
+  db.all(
+    `
+    SELECT
+      strftime('%Y-%m', created_at) as month,
+      AVG(rating) as avgRating,
+      COUNT(*) as count
+    FROM reviews
+    WHERE course_id = ?
+    GROUP BY month
+    ORDER BY month
+    `,
+    [id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message })
+      return res.json(rows)
+    }
+  )
+}
+
+// RESUMO GERAL DE UMA INSTITUIÇÃO (soma de todos os cursos dela)
+export function getInstitutionStats(req: Request, res: Response) {
+  const { userId } = req.params
+
+  db.all(`SELECT id FROM courses WHERE created_by = ?`, [userId], (err, courses: any[]) => {
+    if (err) return res.status(500).json({ error: err.message })
+
+    if (courses.length === 0) {
+      return res.json({ courseCount: 0, views: 0, clicks: 0, favorites: 0, reviewCount: 0, averageRating: 0 })
+    }
+
+    const ids = courses.map(c => c.id)
+    const placeholders = ids.map(() => "?").join(",")
+
+    db.get(`SELECT COUNT(*) as count FROM course_views WHERE course_id IN (${placeholders})`, ids, (e1, views: any) => {
+      db.get(`SELECT COUNT(*) as count FROM course_link_clicks WHERE course_id IN (${placeholders})`, ids, (e2, clicks: any) => {
+        db.get(`SELECT COUNT(*) as count FROM favorites WHERE course_id IN (${placeholders})`, ids, (e3, favs: any) => {
+          db.get(
+            `SELECT COUNT(*) as count, AVG(rating) as avg FROM reviews WHERE course_id IN (${placeholders})`,
+            ids,
+            (e4, reviewInfo: any) => {
+              return res.json({
+                courseCount: courses.length,
+                views: views?.count || 0,
+                clicks: clicks?.count || 0,
+                favorites: favs?.count || 0,
+                reviewCount: reviewInfo?.count || 0,
+                averageRating: reviewInfo?.avg || 0
+              })
+            }
+          )
+        })
+      })
     })
   })
 }

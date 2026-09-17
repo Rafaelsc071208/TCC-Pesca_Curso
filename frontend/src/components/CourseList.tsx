@@ -10,6 +10,8 @@ type Course = {
   images?: string[]
   rating?: number
   reviewCount?: number
+  institution_verified?: boolean
+  created_by?: number
 }
 
 type Props = {
@@ -29,6 +31,8 @@ export default function CourseList({ courses, favoriteIds, onToggleFavorite }: P
           category={course.category}
           price={course.price}
           institution_name={course.institution_name}
+          institutionId={course.created_by}
+          institutionVerified={course.institution_verified}
           modality={course.modality}
           images={course.images}
           rating={course.rating}

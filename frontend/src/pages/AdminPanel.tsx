@@ -43,6 +43,16 @@ type ReportedReview = {
   reports: ReportItem[]
 }
 
+type VerificationRequest = {
+  id: number
+  user_id: number
+  document_url: string
+  status: string
+  created_at: string
+  username: string
+  email: string
+}
+
 type Tab = "courses" | "reviews" | "users" | "verification"
 
 const reportCardClass =
@@ -60,6 +70,8 @@ export default function AdminPanel() {
   const [confirmingReview, setConfirmingReview] = useState<ReportedReview | null>(null)
 
   const [tab, setTab] = useState<Tab>("courses")
+
+  const [verifications, setVerifications] = useState<VerificationRequest[]>([])
 
   const [users, setUsers] = useState<User[]>([])
   const [userSearch, setUserSearch] = useState("")
@@ -86,6 +98,9 @@ export default function AdminPanel() {
 
     axios.get(`${API_URL}/reports/reviews?requesterId=${admin.id}`)
       .then(res => setReportedReviews(res.data)).catch(err => console.error(err))
+
+    axios.get(`${API_URL}/verification/pending?requesterId=${admin.id}`)
+      .then(res => setVerifications(res.data)).catch(err => console.error(err))
   }
 
   useEffect(() => { fetchAll() }, [])
@@ -129,6 +144,28 @@ export default function AdminPanel() {
       fetchAll()
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  async function handleApproveVerification(id: number) {
+    try {
+      await axios.post(`${API_URL}/verification/${id}/approve`, { requesterId: admin.id })
+      setVerifications(prev => prev.filter(v => v.id !== id))
+      showToast("Instituição verificada")
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao aprovar")
+    }
+  }
+
+  async function handleRejectVerification(id: number) {
+    try {
+      await axios.post(`${API_URL}/verification/${id}/reject`, { requesterId: admin.id })
+      setVerifications(prev => prev.filter(v => v.id !== id))
+      showToast("Solicitação rejeitada")
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao rejeitar")
     }
   }
 
@@ -183,6 +220,10 @@ export default function AdminPanel() {
           </button>
           <button className={tabButtonClass("users")} onClick={() => setTab("users")}>
             Usuários ({users.length})
+          </button>
+
+          <button className={tabButtonClass("verification")} onClick={() => setTab("verification")}>
+            Verificações {verifications.length > 0 && `(${verifications.length})`}
           </button>
         </div>
 
@@ -244,12 +285,13 @@ export default function AdminPanel() {
             )}
           </div>
         )}
+
         {tab === "reviews" && (
           <div>
             {reportedReviews.length === 0 ? (
               <p className="text-gray-500 dark:text-gray-400">Nenhuma avaliação denunciada.</p>
             ) : (
-              reportedReviews.map(review => (
+              paginatedReviewReports.map(review => (
                 <div key={review.review_id} className={reportCardClass}>
                   <div className="flex justify-between items-center">
                     <strong>Curso: {review.course_title}</strong>
@@ -270,36 +312,36 @@ export default function AdminPanel() {
                         </button>
                       </li>
                     ))}
-                    {reviewReportTotalPages > 1 && (
-                  <div className="flex items-center justify-center gap-3 mt-4">
-                    <button
-                    disabled={reviewReportPage === 1}
-                    onClick={() => {
-                      setReviewReportPage(p => p - 1)
-                      window.scrollTo({ top: 0, behavior: "smooth" })
-                    }}
-                    className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
-                  >
-                    ← Anterior
-                  </button>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Página {reviewReportPage} de {reviewReportTotalPages}
-                    </span>
-                    <button
-                      disabled={reviewReportPage === reviewReportTotalPages}
-                      onClick={() => {
-                        setReviewReportPage(p => p + 1)
-                        window.scrollTo({ top: 0, behavior: "smooth" })
-                      }}
-                      className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
-                    >
-                      Próxima →
-                    </button>
-                  </div>
-                )}
                   </ul>
                 </div>
               ))
+            )}
+            {reviewReportTotalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button
+                  disabled={reviewReportPage === 1}
+                  onClick={() => {
+                    setReviewReportPage(p => p - 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  ← Anterior
+                </button>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Página {reviewReportPage} de {reviewReportTotalPages}
+                </span>
+                <button
+                  disabled={reviewReportPage === reviewReportTotalPages}
+                  onClick={() => {
+                    setReviewReportPage(p => p + 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-neutral-700 disabled:opacity-40 cursor-pointer"
+                >
+                  Próxima →
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -383,6 +425,48 @@ export default function AdminPanel() {
             )}
           </div>
         )}
+
+        {tab === "verification" && (
+          <div>
+            {verifications.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400">Nenhuma solicitação pendente.</p>
+            ) : (
+              verifications.map(v => (
+                <div key={v.id} className={reportCardClass}>
+                  <div className="flex justify-between items-center flex-wrap gap-3">
+                    <div>
+                      <strong className="block">{v.username}</strong>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{v.email}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleApproveVerification(v.id)}
+                        className="bg-green-600 text-white border-none px-3 py-1.5 rounded-md cursor-pointer hover:bg-green-700"
+                      >
+                        Aprovar
+                      </button>
+                      <button
+                        onClick={() => handleRejectVerification(v.id)}
+                        className={deleteButtonClass}
+                      >
+                        Rejeitar
+                      </button>
+                    </div>
+                  </div>
+
+                  <a href={`${API_URL}${v.document_url}`} target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={`${API_URL}${v.document_url}`}
+                      alt="Documento enviado"
+                      className="mt-3 max-h-64 rounded-lg border border-gray-300 dark:border-neutral-600"
+                    />
+                  </a>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+        
       </div>
       {confirmingCourse && (
         <ConfirmDeleteModal

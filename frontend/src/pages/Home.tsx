@@ -7,6 +7,8 @@ import CourseList from "../components/CourseList"
 import { calculateDistanceKm } from "../utils/distance"
 import { getPeriodBucket } from "../utils/period"
 import FeaturedCarousel from "../components/FeaturedCarousel"
+import { Link } from "react-router-dom"
+import VerifiedBadge from "../components/VerifiedBadge"
 
 type Course = {
   id: number
@@ -51,6 +53,10 @@ export default function Home() {
 
   const [courses, setCourses] = useState<Course[]>([])
 
+  const [searchMode, setSearchMode] = useState<"courses" | "institutions">("courses")
+
+  const [institutions, setInstitutions] = useState<{ id: number, username: string, is_verified: number }[]>([])
+
   const featuredCourses = [...courses]
     .filter(c => (c.reviewCount || 0) > 0)
     .sort((a, b) => ((b.rating || 0) * Math.log((b.reviewCount || 0) + 1)) - ((a.rating || 0) * Math.log((a.reviewCount || 0) + 1)))
@@ -94,6 +100,15 @@ export default function Home() {
       .then(response => setFavoriteIds(response.data))
       .catch(error => console.error(error))
   }, [])
+
+  useEffect(() => {
+    if (searchMode !== "institutions") return
+
+    axios
+      .get(`http://localhost:3000/institutions/search?search=${search}`)
+      .then(response => setInstitutions(response.data))
+      .catch(error => console.error(error))
+  }, [searchMode, search])
 
   async function handleToggleFavorite(courseId: number) {
     const alreadyFavorited = favoriteIds.includes(courseId)
@@ -239,10 +254,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-neutral-900">
 
-      <Header
+       <Header
         search={search}
         setSearch={setSearch}
         onOpenFilters={() => setShowFilters(prev => !prev)}
+        searchMode={searchMode}
+        setSearchMode={setSearchMode}
       />
 
       <FilterSidebar
@@ -269,45 +286,72 @@ export default function Home() {
         onClose={() => setShowFilters(false)}
       />
 
-      <div className="pt-[130px] md:pt-[90px] pb-10 px-5">
-        <FeaturedCarousel courses={featuredCourses} />
-      </div>
-
-      <div className="pb-10">
-        <CourseList
-          courses={paginatedCourses}
-          favoriteIds={favoriteIds}
-          onToggleFavorite={user?.role === "user" ? handleToggleFavorite : undefined}
-        />
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 mt-4">
-             <button
-              disabled={page === 1}
-              onClick={() => {
-                setPage(p => p - 1)
-                window.scrollTo({ top: 0, behavior: "smooth" })
-              }}
-              className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
-            >
-              ← Anterior
-            </button>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Página {page} de {totalPages}
-            </span>
-            <button
-              disabled={page === totalPages}
-              onClick={() => {
-                setPage(p => p + 1)
-                window.scrollTo({ top: 0, behavior: "smooth" })
-              }}
-              className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
-            >
-              Próxima →
-            </button>
+      {searchMode === "courses" ? (
+        <>
+          <div className="pt-[130px] md:pt-[90px] pb-10 px-5">
+            <FeaturedCarousel courses={featuredCourses} />
           </div>
-        )}
-      </div>
+
+          <div className="pb-10">
+            <CourseList
+              courses={paginatedCourses}
+              favoriteIds={favoriteIds}
+              onToggleFavorite={user?.role === "user" ? handleToggleFavorite : undefined}
+            />
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <button
+                  disabled={page === 1}
+                  onClick={() => {
+                    setPage(p => p - 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
+                >
+                  ← Anterior
+                </button>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => {
+                    setPage(p => p + 1)
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }}
+                  className="px-4 py-2 rounded-lg bg-brand-teal text-white disabled:opacity-40 cursor-pointer transition-colors hover:bg-brand-teal-dark"
+                >
+                  Próxima →
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="pt-[130px] md:pt-[90px] pb-10 px-5">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Instituições
+          </h2>
+
+          {institutions.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400">Nenhuma instituição encontrada.</p>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {institutions.map(inst => (
+                <Link
+                  key={inst.id}
+                  to={`/institution/${inst.id}`}
+                  className="bg-white dark:bg-neutral-800 rounded-xl p-4 no-underline text-gray-900 dark:text-gray-100 flex items-center transition-transform hover:scale-[1.01] shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+                >
+                  <span className="font-semibold">{inst.username}</span>
+                  {inst.is_verified === 1 && <VerifiedBadge size={16} />}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
     </div>
   )

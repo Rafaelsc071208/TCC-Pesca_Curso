@@ -11,6 +11,10 @@ import Profile from "./pages/Profile"
 import Favorites from "./pages/Favorites"
 import MyReviews from "./pages/MyReviews"
 import ForgotPassword from "./pages/ForgotPassword"
+import RequestVerification from "./pages/RequestVerification"
+import InstitutionProfile from "./pages/InstitutionProfile"
+import EditCourse from "./pages/EditCourse"
+import InstitutionStats from "./pages/InstitutionStats"
 
 function App() {
   return (
@@ -19,6 +23,7 @@ function App() {
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<Home />} />
         <Route path="/course/:id" element={<CourseDetails />} />
+        <Route path="/institution/:id" element={<InstitutionProfile />} />
         <Route path="/create-course" element={<CreateCourse />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -27,6 +32,9 @@ function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/my-reviews" element={<MyReviews />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verification" element={<RequestVerification />} />
+        <Route path="/stats" element={<InstitutionStats />} />
+        <Route path="/edit-course/:id" element={<EditCourse />} />
       </Routes>
     </BrowserRouter>
   )

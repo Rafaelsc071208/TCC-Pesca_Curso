@@ -62,23 +62,17 @@ export default function FilterSidebar({
       {/* fundo escurecido, fecha ao clicar fora */}
       <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black/30 z-[998] transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/30 z-[1050] transition-opacity duration-300 ${
           open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />
 
       {/* painel de filtros, desliza a partir da direita */}
       <div
-        className={`fixed right-0 top-0 w-[270px] h-full bg-brand-mint text-white p-5 overflow-y-auto hide-scrollbar z-[999]
+        className={`fixed right-0 top-0 w-[270px] h-full bg-brand-mint text-white p-5 overflow-y-auto hide-scrollbar z-[1100]
           transition-transform duration-300 ease-out
           ${open ? "translate-x-0" : "translate-x-full"}`}
       >
-        <button
-          onClick={onClose}
-          className="w-full px-5 py-2.5 rounded-lg border-none bg-brand-teal text-white cursor-pointer text-base mb-5 transition-colors hover:bg-brand-teal-dark"
-        >
-          Fechar
-        </button>
 
         <h2 className="text-lg font-bold">Preço</h2>
 

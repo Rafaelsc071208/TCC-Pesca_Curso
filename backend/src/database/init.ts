@@ -154,4 +154,24 @@ db.serialize(() => {
   db.run(`ALTER TABLE courses ADD COLUMN updated_at TEXT`, (err) => {
     if (err && !err.message.includes("duplicate column name")) console.error(err)
   })
+
+  // registro de cada vez que alguém abre a página de um curso
+  db.run(`
+    CREATE TABLE IF NOT EXISTS course_views (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL,
+      viewed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )
+  `)
+
+  // registro de cada vez que alguém clica no link externo do curso
+  db.run(`
+    CREATE TABLE IF NOT EXISTS course_link_clicks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      course_id INTEGER NOT NULL,
+      clicked_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )
+  `)
 })

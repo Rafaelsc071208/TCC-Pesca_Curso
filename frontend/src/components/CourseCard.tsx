@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import axios from "axios"
 import ImageCarousel from "./ImageCarousel"
 import StarRating from "./StarRating"
+import VerifiedBadge from "./VerifiedBadge"
 import { useState } from "react"
 import ConfirmDeleteModal from "./ConfirmDeleteModal"
 
@@ -9,6 +10,7 @@ type Props = {
   id: string
   title: string
   institution_name: string
+  institutionId?: number
   modality?: string
   price: number
   images?: string[]
@@ -31,6 +33,7 @@ export default function CourseCard({
   rating,
   reviewCount,
   isFavorited,
+  institutionVerified,
   onToggleFavorite
 }: Props) {
 
@@ -60,7 +63,16 @@ export default function CourseCard({
         <ImageCarousel images={images || []} height="180px" />
 
         <h3 className="text-gray-900 dark:text-gray-100 font-semibold mt-2 mb-0.5 flex items-center">
-          {institution_name}
+          {institutionId ? (
+            <Link
+              to={`/institution/${institutionId}`}
+              className="hover:underline text-inherit no-underline"
+            >
+              {institution_name}
+            </Link>
+          ) : (
+            institution_name
+          )}
           {institutionVerified && <VerifiedBadge size={14} />}
         </h3>
 

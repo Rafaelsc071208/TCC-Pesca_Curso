@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import { db } from "../database/database"
+import bcrypt from "bcrypt"
 
 // ---------- utilidades de banco ----------
 
@@ -26,6 +27,12 @@ function get(sql: string, params: any[] = []): Promise<any> {
 
 function randomFrom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
+}
+
+function randomPastDate(): string {
+  const daysAgo = randomInt(0, 365)
+  const date = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
+  return date.toISOString().slice(0, 19).replace("T", " ")
 }
 
 function randomInt(min: number, max: number): number {
@@ -83,7 +90,6 @@ const positiveComments = [
   "Melhor curso que já fiz na área.",
   "Professor muito atencioso, aprendi bastante.",
   "Didática ótima, valeu cada centavo.",
-  "Já indiquei pra vários amigos.",
   ""
 ]
 
@@ -91,15 +97,14 @@ const neutralComments = [
   "Bom conteúdo, mas poderia ser mais dinâmico.",
   "Conteúdo razoável pelo preço.",
   "Cumpriu o que prometeu, nada excepcional.",
-  "Achei ok, mas esperava um pouco mais de prática.",
   ""
 ]
 
 const negativeComments = [
   "Não gostei muito, esperava mais.",
   "Conteúdo muito básico pro que foi anunciado.",
-  "Tive dificuldade de acompanhar o ritmo das aulas.",
   "Não recomendo, achei fraco pelo valor cobrado.",
+  "Péssima experiência, não valeu o investimento.",
   ""
 ]
 
@@ -146,9 +151,11 @@ async function ensureUser(username: string, email: string, role: string): Promis
   const existing = await get(`SELECT id FROM users WHERE email = ?`, [email])
   if (existing) return existing.id
 
+  const hashedPassword = await bcrypt.hash("123456", 10)
+
   return run(
     `INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)`,
-    [username, email, "123456", role]
+    [username, email, hashedPassword, role]
   )
 }
 
@@ -165,6 +172,17 @@ async function seed() {
       "institution"
     )
     institutionIds.push(id)
+
+    // metade das instituições já vem verificada
+    if (i % 2 === 0) {
+      await run(`UPDATE users SET is_verified = 1 WHERE id = ?`, [id])
+    } else {
+      // as outras ficam com uma solicitação pendente, pra testar a aba do admin
+      await run(
+        `INSERT INTO verification_requests (user_id, document_url, status) VALUES (?, ?, 'pending')`,
+        [id, "/uploads/documento-teste.jpg"]
+      )
+    }
   }
 
   const studentIds: number[] = []
@@ -240,11 +258,11 @@ async function seed() {
     const reviewCount = randomInt(0, 8)
 
     for (let i = 0; i < reviewCount; i++) {
-      const rating = randomInt(1, 5)
+      const rating = randomInt(0, 5)
 
       const reviewId = await run(
-        `INSERT INTO reviews (course_id, user_id, rating, comment) VALUES (?, ?, ?, ?)`,
-        [courseId, randomFrom(studentIds), rating, commentForRating(rating)]
+        `INSERT INTO reviews (course_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)`,
+        [courseId, randomFrom(studentIds), rating, commentForRating(rating), randomPastDate()]
       )
       reviewIds.push(reviewId)
     }
@@ -285,6 +303,40 @@ async function seed() {
         "Denúncia gerada automaticamente para teste."
       ]
     )
+  }
+
+  console.log("Criando favoritos, visualizações e cliques...")
+
+  for (const courseId of courseIds) {
+
+    // favoritos: alguns alunos favoritam cada curso
+    const favCount = randomInt(0, 6)
+    const shuffledStudents = [...studentIds].sort(() => Math.random() - 0.5)
+
+    for (let i = 0; i < favCount; i++) {
+      await run(
+        `INSERT OR IGNORE INTO favorites (user_id, course_id) VALUES (?, ?)`,
+        [shuffledStudents[i], courseId]
+      )
+    }
+
+    // visualizações: entre 10 e 200 por curso, espalhadas no tempo
+    const viewCount = randomInt(10, 200)
+    for (let i = 0; i < viewCount; i++) {
+      await run(
+        `INSERT INTO course_views (course_id, viewed_at) VALUES (?, ?)`,
+        [courseId, randomPastDate()]
+      )
+    }
+
+    // cliques no link: sempre menos que visualizações (nem todo mundo clica)
+    const clickCount = randomInt(0, Math.floor(viewCount / 3))
+    for (let i = 0; i < clickCount; i++) {
+      await run(
+        `INSERT INTO course_link_clicks (course_id, clicked_at) VALUES (?, ?)`,
+        [courseId, randomPastDate()]
+      )
+    }
   }
 
   console.log(
