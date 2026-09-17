@@ -28,6 +28,7 @@ export default function CourseCard({
   category,
   price,
   institution_name,
+  institutionId,
   modality,
   images,
   rating,
