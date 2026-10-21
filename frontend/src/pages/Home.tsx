@@ -5,7 +5,6 @@ import Header from "../components/Header"
 import FilterSidebar from "../components/FilterSidebar"
 import CourseList from "../components/CourseList"
 import { calculateDistanceKm } from "../utils/distance"
-import { getPeriodBucket } from "../utils/period"
 import FeaturedCarousel from "../components/FeaturedCarousel"
 import { Link } from "react-router-dom"
 import VerifiedBadge from "../components/VerifiedBadge"
@@ -24,6 +23,7 @@ type Course = {
   payment_type?: string
   period?: string
   images?: string[]
+  periods?: string
   rating?: number
   reviewCount?: number
   lat?: number
@@ -161,35 +161,7 @@ export default function Home() {
         .includes(search.toLowerCase())
 
     const matchesCategory =
-
-      selectedCategory === ""
-
-      ||
-
-      (
-        selectedCategory === "Presencial" &&
-        (
-          course.category === "Presencial" ||
-          course.category === "Misto"
-        )
-      )
-
-      ||
-
-      (
-        selectedCategory === "Online" &&
-        (
-          course.category === "Online" ||
-          course.category === "Misto"
-        )
-      )
-
-      ||
-
-      (
-        selectedCategory === "Misto" &&
-        course.category === "Misto"
-      )
+      selectedCategory === "" || course.category === selectedCategory
 
     const matchesPrice =
       Number(course.price || 0) >= minPrice &&
@@ -210,13 +182,30 @@ export default function Home() {
       distanceKm <= radiusKm
 
     const matchesModality =
-      selectedModality === "" || course.modality === selectedModality
+      selectedModality === ""
+      ||
+      (
+        selectedModality === "Presencial" &&
+        (course.modality === "Presencial" || course.modality === "Híbrido")
+      )
+      ||
+      (
+        selectedModality === "Online" &&
+        (course.modality === "Online" || course.modality === "Híbrido")
+      )
+      ||
+      (
+        selectedModality === "Híbrido" &&
+        course.modality === "Híbrido"
+      )
 
     const matchesPaymentType =
       selectedPaymentType === "" || course.payment_type === selectedPaymentType
 
+    const coursePeriods: string[] = course.periods ? (() => { try { return JSON.parse(course.periods) } catch { return [] } })() : []
+
     const matchesPeriod =
-      selectedPeriod === "" || getPeriodBucket(course.period) === selectedPeriod
+      selectedPeriod === "" || coursePeriods.includes(selectedPeriod)
 
     return (
       matchesSearch &&

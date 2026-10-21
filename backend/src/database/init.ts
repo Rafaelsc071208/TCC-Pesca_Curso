@@ -126,6 +126,11 @@ db.serialize(() => {
     if (err && !err.message.includes("duplicate column name")) console.error(err)
   })
 
+  // períodos do curso, substitui o antigo campo de horário fixo
+  db.run(`ALTER TABLE courses ADD COLUMN periods TEXT`, (err) => {
+    if (err && !err.message.includes("duplicate column name")) console.error(err)
+  })
+
   db.run(`
     CREATE TABLE IF NOT EXISTS verification_requests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

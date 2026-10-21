@@ -10,7 +10,7 @@ export async function createCourse(req: Request, res: Response) {
   const {
     title, description, category, link, endereco,
     institution_name, modality, payment_type,
-    location, period, duration, price, description_det, created_by
+    location, periods, duration, price, description_det, created_by
   } = req.body
 
   const files = req.files as any[] | undefined
@@ -21,11 +21,11 @@ export async function createCourse(req: Request, res: Response) {
     `
     INSERT INTO courses
     (title, description, category, price, link, description_det, endereco,
-     institution_name, modality, payment_type, location, period, duration, created_by, lat, lng)
+     institution_name, modality, payment_type, location, periods, duration, created_by, lat, lng)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [title, description, category, price, link, description_det, endereco,
-     institution_name, modality, payment_type, location, period, duration, created_by,
+     institution_name, modality, payment_type, location, periods, duration, created_by,
      coords?.lat ?? null, coords?.lng ?? null],
 
     function (err) {
@@ -191,7 +191,7 @@ export function updateCourse(req: Request, res: Response) {
       const allowedFields = [
         "title", "description", "category", "price", "link", "description_det",
         "endereco", "institution_name", "modality", "payment_type", "location",
-        "period", "duration"
+        "periods", "duration"
       ]
 
       const updates = allowedFields.filter(f => fields[f] !== undefined)

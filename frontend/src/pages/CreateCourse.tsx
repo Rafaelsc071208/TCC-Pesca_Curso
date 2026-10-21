@@ -4,6 +4,7 @@ import FormField, { fieldClass } from "../components/FormField"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "../context/ToastContext"
 import BackButton from "../components/BackButton"
+import { CATEGORY_OPTIONS, MODALITY_OPTIONS, PERIOD_OPTIONS, PAYMENT_TYPE_OPTIONS } from "../constants/courseOptions"
 
 import Header from "../components/Header"
 
@@ -21,8 +22,13 @@ export default function CreateCourse() {
   const [modality, setModality] = useState("")
   const [paymentType, setPaymentType] = useState("")
   const [location, setLocation] = useState("")
-  const [startTime, setStartTime] = useState("")
-  const [endTime, setEndTime] = useState("")
+  const [periods, setPeriods] = useState<string[]>([])
+
+  function togglePeriod(option: string) {
+    setPeriods(prev =>
+      prev.includes(option) ? prev.filter(p => p !== option) : [...prev, option]
+    )
+  }
   const [duration, setDuration] = useState("")
 
   const [description, setDescription] = useState("")
@@ -74,7 +80,7 @@ export default function CreateCourse() {
       formData.append("modality", modality)
       formData.append("payment_type", paymentType)
       formData.append("location", location)
-      formData.append("period", startTime && endTime ? `${startTime} às ${endTime}` : "")
+      formData.append("periods", JSON.stringify(periods))
       formData.append("duration", duration)
       formData.append("price", price)
       formData.append("description_det", descriptionDet)
@@ -162,9 +168,9 @@ export default function CreateCourse() {
                   onChange={(e) => setCategory(e.target.value)}
                 >
                   <option value="">Selecione</option>
-                  <option value="Presencial">Presencial</option>
-                  <option value="Online">Online</option>
-                  <option value="Misto">Misto</option>
+                  {CATEGORY_OPTIONS.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
                 </select>
               </FormField>
 
@@ -205,11 +211,9 @@ export default function CreateCourse() {
                   onChange={(e) => setModality(e.target.value)}
                 >
                   <option value="">Selecione</option>
-                  <option value="Curso técnico">Curso técnico</option>
-                  <option value="Curso livre">Curso livre</option>
-                  <option value="Graduação">Graduação</option>
-                  <option value="Pós-graduação">Pós-graduação</option>
-                  <option value="Profissionalizante">Profissionalizante</option>
+                  {MODALITY_OPTIONS.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
                 </select>
               </FormField>
 
@@ -220,33 +224,31 @@ export default function CreateCourse() {
                   onChange={(e) => setPaymentType(e.target.value)}
                 >
                   <option value="">Selecione</option>
-                  <option value="Gratuito">Gratuito</option>
-                  <option value="Mensalidade">Mensalidade</option>
-                  <option value="Pagamento único">Pagamento único</option>
-                  <option value="Bolsa parcial">Bolsa parcial</option>
-                  <option value="Bolsa integral">Bolsa integral</option>
+                  {PAYMENT_TYPE_OPTIONS.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
                 </select>
               </FormField>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Horário de início">
-                  <input
-                    type="time"
-                    className={fieldClass}
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </FormField>
-
-                <FormField label="Horário de término">
-                  <input
-                    type="time"
-                    className={fieldClass}
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
+                <FormField label="Períodos oferecidos (selecione um ou mais)">
+                  <div className="grid grid-cols-2 gap-2">
+                    {PERIOD_OPTIONS.map(option => (
+                      <label
+                        key={option}
+                        className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-neutral-700 rounded-lg px-3 py-2 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={periods.includes(option)}
+                          onChange={() => togglePeriod(option)}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
                 </FormField>
               </div>
 

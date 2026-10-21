@@ -4,7 +4,6 @@ import axios from "axios"
 import Header from "../components/Header"
 import FilterSidebar from "../components/FilterSidebar"
 import CourseList from "../components/CourseList"
-import { getPeriodBucket } from "../utils/period"
 
 type Course = {
   id: number
@@ -19,6 +18,7 @@ type Course = {
   modality?: string
   payment_type?: string
   period?: string
+  periods?: string
   images?: string[]
   rating?: number
   reviewCount?: number
@@ -83,35 +83,7 @@ export default function InstitutionDashboard() {
         .includes(search.toLowerCase())
 
     const matchesCategory =
-
-      selectedCategory === ""
-
-      ||
-
-      (
-        selectedCategory === "Presencial" &&
-        (
-          course.category === "Presencial" ||
-          course.category === "Misto"
-        )
-      )
-
-      ||
-
-      (
-        selectedCategory === "Online" &&
-        (
-          course.category === "Online" ||
-          course.category === "Misto"
-        )
-      )
-
-      ||
-
-      (
-        selectedCategory === "Misto" &&
-        course.category === "Misto"
-      )
+      selectedCategory === "" || course.category === selectedCategory
 
     const matchesPrice =
       Number(course.price || 0) >= minPrice &&
@@ -122,13 +94,30 @@ export default function InstitutionDashboard() {
       (course.rating || 0) >= selectedMinRating
 
     const matchesModality =
-      selectedModality === "" || course.modality === selectedModality
+      selectedModality === ""
+      ||
+      (
+        selectedModality === "Presencial" &&
+        (course.modality === "Presencial" || course.modality === "Híbrido")
+      )
+      ||
+      (
+        selectedModality === "Online" &&
+        (course.modality === "Online" || course.modality === "Híbrido")
+      )
+      ||
+      (
+        selectedModality === "Híbrido" &&
+        course.modality === "Híbrido"
+      )
 
     const matchesPaymentType =
       selectedPaymentType === "" || course.payment_type === selectedPaymentType
 
+    const coursePeriods: string[] = course.periods ? (() => { try { return JSON.parse(course.periods) } catch { return [] } })() : []
+
     const matchesPeriod =
-      selectedPeriod === "" || getPeriodBucket(course.period) === selectedPeriod
+      selectedPeriod === "" || coursePeriods.includes(selectedPeriod)
 
     return (
       matchesSearch &&

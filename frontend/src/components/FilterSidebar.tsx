@@ -1,3 +1,5 @@
+import { CATEGORY_OPTIONS, MODALITY_OPTIONS, PERIOD_OPTIONS, PAYMENT_TYPE_OPTIONS } from "../constants/courseOptions"
+
 type Props = {
   open: boolean
 
@@ -100,12 +102,12 @@ export default function FilterSidebar({
           className={inputClass}
         >
           <option value="">Todas</option>
-          <option value="Presencial">Presencial</option>
-          <option value="Online">Online</option>
-          <option value="Misto">Misto</option>
+          {CATEGORY_OPTIONS.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
 
-        <h2 className="text-lg font-bold flex items-center gap-2">Modalidade</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">🎓 Modalidade</h2>
 
         <select
           value={selectedModality}
@@ -113,11 +115,9 @@ export default function FilterSidebar({
           className={inputClass}
         >
           <option value="">Todas</option>
-          <option value="Curso técnico">Curso técnico</option>
-          <option value="Curso livre">Curso livre</option>
-          <option value="Graduação">Graduação</option>
-          <option value="Pós-graduação">Pós-graduação</option>
-          <option value="Profissionalizante">Profissionalizante</option>
+          {MODALITY_OPTIONS.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
 
         <h2 className="text-lg font-bold flex items-center gap-2">Forma de pagamento</h2>
@@ -128,24 +128,22 @@ export default function FilterSidebar({
           className={inputClass}
         >
           <option value="">Todas</option>
-          <option value="Gratuito">Gratuito</option>
-          <option value="Mensalidade">Mensalidade</option>
-          <option value="Pagamento único">Pagamento único</option>
-          <option value="Bolsa parcial">Bolsa parcial</option>
-          <option value="Bolsa integral">Bolsa integral</option>
+          {PAYMENT_TYPE_OPTIONS.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
 
-        <h2 className="text-lg font-bold flex items-center gap-2"> Horário</h2>
+        <h2 className="text-lg font-bold flex items-center gap-2">🕒 Período</h2>
 
         <select
           value={selectedPeriod}
           onChange={(e) => setSelectedPeriod(e.target.value)}
           className={inputClass}
         >
-          <option value="">Qualquer horário</option>
-          <option value="Manhã">Manhã</option>
-          <option value="Tarde">Tarde</option>
-          <option value="Noite">Noite</option>
+          <option value="">Qualquer período</option>
+          {PERIOD_OPTIONS.map(option => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
 
         <h2 className="text-lg font-bold flex items-center gap-2"> Localização</h2>

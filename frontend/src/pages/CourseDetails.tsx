@@ -33,6 +33,7 @@ type Course = {
   payment_type?: string
   location?: string
   period?: string
+  periods?: string
   duration?: string
   images?: string[]
   lat?: number
@@ -221,7 +222,15 @@ export default function CourseDetails() {
             <InfoRow icon="💳" label="Forma de pagamento" value={course.payment_type} />
             <InfoRow icon="📍" label="Endereço" value={course.endereco} />
             <InfoRow icon="🗺️" label="Localização" value={course.location} />
-            <InfoRow icon="🕒" label="Horário" value={course.period} />
+            <InfoRow
+              icon="🕒"
+              label="Períodos"
+              value={
+                course.periods
+                  ? (() => { try { return JSON.parse(course.periods).join(", ") } catch { return "" } })()
+                  : undefined
+              }
+            />
             <InfoRow icon="⏳" label="Duração" value={course.duration} />
           </div>
 
