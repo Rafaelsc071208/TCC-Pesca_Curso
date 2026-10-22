@@ -26,35 +26,19 @@ export default function Header({
     localStorage.getItem("user") || "null"
   )
 
-  return (
-    <div className="fixed top-0 left-0 w-full bg-brand-teal z-[1000] px-3 md:px-5 py-2 md:py-0 md:h-[70px] flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
+return (
+  <div className="fixed top-0 left-0 w-full bg-brand-teal z-[1000] px-3 md:px-5 py-2 md:py-0 md:h-[70px] flex flex-col md:flex-row md:items-center gap-2 md:gap-0">
 
-      {/* LINHA DE CIMA no celular / esquerda no desktop */}
-      <div className="flex items-center justify-between md:justify-start md:contents">
-        <Link to="/" className="flex items-center transition-opacity hover:opacity-80">
-          <img src={logoUrl} alt="Cursos" className="h-8 md:h-10 w-auto" />
-        </Link>
+    {/* Contêiner centralizado */}
+    <div className="w-full flex flex-col md:flex-row items-center justify-between md:justify-center gap-4">
 
-        {/* no celular, o resto da direita (tema/perfil) já aparece aqui em cima */}
-        <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={toggleTheme}
-            className="w-9 h-9 rounded-full bg-brand-dark text-white cursor-pointer text-base"
-          >
-            {theme === "light" ? "🌙" : "☀️"}
-          </button>
-          {user ? <ProfileMenu user={user} /> : (
-            <Link to="/login">
-              <button className="px-3 py-2 rounded-lg bg-brand-green text-white text-sm cursor-pointer">
-                Login
-              </button>
-            </Link>
-          )}
-        </div>
-      </div>
+      {/* Logo */}
+      <Link to="/" className="flex items-center transition-opacity hover:opacity-80">
+        <img src={logoUrl} alt="Cursos" className="h-8 md:h-10 w-auto" />
+      </Link>
 
-      {/* BUSCA — sempre largura cheia no celular */}
-      <div className="w-full md:w-2/5 flex items-center gap-2 md:mx-4">
+      {/* Barra de pesquisa */}
+      <div className="w-full md:w-2/5 flex items-center gap-2">
         {setSearchMode && (
           <select
             value={searchMode}
@@ -88,9 +72,8 @@ export default function Header({
         </button>
       </div>
 
-      {/* DIREITA — só aparece aqui a partir de tablet; no celular já foi mostrada em cima */}
-      <div className="hidden md:flex items-center gap-2.5">
-
+      {/* Botões à direita */}
+      <div className="flex items-center gap-2.5">
         <button
           onClick={toggleTheme}
           className="w-10 h-10 rounded-full bg-brand-dark text-white cursor-pointer text-lg transition-transform hover:scale-110 hover:brightness-110 active:scale-95"
@@ -127,5 +110,6 @@ export default function Header({
         )}
       </div>
     </div>
-  )
+  </div>
+)
 }
